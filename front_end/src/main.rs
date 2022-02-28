@@ -1,6 +1,6 @@
-use yew::prelude::*;
-use std::rc::Rc;
 use std::cell::{Cell, RefCell};
+use std::rc::Rc;
+use yew::prelude::*;
 
 const ROWS: u8 = 8;
 const COLS: u8 = 7;
@@ -31,8 +31,7 @@ impl Default for SharedState {
     }
 }
 
-struct Slot {
-}
+struct Slot {}
 
 enum SlotMessage {
     Press(u8),
@@ -55,8 +54,8 @@ impl Component for Slot {
     fn view(&self, ctx: &Context<Self>) -> Html {
         let idx = ctx.props().idx;
         let state = match ctx.props().state.as_ref().get() {
-            BoardState::Empty   => "open",
-            BoardState::Cyan    => "cyan",
+            BoardState::Empty => "open",
+            BoardState::Cyan => "cyan",
             BoardState::Magenta => "magenta",
         };
         let idx_copy = idx.clone();
@@ -72,22 +71,33 @@ impl Component for Slot {
     fn update(&mut self, ctx: &Context<Self>, msg: Self::Message) -> bool {
         match msg {
             SlotMessage::Press(idx) => {
-                let (mut shared, _) = ctx.link().context::<SharedState>(Callback::noop()).expect("shared to be set");
+                let (mut shared, _) = ctx
+                    .link()
+                    .context::<SharedState>(Callback::noop())
+                    .expect("shared to be set");
                 let value_at_idx = shared.board.as_ref().borrow()[idx as usize].clone();
                 match value_at_idx {
-                    BoardState::Empty => shared.board.as_ref().borrow_mut()[idx as usize] = BoardState::Cyan,
-                    BoardState::Cyan => shared.board.as_ref().borrow_mut()[idx as usize] = BoardState::Magenta,
-                    BoardState::Magenta => shared.board.as_ref().borrow_mut()[idx as usize] = BoardState::Empty,
+                    BoardState::Empty => {
+                        shared.board.as_ref().borrow_mut()[idx as usize] = BoardState::Cyan
+                    }
+                    BoardState::Cyan => {
+                        shared.board.as_ref().borrow_mut()[idx as usize] = BoardState::Magenta
+                    }
+                    BoardState::Magenta => {
+                        shared.board.as_ref().borrow_mut()[idx as usize] = BoardState::Empty
+                    }
                 }
-                ctx.props().state.as_ref().replace(shared.board.as_ref().borrow_mut()[idx as usize]);
-            },
+                ctx.props()
+                    .state
+                    .as_ref()
+                    .replace(shared.board.as_ref().borrow_mut()[idx as usize]);
+            }
         }
         true
     }
 }
 
-struct Wrapper {
-}
+struct Wrapper {}
 
 impl Component for Wrapper {
     type Message = ();
@@ -98,7 +108,10 @@ impl Component for Wrapper {
     }
 
     fn view(&self, ctx: &Context<Self>) -> Html {
-        let (mut shared, _) = ctx.link().context::<SharedState>(Callback::noop()).expect("state to be set");
+        let (mut shared, _) = ctx
+            .link()
+            .context::<SharedState>(Callback::noop())
+            .expect("state to be set");
         let link = ctx.link();
         html! {
             <div class="wrapper">
