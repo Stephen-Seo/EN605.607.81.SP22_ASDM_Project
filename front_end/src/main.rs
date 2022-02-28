@@ -90,7 +90,7 @@ impl Component for Slot {
                 ctx.props()
                     .state
                     .as_ref()
-                    .replace(shared.board.as_ref().borrow_mut()[idx as usize]);
+                    .replace(shared.board.as_ref().borrow()[idx as usize]);
             }
         }
         true
