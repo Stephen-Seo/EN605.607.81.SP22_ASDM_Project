@@ -2,7 +2,7 @@ use std::cell::{Cell, RefCell};
 use std::rc::Rc;
 use yew::prelude::*;
 
-const ROWS: u8 = 8;
+//const ROWS: u8 = 8;
 const COLS: u8 = 7;
 
 #[derive(Copy, Clone, Debug, PartialEq, Eq)]
@@ -58,7 +58,7 @@ impl Component for Slot {
             BoardState::Cyan => "cyan",
             BoardState::Magenta => "magenta",
         };
-        let idx_copy = idx.clone();
+        let idx_copy = idx;
         let onclick = ctx.link().callback(move |_| SlotMessage::Press(idx_copy));
         let col = idx % COLS;
         let row = idx / COLS;
@@ -71,11 +71,11 @@ impl Component for Slot {
     fn update(&mut self, ctx: &Context<Self>, msg: Self::Message) -> bool {
         match msg {
             SlotMessage::Press(idx) => {
-                let (mut shared, _) = ctx
+                let (shared, _) = ctx
                     .link()
                     .context::<SharedState>(Callback::noop())
                     .expect("shared to be set");
-                let value_at_idx = shared.board.as_ref().borrow()[idx as usize].clone();
+                let value_at_idx = shared.board.as_ref().borrow()[idx as usize];
                 match value_at_idx {
                     BoardState::Empty => {
                         shared.board.as_ref().borrow_mut()[idx as usize] = BoardState::Cyan
@@ -103,16 +103,15 @@ impl Component for Wrapper {
     type Message = ();
     type Properties = ();
 
-    fn create(ctx: &Context<Self>) -> Self {
+    fn create(_ctx: &Context<Self>) -> Self {
         Self {}
     }
 
     fn view(&self, ctx: &Context<Self>) -> Html {
-        let (mut shared, _) = ctx
+        let (shared, _) = ctx
             .link()
             .context::<SharedState>(Callback::noop())
             .expect("state to be set");
-        let link = ctx.link();
         html! {
             <div class="wrapper">
                 <Slot idx=0 state={Rc::new(Cell::new(shared.board.as_ref().borrow()[0]))} />
@@ -175,9 +174,10 @@ impl Component for Wrapper {
         }
     }
 }
+
 #[function_component(App)]
 fn app() -> Html {
-    let ctx = use_state(|| SharedState::default());
+    let ctx = use_state(SharedState::default);
     html! {
         <ContextProvider<SharedState> context={(*ctx).clone()}>
             <Wrapper />
