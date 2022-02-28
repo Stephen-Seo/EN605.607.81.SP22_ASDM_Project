@@ -1,0 +1,1388 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<office:document xmlns:presentation="urn:oasis:names:tc:opendocument:xmlns:presentation:1.0" xmlns:css3t="http://www.w3.org/TR/css3-text/" xmlns:grddl="http://www.w3.org/2003/g/data-view#" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:formx="urn:openoffice:names:experimental:ooxml-odf-interop:xmlns:form:1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:chart="urn:oasis:names:tc:opendocument:xmlns:chart:1.0" xmlns:svg="urn:oasis:names:tc:opendocument:xmlns:svg-compatible:1.0" xmlns:text="urn:oasis:names:tc:opendocument:xmlns:text:1.0" xmlns:oooc="http://openoffice.org/2004/calc" xmlns:style="urn:oasis:names:tc:opendocument:xmlns:style:1.0" xmlns:ooow="http://openoffice.org/2004/writer" xmlns:meta="urn:oasis:names:tc:opendocument:xmlns:meta:1.0" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:rpt="http://openoffice.org/2005/report" xmlns:draw="urn:oasis:names:tc:opendocument:xmlns:drawing:1.0" xmlns:config="urn:oasis:names:tc:opendocument:xmlns:config:1.0" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:fo="urn:oasis:names:tc:opendocument:xmlns:xsl-fo-compatible:1.0" xmlns:ooo="http://openoffice.org/2004/office" xmlns:office="urn:oasis:names:tc:opendocument:xmlns:office:1.0" xmlns:dr3d="urn:oasis:names:tc:opendocument:xmlns:dr3d:1.0" xmlns:table="urn:oasis:names:tc:opendocument:xmlns:table:1.0" xmlns:number="urn:oasis:names:tc:opendocument:xmlns:datastyle:1.0" xmlns:of="urn:oasis:names:tc:opendocument:xmlns:of:1.2" xmlns:calcext="urn:org:documentfoundation:names:experimental:calc:xmlns:calcext:1.0" xmlns:tableooo="http://openoffice.org/2009/table" xmlns:drawooo="http://openoffice.org/2010/draw" xmlns:loext="urn:org:documentfoundation:names:experimental:office:xmlns:loext:1.0" xmlns:dom="http://www.w3.org/2001/xml-events" xmlns:field="urn:openoffice:names:experimental:ooo-ms-interop:xmlns:field:1.0" xmlns:math="http://www.w3.org/1998/Math/MathML" xmlns:form="urn:oasis:names:tc:opendocument:xmlns:form:1.0" xmlns:script="urn:oasis:names:tc:opendocument:xmlns:script:1.0" xmlns:xforms="http://www.w3.org/2002/xforms" office:version="1.3" office:mimetype="application/vnd.oasis.opendocument.spreadsheet">
+ <office:meta><meta:creation-date>2022-02-27T14:56:15.671560282</meta:creation-date><meta:generator>LibreOffice/7.3.0.3$Linux_X86_64 LibreOffice_project/30$Build-3</meta:generator><dc:date>2022-02-27T19:11:51.732559584</dc:date><meta:editing-duration>PT2H1S</meta:editing-duration><meta:editing-cycles>35</meta:editing-cycles><meta:document-statistic meta:table-count="1" meta:cell-count="293" meta:object-count="0"/></office:meta>
+ <office:settings>
+  <config:config-item-set config:name="ooo:view-settings">
+   <config:config-item config:name="VisibleAreaTop" config:type="int">0</config:config-item>
+   <config:config-item config:name="VisibleAreaLeft" config:type="int">0</config:config-item>
+   <config:config-item config:name="VisibleAreaWidth" config:type="int">46383</config:config-item>
+   <config:config-item config:name="VisibleAreaHeight" config:type="int">35608</config:config-item>
+   <config:config-item-map-indexed config:name="Views">
+    <config:config-item-map-entry>
+     <config:config-item config:name="ViewId" config:type="string">view1</config:config-item>
+     <config:config-item-map-named config:name="Tables">
+      <config:config-item-map-entry config:name="User Stories">
+       <config:config-item config:name="CursorPositionX" config:type="int">12</config:config-item>
+       <config:config-item config:name="CursorPositionY" config:type="int">3</config:config-item>
+       <config:config-item config:name="HorizontalSplitMode" config:type="short">2</config:config-item>
+       <config:config-item config:name="VerticalSplitMode" config:type="short">2</config:config-item>
+       <config:config-item config:name="HorizontalSplitPosition" config:type="int">1</config:config-item>
+       <config:config-item config:name="VerticalSplitPosition" config:type="int">1</config:config-item>
+       <config:config-item config:name="ActiveSplitRange" config:type="short">3</config:config-item>
+       <config:config-item config:name="PositionLeft" config:type="int">0</config:config-item>
+       <config:config-item config:name="PositionRight" config:type="int">3</config:config-item>
+       <config:config-item config:name="PositionTop" config:type="int">0</config:config-item>
+       <config:config-item config:name="PositionBottom" config:type="int">1</config:config-item>
+       <config:config-item config:name="ZoomType" config:type="short">0</config:config-item>
+       <config:config-item config:name="ZoomValue" config:type="int">100</config:config-item>
+       <config:config-item config:name="PageViewZoomValue" config:type="int">60</config:config-item>
+       <config:config-item config:name="ShowGrid" config:type="boolean">true</config:config-item>
+       <config:config-item config:name="AnchoredTextOverflowLegacy" config:type="boolean">false</config:config-item>
+      </config:config-item-map-entry>
+     </config:config-item-map-named>
+     <config:config-item config:name="ActiveTable" config:type="string">User Stories</config:config-item>
+     <config:config-item config:name="HorizontalScrollbarWidth" config:type="int">1203</config:config-item>
+     <config:config-item config:name="ZoomType" config:type="short">0</config:config-item>
+     <config:config-item config:name="ZoomValue" config:type="int">100</config:config-item>
+     <config:config-item config:name="PageViewZoomValue" config:type="int">60</config:config-item>
+     <config:config-item config:name="ShowPageBreakPreview" config:type="boolean">false</config:config-item>
+     <config:config-item config:name="ShowZeroValues" config:type="boolean">true</config:config-item>
+     <config:config-item config:name="ShowNotes" config:type="boolean">true</config:config-item>
+     <config:config-item config:name="ShowGrid" config:type="boolean">true</config:config-item>
+     <config:config-item config:name="GridColor" config:type="int">12632256</config:config-item>
+     <config:config-item config:name="ShowPageBreaks" config:type="boolean">true</config:config-item>
+     <config:config-item config:name="HasColumnRowHeaders" config:type="boolean">true</config:config-item>
+     <config:config-item config:name="HasSheetTabs" config:type="boolean">true</config:config-item>
+     <config:config-item config:name="IsOutlineSymbolsSet" config:type="boolean">true</config:config-item>
+     <config:config-item config:name="IsValueHighlightingEnabled" config:type="boolean">false</config:config-item>
+     <config:config-item config:name="IsSnapToRaster" config:type="boolean">false</config:config-item>
+     <config:config-item config:name="RasterIsVisible" config:type="boolean">false</config:config-item>
+     <config:config-item config:name="RasterResolutionX" config:type="int">1270</config:config-item>
+     <config:config-item config:name="RasterResolutionY" config:type="int">1270</config:config-item>
+     <config:config-item config:name="RasterSubdivisionX" config:type="int">1</config:config-item>
+     <config:config-item config:name="RasterSubdivisionY" config:type="int">1</config:config-item>
+     <config:config-item config:name="IsRasterAxisSynchronized" config:type="boolean">true</config:config-item>
+     <config:config-item config:name="AnchoredTextOverflowLegacy" config:type="boolean">false</config:config-item>
+    </config:config-item-map-entry>
+   </config:config-item-map-indexed>
+  </config:config-item-set>
+  <config:config-item-set config:name="ooo:configuration-settings">
+   <config:config-item config:name="AllowPrintJobCancel" config:type="boolean">true</config:config-item>
+   <config:config-item config:name="ApplyUserData" config:type="boolean">true</config:config-item>
+   <config:config-item config:name="AutoCalculate" config:type="boolean">true</config:config-item>
+   <config:config-item config:name="CharacterCompressionType" config:type="short">0</config:config-item>
+   <config:config-item config:name="EmbedAsianScriptFonts" config:type="boolean">true</config:config-item>
+   <config:config-item config:name="EmbedComplexScriptFonts" config:type="boolean">true</config:config-item>
+   <config:config-item config:name="EmbedFonts" config:type="boolean">false</config:config-item>
+   <config:config-item config:name="EmbedLatinScriptFonts" config:type="boolean">true</config:config-item>
+   <config:config-item config:name="EmbedOnlyUsedFonts" config:type="boolean">false</config:config-item>
+   <config:config-item-map-indexed config:name="ForbiddenCharacters">
+    <config:config-item-map-entry>
+     <config:config-item config:name="Language" config:type="string">en</config:config-item>
+     <config:config-item config:name="Country" config:type="string">US</config:config-item>
+     <config:config-item config:name="Variant" config:type="string"/>
+     <config:config-item config:name="BeginLine" config:type="string"/>
+     <config:config-item config:name="EndLine" config:type="string"/>
+    </config:config-item-map-entry>
+   </config:config-item-map-indexed>
+   <config:config-item config:name="GridColor" config:type="int">12632256</config:config-item>
+   <config:config-item config:name="HasColumnRowHeaders" config:type="boolean">true</config:config-item>
+   <config:config-item config:name="HasSheetTabs" config:type="boolean">true</config:config-item>
+   <config:config-item config:name="IsDocumentShared" config:type="boolean">false</config:config-item>
+   <config:config-item config:name="IsKernAsianPunctuation" config:type="boolean">false</config:config-item>
+   <config:config-item config:name="IsOutlineSymbolsSet" config:type="boolean">true</config:config-item>
+   <config:config-item config:name="IsRasterAxisSynchronized" config:type="boolean">true</config:config-item>
+   <config:config-item config:name="IsSnapToRaster" config:type="boolean">false</config:config-item>
+   <config:config-item config:name="LinkUpdateMode" config:type="short">3</config:config-item>
+   <config:config-item config:name="LoadReadonly" config:type="boolean">false</config:config-item>
+   <config:config-item config:name="PrinterName" config:type="string">Generic Printer</config:config-item>
+   <config:config-item config:name="PrinterPaperFromSetup" config:type="boolean">false</config:config-item>
+   <config:config-item config:name="PrinterSetup" config:type="base64Binary">pAH+/0dlbmVyaWMgUHJpbnRlcgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAU0dFTlBSVAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWAAMAxQAAAAAAAAAIAFZUAAAkbQAASm9iRGF0YSAxCnByaW50ZXI9R2VuZXJpYyBQcmludGVyCm9yaWVudGF0aW9uPVBvcnRyYWl0CmNvcGllcz0xCmNvbGxhdGU9ZmFsc2UKbWFyZ2luYWRqdXN0bWVudD0wLDAsMCwwCmNvbG9yZGVwdGg9MjQKcHNsZXZlbD0wCnBkZmRldmljZT0xCmNvbG9yZGV2aWNlPTAKUFBEQ29udGV4dERhdGEKUGFnZVNpemU6TGV0dGVyAER1cGxleDpOb25lAAASAENPTVBBVF9EVVBMRVhfTU9ERQ8ARHVwbGV4TW9kZTo6T2Zm</config:config-item>
+   <config:config-item config:name="RasterIsVisible" config:type="boolean">false</config:config-item>
+   <config:config-item config:name="RasterResolutionX" config:type="int">1270</config:config-item>
+   <config:config-item config:name="RasterResolutionY" config:type="int">1270</config:config-item>
+   <config:config-item config:name="RasterSubdivisionX" config:type="int">1</config:config-item>
+   <config:config-item config:name="RasterSubdivisionY" config:type="int">1</config:config-item>
+   <config:config-item config:name="SaveThumbnail" config:type="boolean">true</config:config-item>
+   <config:config-item config:name="SaveVersionOnClose" config:type="boolean">false</config:config-item>
+   <config:config-item config:name="ShowGrid" config:type="boolean">true</config:config-item>
+   <config:config-item config:name="ShowNotes" config:type="boolean">true</config:config-item>
+   <config:config-item config:name="ShowPageBreaks" config:type="boolean">true</config:config-item>
+   <config:config-item config:name="ShowZeroValues" config:type="boolean">true</config:config-item>
+   <config:config-item config:name="SyntaxStringRef" config:type="short">7</config:config-item>
+   <config:config-item config:name="UpdateFromTemplate" config:type="boolean">true</config:config-item>
+   <config:config-item-map-named config:name="ScriptConfiguration">
+    <config:config-item-map-entry config:name="User Stories">
+     <config:config-item config:name="CodeName" config:type="string">Sheet1</config:config-item>
+    </config:config-item-map-entry>
+   </config:config-item-map-named>
+  </config:config-item-set>
+ </office:settings>
+ <office:scripts>
+  <office:script script:language="ooo:Basic">
+   <ooo:libraries xmlns:ooo="http://openoffice.org/2004/office" xmlns:xlink="http://www.w3.org/1999/xlink"/>
+  </office:script>
+ </office:scripts>
+ <office:font-face-decls>
+  <style:font-face style:name="Liberation Sans" svg:font-family="&apos;Liberation Sans&apos;" style:font-family-generic="swiss" style:font-pitch="variable"/>
+  <style:font-face style:name="Noto Sans CJK SC" svg:font-family="&apos;Noto Sans CJK SC&apos;" style:font-family-generic="system" style:font-pitch="variable"/>
+  <style:font-face style:name="Noto Sans Devanagari" svg:font-family="&apos;Noto Sans Devanagari&apos;" style:font-family-generic="system" style:font-pitch="variable"/>
+ </office:font-face-decls>
+ <office:styles>
+  <style:default-style style:family="table-cell">
+   <style:paragraph-properties style:tab-stop-distance="0.5in"/>
+   <style:text-properties style:font-name="Liberation Sans" fo:font-size="10pt" fo:language="en" fo:country="US" style:font-name-asian="Noto Sans CJK SC" style:font-size-asian="10pt" style:language-asian="zh" style:country-asian="CN" style:font-name-complex="Noto Sans Devanagari" style:font-size-complex="10pt" style:language-complex="hi" style:country-complex="IN"/>
+  </style:default-style>
+  <number:number-style style:name="N0">
+   <number:number number:min-integer-digits="1"/>
+  </number:number-style>
+  <style:style style:name="Default" style:family="table-cell"/>
+  <style:style style:name="Heading" style:family="table-cell" style:parent-style-name="Default">
+   <style:text-properties fo:color="#000000" fo:font-size="24pt" fo:font-style="normal" fo:font-weight="bold" style:font-size-asian="24pt" style:font-style-asian="normal" style:font-weight-asian="bold" style:font-size-complex="24pt" style:font-style-complex="normal" style:font-weight-complex="bold"/>
+  </style:style>
+  <style:style style:name="Heading_20_1" style:display-name="Heading 1" style:family="table-cell" style:parent-style-name="Heading">
+   <style:text-properties fo:font-size="18pt" style:font-size-asian="18pt" style:font-size-complex="18pt"/>
+  </style:style>
+  <style:style style:name="Heading_20_2" style:display-name="Heading 2" style:family="table-cell" style:parent-style-name="Heading">
+   <style:text-properties fo:font-size="12pt" style:font-size-asian="12pt" style:font-size-complex="12pt"/>
+  </style:style>
+  <style:style style:name="Text" style:family="table-cell" style:parent-style-name="Default"/>
+  <style:style style:name="Note" style:family="table-cell" style:parent-style-name="Text">
+   <style:table-cell-properties fo:background-color="#ffffcc" style:diagonal-bl-tr="none" style:diagonal-tl-br="none" fo:border="0.74pt solid #808080"/>
+   <style:text-properties fo:color="#333333"/>
+  </style:style>
+  <style:style style:name="Footnote" style:family="table-cell" style:parent-style-name="Text">
+   <style:text-properties fo:color="#808080" fo:font-style="italic" style:font-style-asian="italic" style:font-style-complex="italic"/>
+  </style:style>
+  <style:style style:name="Hyperlink" style:family="table-cell" style:parent-style-name="Text">
+   <style:text-properties fo:color="#0000ee" style:text-underline-style="solid" style:text-underline-width="auto" style:text-underline-color="#0000ee"/>
+  </style:style>
+  <style:style style:name="Status" style:family="table-cell" style:parent-style-name="Default"/>
+  <style:style style:name="Good" style:family="table-cell" style:parent-style-name="Status">
+   <style:table-cell-properties fo:background-color="#ccffcc"/>
+   <style:text-properties fo:color="#006600"/>
+  </style:style>
+  <style:style style:name="Neutral" style:family="table-cell" style:parent-style-name="Status">
+   <style:table-cell-properties fo:background-color="#ffffcc"/>
+   <style:text-properties fo:color="#996600"/>
+  </style:style>
+  <style:style style:name="Bad" style:family="table-cell" style:parent-style-name="Status">
+   <style:table-cell-properties fo:background-color="#ffcccc"/>
+   <style:text-properties fo:color="#cc0000"/>
+  </style:style>
+  <style:style style:name="Warning" style:family="table-cell" style:parent-style-name="Status">
+   <style:text-properties fo:color="#cc0000"/>
+  </style:style>
+  <style:style style:name="Error" style:family="table-cell" style:parent-style-name="Status">
+   <style:table-cell-properties fo:background-color="#cc0000"/>
+   <style:text-properties fo:color="#ffffff" fo:font-weight="bold" style:font-weight-asian="bold" style:font-weight-complex="bold"/>
+  </style:style>
+  <style:style style:name="Accent" style:family="table-cell" style:parent-style-name="Default">
+   <style:text-properties fo:font-weight="bold" style:font-weight-asian="bold" style:font-weight-complex="bold"/>
+  </style:style>
+  <style:style style:name="Accent_20_1" style:display-name="Accent 1" style:family="table-cell" style:parent-style-name="Accent">
+   <style:table-cell-properties fo:background-color="#000000"/>
+   <style:text-properties fo:color="#ffffff"/>
+  </style:style>
+  <style:style style:name="Accent_20_2" style:display-name="Accent 2" style:family="table-cell" style:parent-style-name="Accent">
+   <style:table-cell-properties fo:background-color="#808080"/>
+   <style:text-properties fo:color="#ffffff"/>
+  </style:style>
+  <style:style style:name="Accent_20_3" style:display-name="Accent 3" style:family="table-cell" style:parent-style-name="Accent">
+   <style:table-cell-properties fo:background-color="#dddddd"/>
+  </style:style>
+  <style:style style:name="Result" style:family="table-cell" style:parent-style-name="Default">
+   <style:text-properties fo:font-style="italic" style:text-underline-style="solid" style:text-underline-width="auto" style:text-underline-color="font-color" fo:font-weight="bold" style:font-style-asian="italic" style:font-weight-asian="bold" style:font-style-complex="italic" style:font-weight-complex="bold"/>
+  </style:style>
+ </office:styles>
+ <office:automatic-styles>
+  <style:style style:name="co1" style:family="table-column">
+   <style:table-column-properties fo:break-before="auto" style:column-width="1.1146in"/>
+  </style:style>
+  <style:style style:name="co2" style:family="table-column">
+   <style:table-column-properties fo:break-before="auto" style:column-width="1.3075in"/>
+  </style:style>
+  <style:style style:name="co3" style:family="table-column">
+   <style:table-column-properties fo:break-before="auto" style:column-width="2.798in"/>
+  </style:style>
+  <style:style style:name="co4" style:family="table-column">
+   <style:table-column-properties fo:break-before="auto" style:column-width="2.2189in"/>
+  </style:style>
+  <style:style style:name="co5" style:family="table-column">
+   <style:table-column-properties fo:break-before="auto" style:column-width="2.7335in"/>
+  </style:style>
+  <style:style style:name="co6" style:family="table-column">
+   <style:table-column-properties fo:break-before="auto" style:column-width="1.4362in"/>
+  </style:style>
+  <style:style style:name="co7" style:family="table-column">
+   <style:table-column-properties fo:break-before="auto" style:column-width="0.9in"/>
+  </style:style>
+  <style:style style:name="co8" style:family="table-column">
+   <style:table-column-properties fo:break-before="auto" style:column-width="1.0929in"/>
+  </style:style>
+  <style:style style:name="co9" style:family="table-column">
+   <style:table-column-properties fo:break-before="auto" style:column-width="1.1043in"/>
+  </style:style>
+  <style:style style:name="co10" style:family="table-column">
+   <style:table-column-properties fo:break-before="auto" style:column-width="0.889in"/>
+  </style:style>
+  <style:style style:name="ro1" style:family="table-row">
+   <style:table-row-properties style:row-height="0.178in" fo:break-before="auto" style:use-optimal-row-height="true"/>
+  </style:style>
+  <style:style style:name="ro2" style:family="table-row">
+   <style:table-row-properties style:row-height="0.3311in" fo:break-before="auto" style:use-optimal-row-height="true"/>
+  </style:style>
+  <style:style style:name="ro3" style:family="table-row">
+   <style:table-row-properties style:row-height="0.9535in" fo:break-before="auto" style:use-optimal-row-height="true"/>
+  </style:style>
+  <style:style style:name="ro4" style:family="table-row">
+   <style:table-row-properties style:row-height="0.6425in" fo:break-before="auto" style:use-optimal-row-height="true"/>
+  </style:style>
+  <style:style style:name="ro5" style:family="table-row">
+   <style:table-row-properties style:row-height="0.4866in" fo:break-before="auto" style:use-optimal-row-height="true"/>
+  </style:style>
+  <style:style style:name="ro6" style:family="table-row">
+   <style:table-row-properties style:row-height="0.798in" fo:break-before="auto" style:use-optimal-row-height="true"/>
+  </style:style>
+  <style:style style:name="ta1" style:family="table" style:master-page-name="Default">
+   <style:table-properties table:display="true" style:writing-mode="lr-tb"/>
+  </style:style>
+  <number:number-style style:name="N2">
+   <number:number number:decimal-places="2" number:min-decimal-places="2" number:min-integer-digits="1"/>
+  </number:number-style>
+  <number:percentage-style style:name="N11">
+   <number:number number:decimal-places="2" number:min-decimal-places="2" number:min-integer-digits="1"/>
+   <number:text>%</number:text>
+  </number:percentage-style>
+  <style:style style:name="ce1" style:family="table-cell" style:parent-style-name="Default">
+   <style:table-cell-properties fo:wrap-option="wrap" fo:border="0.74pt solid #000000"/>
+   <style:text-properties fo:font-weight="bold" style:font-weight-asian="bold" style:font-weight-complex="bold"/>
+  </style:style>
+  <style:style style:name="ce10" style:family="table-cell" style:parent-style-name="Default">
+   <style:table-cell-properties fo:background-color="#b3cac7" fo:wrap-option="wrap" fo:border="0.74pt solid #000000"/>
+  </style:style>
+  <style:style style:name="ce11" style:family="table-cell" style:parent-style-name="Default">
+   <style:table-cell-properties fo:wrap-option="wrap" fo:border="0.74pt solid #000000"/>
+  </style:style>
+  <style:style style:name="ce12" style:family="table-cell" style:parent-style-name="Default">
+   <style:table-cell-properties fo:border="0.74pt solid #000000"/>
+   <style:text-properties fo:font-weight="bold" style:font-weight-asian="bold" style:font-weight-complex="bold"/>
+  </style:style>
+  <style:style style:name="ce13" style:family="table-cell" style:parent-style-name="Default">
+   <style:table-cell-properties fo:background-color="#ff6d6d" fo:border="0.74pt solid #000000"/>
+  </style:style>
+  <style:style style:name="ce14" style:family="table-cell" style:parent-style-name="Default">
+   <style:table-cell-properties fo:background-color="#bbe33d" fo:border="0.74pt solid #000000"/>
+  </style:style>
+  <style:style style:name="ce15" style:family="table-cell" style:parent-style-name="Default">
+   <style:table-cell-properties fo:background-color="#ffff38" fo:border="0.74pt solid #000000"/>
+  </style:style>
+  <style:style style:name="ce16" style:family="table-cell" style:parent-style-name="Default">
+   <style:table-cell-properties fo:background-color="#b3cac7" fo:border="0.74pt solid #000000"/>
+  </style:style>
+  <style:style style:name="ce17" style:family="table-cell" style:parent-style-name="Default">
+   <style:table-cell-properties fo:border="0.74pt solid #000000"/>
+  </style:style>
+  <style:style style:name="ce19" style:family="table-cell" style:parent-style-name="Default">
+   <style:table-cell-properties fo:border="0.74pt solid #000000"/>
+   <style:text-properties fo:font-weight="bold" style:font-weight-asian="bold" style:font-weight-complex="bold"/>
+  </style:style>
+  <style:style style:name="ce26" style:family="table-cell" style:parent-style-name="Default" style:data-style-name="N11">
+   <style:table-cell-properties fo:border="0.74pt solid #000000"/>
+   <style:text-properties fo:font-weight="bold" style:font-weight-asian="bold" style:font-weight-complex="bold"/>
+  </style:style>
+  <style:style style:name="ce27" style:family="table-cell" style:parent-style-name="Default" style:data-style-name="N11">
+   <style:table-cell-properties fo:background-color="#ff6d6d" fo:border="0.74pt solid #000000"/>
+  </style:style>
+  <style:style style:name="ce28" style:family="table-cell" style:parent-style-name="Default" style:data-style-name="N11">
+   <style:table-cell-properties fo:background-color="#bbe33d" fo:border="0.74pt solid #000000"/>
+  </style:style>
+  <style:style style:name="ce29" style:family="table-cell" style:parent-style-name="Default" style:data-style-name="N11">
+   <style:table-cell-properties fo:background-color="#ffff38" fo:border="0.74pt solid #000000"/>
+  </style:style>
+  <style:style style:name="ce30" style:family="table-cell" style:parent-style-name="Default" style:data-style-name="N11">
+   <style:table-cell-properties fo:background-color="#b3cac7" fo:border="0.74pt solid #000000"/>
+  </style:style>
+  <style:style style:name="ce31" style:family="table-cell" style:parent-style-name="Default" style:data-style-name="N11">
+   <style:table-cell-properties fo:border="0.74pt solid #000000"/>
+  </style:style>
+  <style:style style:name="ce4" style:family="table-cell" style:parent-style-name="Default">
+   <style:table-cell-properties fo:background-color="#ff6d6d" fo:wrap-option="wrap" fo:border="0.74pt solid #000000"/>
+  </style:style>
+  <style:style style:name="ce7" style:family="table-cell" style:parent-style-name="Default">
+   <style:table-cell-properties fo:background-color="#bbe33d" fo:wrap-option="wrap" fo:border="0.74pt solid #000000"/>
+  </style:style>
+  <style:style style:name="ce8" style:family="table-cell" style:parent-style-name="Default">
+   <style:table-cell-properties fo:background-color="#ffff38" fo:wrap-option="wrap" fo:border="0.74pt solid #000000"/>
+  </style:style>
+  <style:style style:name="ce38" style:family="table-cell" style:parent-style-name="Default">
+   <style:table-cell-properties fo:wrap-option="wrap" fo:border="0.74pt solid #000000"/>
+   <style:text-properties fo:font-weight="bold" style:font-weight-asian="bold" style:font-weight-complex="bold"/>
+  </style:style>
+  <style:style style:name="ce39" style:family="table-cell" style:parent-style-name="Default">
+   <style:table-cell-properties fo:background-color="#ff6d6d" fo:wrap-option="wrap" fo:border="0.74pt solid #000000"/>
+  </style:style>
+  <style:style style:name="ce40" style:family="table-cell" style:parent-style-name="Default">
+   <style:table-cell-properties fo:background-color="#bbe33d" fo:wrap-option="wrap" fo:border="0.74pt solid #000000"/>
+  </style:style>
+  <style:style style:name="ce41" style:family="table-cell" style:parent-style-name="Default">
+   <style:table-cell-properties fo:background-color="#ffff38" fo:wrap-option="wrap" fo:border="0.74pt solid #000000"/>
+  </style:style>
+  <style:style style:name="ce42" style:family="table-cell" style:parent-style-name="Default">
+   <style:table-cell-properties fo:background-color="#b3cac7" fo:wrap-option="wrap" fo:border="0.74pt solid #000000"/>
+  </style:style>
+  <style:style style:name="ce43" style:family="table-cell" style:parent-style-name="Default">
+   <style:table-cell-properties fo:wrap-option="wrap" fo:border="0.74pt solid #000000"/>
+  </style:style>
+  <style:style style:name="ce44" style:family="table-cell" style:parent-style-name="Default">
+   <style:table-cell-properties fo:border="0.74pt solid #000000"/>
+   <style:text-properties fo:font-weight="bold" style:font-weight-asian="bold" style:font-weight-complex="bold"/>
+  </style:style>
+  <style:style style:name="ce45" style:family="table-cell" style:parent-style-name="Default">
+   <style:table-cell-properties fo:background-color="#ff6d6d" fo:border="0.74pt solid #000000"/>
+  </style:style>
+  <style:style style:name="ce46" style:family="table-cell" style:parent-style-name="Default">
+   <style:table-cell-properties fo:background-color="#bbe33d" fo:border="0.74pt solid #000000"/>
+  </style:style>
+  <style:style style:name="ce47" style:family="table-cell" style:parent-style-name="Default">
+   <style:table-cell-properties fo:background-color="#ffff38" fo:border="0.74pt solid #000000"/>
+  </style:style>
+  <style:style style:name="ce48" style:family="table-cell" style:parent-style-name="Default">
+   <style:table-cell-properties fo:background-color="#b3cac7" fo:border="0.74pt solid #000000"/>
+  </style:style>
+  <style:style style:name="ce49" style:family="table-cell" style:parent-style-name="Default">
+   <style:table-cell-properties fo:border="0.74pt solid #000000"/>
+  </style:style>
+  <style:style style:name="ce50" style:family="table-cell" style:parent-style-name="Default" style:data-style-name="N11">
+   <style:table-cell-properties fo:border="0.74pt solid #000000"/>
+   <style:text-properties fo:font-weight="bold" style:font-weight-asian="bold" style:font-weight-complex="bold"/>
+  </style:style>
+  <style:style style:name="ce51" style:family="table-cell" style:parent-style-name="Default" style:data-style-name="N11">
+   <style:table-cell-properties fo:background-color="#ff6d6d" fo:border="0.74pt solid #000000"/>
+  </style:style>
+  <style:style style:name="ce52" style:family="table-cell" style:parent-style-name="Default" style:data-style-name="N11">
+   <style:table-cell-properties fo:background-color="#bbe33d" fo:border="0.74pt solid #000000"/>
+  </style:style>
+  <style:style style:name="ce53" style:family="table-cell" style:parent-style-name="Default" style:data-style-name="N11">
+   <style:table-cell-properties fo:background-color="#ffff38" fo:border="0.74pt solid #000000"/>
+  </style:style>
+  <style:style style:name="ce54" style:family="table-cell" style:parent-style-name="Default" style:data-style-name="N11">
+   <style:table-cell-properties fo:background-color="#b3cac7" fo:border="0.74pt solid #000000"/>
+  </style:style>
+  <style:style style:name="ce55" style:family="table-cell" style:parent-style-name="Default" style:data-style-name="N11">
+   <style:table-cell-properties fo:border="0.74pt solid #000000"/>
+  </style:style>
+  <style:page-layout style:name="pm1">
+   <style:page-layout-properties style:writing-mode="lr-tb"/>
+   <style:header-style>
+    <style:header-footer-properties fo:min-height="0.2953in" fo:margin-left="0in" fo:margin-right="0in" fo:margin-bottom="0.0984in"/>
+   </style:header-style>
+   <style:footer-style>
+    <style:header-footer-properties fo:min-height="0.2953in" fo:margin-left="0in" fo:margin-right="0in" fo:margin-top="0.0984in"/>
+   </style:footer-style>
+  </style:page-layout>
+  <style:page-layout style:name="pm2">
+   <style:page-layout-properties style:writing-mode="lr-tb"/>
+   <style:header-style>
+    <style:header-footer-properties fo:min-height="0.2953in" fo:margin-left="0in" fo:margin-right="0in" fo:margin-bottom="0.0984in" fo:border="1.5pt solid #000000" fo:padding="0.0071in" fo:background-color="#c0c0c0">
+     <style:background-image/>
+    </style:header-footer-properties>
+   </style:header-style>
+   <style:footer-style>
+    <style:header-footer-properties fo:min-height="0.2953in" fo:margin-left="0in" fo:margin-right="0in" fo:margin-top="0.0984in" fo:border="1.5pt solid #000000" fo:padding="0.0071in" fo:background-color="#c0c0c0">
+     <style:background-image/>
+    </style:header-footer-properties>
+   </style:footer-style>
+  </style:page-layout>
+ </office:automatic-styles>
+ <office:master-styles>
+  <style:master-page style:name="Default" style:page-layout-name="pm1">
+   <style:header>
+    <text:p><text:sheet-name>???</text:sheet-name></text:p>
+   </style:header>
+   <style:header-left style:display="false"/>
+   <style:header-first style:display="false"/>
+   <style:footer>
+    <text:p>Page <text:page-number>1</text:page-number></text:p>
+   </style:footer>
+   <style:footer-left style:display="false"/>
+   <style:footer-first style:display="false"/>
+  </style:master-page>
+  <style:master-page style:name="Report" style:page-layout-name="pm2">
+   <style:header>
+    <style:region-left>
+     <text:p><text:sheet-name>???</text:sheet-name><text:s/>(<text:title>???</text:title>)</text:p>
+    </style:region-left>
+    <style:region-right>
+     <text:p><text:date style:data-style-name="N2" text:date-value="2022-02-28">00/00/0000</text:date>, <text:time style:data-style-name="N2" text:time-value="13:40:12.746973596">00:00:00</text:time></text:p>
+    </style:region-right>
+   </style:header>
+   <style:header-left style:display="false"/>
+   <style:header-first style:display="false"/>
+   <style:footer>
+    <text:p>Page <text:page-number>1</text:page-number><text:s/>/ <text:page-count>99</text:page-count></text:p>
+   </style:footer>
+   <style:footer-left style:display="false"/>
+   <style:footer-first style:display="false"/>
+  </style:master-page>
+ </office:master-styles>
+ <office:body>
+  <office:spreadsheet>
+   <table:calculation-settings table:automatic-find-labels="false" table:use-regular-expressions="false" table:use-wildcards="true"/>
+   <table:table table:name="User Stories" table:style-name="ta1">
+    <office:forms form:automatic-focus="false" form:apply-design-mode="false"/>
+    <table:table-column table:style-name="co1" table:default-cell-style-name="ce43"/>
+    <table:table-column table:style-name="co2" table:default-cell-style-name="ce43"/>
+    <table:table-column table:style-name="co3" table:default-cell-style-name="ce43"/>
+    <table:table-column table:style-name="co4" table:default-cell-style-name="ce43"/>
+    <table:table-column table:style-name="co5" table:default-cell-style-name="ce43"/>
+    <table:table-column table:style-name="co6" table:default-cell-style-name="ce49"/>
+    <table:table-column table:style-name="co7" table:default-cell-style-name="ce49"/>
+    <table:table-column table:style-name="co8" table:default-cell-style-name="ce49"/>
+    <table:table-column table:style-name="co9" table:default-cell-style-name="ce49"/>
+    <table:table-column table:style-name="co10" table:default-cell-style-name="ce49"/>
+    <table:table-column table:style-name="co10" table:number-columns-repeated="2" table:default-cell-style-name="ce55"/>
+    <table:table-column table:style-name="co10" table:number-columns-repeated="1012" table:default-cell-style-name="ce49"/>
+    <table:table-row table:style-name="ro1">
+     <table:table-cell table:style-name="ce38" office:value-type="string" calcext:value-type="string">
+      <text:p>Short Title</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce38" office:value-type="string" calcext:value-type="string">
+      <text:p>Theme</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce38" office:value-type="string" calcext:value-type="string">
+      <text:p>User Story</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce38" office:value-type="string" calcext:value-type="string">
+      <text:p>Clarifications</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce38" office:value-type="string" calcext:value-type="string">
+      <text:p>Test or Conditions of Satisfaction</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce44" office:value-type="string" calcext:value-type="string">
+      <text:p>Kano Category</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce44" office:value-type="string" calcext:value-type="string">
+      <text:p>Story Points</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce44" office:value-type="string" calcext:value-type="string">
+      <text:p>Relative Benefit</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce44" office:value-type="string" calcext:value-type="string">
+      <text:p>Relative Penalty</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce44" office:value-type="string" calcext:value-type="string">
+      <text:p>Total Value</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce50" office:value-type="string" calcext:value-type="string">
+      <text:p>Value %</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce50" office:value-type="string" calcext:value-type="string">
+      <text:p>Cost %</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce44" office:value-type="string" calcext:value-type="string">
+      <text:p>Priority</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce44" table:number-columns-repeated="1011"/>
+    </table:table-row>
+    <table:table-row table:style-name="ro2">
+     <table:table-cell table:style-name="ce39" office:value-type="string" calcext:value-type="string">
+      <text:p>Main Epic User Story</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce39" office:value-type="string" calcext:value-type="string">
+      <text:p>Epic</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce39" office:value-type="string" calcext:value-type="string">
+      <text:p>As a player, I would like to play the game Four-Line Dropper, so that I can have fun.</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce39" table:number-columns-repeated="2"/>
+     <table:table-cell table:style-name="ce45" office:value-type="string" calcext:value-type="string">
+      <text:p>Mandatory</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce45" table:formula="of:=SUM([.$G3:.$G100])" office:value-type="float" office:value="928" calcext:value-type="float">
+      <text:p>928</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce45" table:formula="of:=SUM([.$H3:.$H100])" office:value-type="float" office:value="174" calcext:value-type="float">
+      <text:p>174</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce45" table:formula="of:=SUM([.$I3:.$I100])" office:value-type="float" office:value="148" calcext:value-type="float">
+      <text:p>148</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce45" table:formula="of:=SUM([.$H2:.$I2])" office:value-type="float" office:value="322" calcext:value-type="float">
+      <text:p>322</text:p>
+     </table:table-cell>
+     <table:table-cell table:number-columns-repeated="2" table:style-name="ce51" office:value-type="percentage" office:value="1" calcext:value-type="percentage">
+      <text:p>100.00%</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce45" table:formula="of:=[.$K2]/[.$L2]" office:value-type="float" office:value="1" calcext:value-type="float">
+      <text:p>1</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce45" table:number-columns-repeated="1011"/>
+    </table:table-row>
+    <table:table-row table:style-name="ro3">
+     <table:table-cell table:style-name="ce40" office:value-type="string" calcext:value-type="string">
+      <text:p>Choose game type</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce40" office:value-type="string" calcext:value-type="string">
+      <text:p>Front-End Interface</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce40" office:value-type="string" calcext:value-type="string">
+      <text:p>As a player, I would like to choose to play against the AI, or another Player over the network, or another Player locally, so that I can choose the type of game to play.</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce40" office:value-type="string" calcext:value-type="string">
+      <text:p>The player should be presented with a menu to select the game type. When networking hasn’t yet been implemented, “local-mulitplayer” or “against the AI” are the only options available.</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce40" office:value-type="string" calcext:value-type="string">
+      <text:p>The game type should be selectable. Player is queued for play against another player, or starts a game against an AI, or starts a game in “Local-Multiplayer” mode.</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce46" office:value-type="string" calcext:value-type="string">
+      <text:p>Mandatory</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce46" office:value-type="float" office:value="10" calcext:value-type="float">
+      <text:p>10</text:p>
+     </table:table-cell>
+     <table:table-cell table:number-columns-repeated="2" table:style-name="ce46" office:value-type="float" office:value="8" calcext:value-type="float">
+      <text:p>8</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce46" table:formula="of:=SUM([.$H3:.$I3])" office:value-type="float" office:value="16" calcext:value-type="float">
+      <text:p>16</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce52" table:formula="of:=[.$J3]/[.$J$2]" office:value-type="percentage" office:value="0.0496894409937888" calcext:value-type="percentage">
+      <text:p>4.97%</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce52" table:formula="of:=[.$G3]/[.$G$2]" office:value-type="percentage" office:value="0.0107758620689655" calcext:value-type="percentage">
+      <text:p>1.08%</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce46" table:formula="of:=[.$K3]/[.$L3]" office:value-type="float" office:value="4.6111801242236" calcext:value-type="float">
+      <text:p>4.6111801242236</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce46" table:number-columns-repeated="1011"/>
+    </table:table-row>
+    <table:table-row table:style-name="ro3">
+     <table:table-cell table:style-name="ce40" office:value-type="string" calcext:value-type="string">
+      <text:p>Game start</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce40" office:value-type="string" calcext:value-type="string">
+      <text:p>Front-End Interface</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce40" office:value-type="string" calcext:value-type="string">
+      <text:p>As a player, I would like to know when the game has started, so that I know to start playing the game.</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce40"/>
+     <table:table-cell table:style-name="ce40" office:value-type="string" calcext:value-type="string">
+      <text:p>The game should start once the current Player has been paired with another player, or immediately after choosing to play against an AI or local Player. If pairing has not yet ocurred, it should be obvious that pairing is still pending.</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce46" office:value-type="string" calcext:value-type="string">
+      <text:p>Mandatory</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce46" office:value-type="float" office:value="40" calcext:value-type="float">
+      <text:p>40</text:p>
+     </table:table-cell>
+     <table:table-cell table:number-columns-repeated="2" table:style-name="ce46" office:value-type="float" office:value="8" calcext:value-type="float">
+      <text:p>8</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce46" table:formula="of:=SUM([.$H4:.$I4])" office:value-type="float" office:value="16" calcext:value-type="float">
+      <text:p>16</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce52" table:formula="of:=[.$J4]/[.$J$2]" office:value-type="percentage" office:value="0.0496894409937888" calcext:value-type="percentage">
+      <text:p>4.97%</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce52" table:formula="of:=[.$G4]/[.$G$2]" office:value-type="percentage" office:value="0.0431034482758621" calcext:value-type="percentage">
+      <text:p>4.31%</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce46" table:formula="of:=[.$K4]/[.$L4]" office:value-type="float" office:value="1.1527950310559" calcext:value-type="float">
+      <text:p>1.1527950310559</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce46" table:number-columns-repeated="1011"/>
+    </table:table-row>
+    <table:table-row table:style-name="ro4">
+     <table:table-cell table:style-name="ce41" office:value-type="string" calcext:value-type="string">
+      <text:p>Player pairing cancellation</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce41" office:value-type="string" calcext:value-type="string">
+      <text:p>Front-End Interface</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce41" office:value-type="string" calcext:value-type="string">
+      <text:p>As a player, I would like to abort playing against another Player and play against an AI, so that I don’t have to keep waiting for the game to start.</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce41"/>
+     <table:table-cell table:style-name="ce41" office:value-type="string" calcext:value-type="string">
+      <text:p>The player should be able to remove themselves from the pairing process and immediately start a game against an AI.</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce47" office:value-type="string" calcext:value-type="string">
+      <text:p>Exciter</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce47" office:value-type="float" office:value="37" calcext:value-type="float">
+      <text:p>37</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce47" office:value-type="float" office:value="6" calcext:value-type="float">
+      <text:p>6</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce47" office:value-type="float" office:value="2" calcext:value-type="float">
+      <text:p>2</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce47" table:formula="of:=SUM([.$H5:.$I5])" office:value-type="float" office:value="8" calcext:value-type="float">
+      <text:p>8</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce53" table:formula="of:=[.$J5]/[.$J$2]" office:value-type="percentage" office:value="0.0248447204968944" calcext:value-type="percentage">
+      <text:p>2.48%</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce53" table:formula="of:=[.$G5]/[.$G$2]" office:value-type="percentage" office:value="0.0398706896551724" calcext:value-type="percentage">
+      <text:p>3.99%</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce47" table:formula="of:=[.$K5]/[.$L5]" office:value-type="float" office:value="0.623132449219406" calcext:value-type="float">
+      <text:p>0.623132449219406</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce47" table:number-columns-repeated="1011"/>
+    </table:table-row>
+    <table:table-row table:style-name="ro5">
+     <table:table-cell table:style-name="ce40" office:value-type="string" calcext:value-type="string">
+      <text:p>Visible “whose turn it is”</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce40" office:value-type="string" calcext:value-type="string">
+      <text:p>Front-End Interface</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce40" office:value-type="string" calcext:value-type="string">
+      <text:p>As a player, I would like to see who’s turn it is, so that I can wait for my turn and play when it is my turn.</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce40"/>
+     <table:table-cell table:style-name="ce40" office:value-type="string" calcext:value-type="string">
+      <text:p>It should be obvious whose turn it is during gameplay.</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce46" office:value-type="string" calcext:value-type="string">
+      <text:p>Mandatory</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce46" office:value-type="float" office:value="13" calcext:value-type="float">
+      <text:p>13</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce46" office:value-type="float" office:value="7" calcext:value-type="float">
+      <text:p>7</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce46" office:value-type="float" office:value="9" calcext:value-type="float">
+      <text:p>9</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce46" table:formula="of:=SUM([.$H6:.$I6])" office:value-type="float" office:value="16" calcext:value-type="float">
+      <text:p>16</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce52" table:formula="of:=[.$J6]/[.$J$2]" office:value-type="percentage" office:value="0.0496894409937888" calcext:value-type="percentage">
+      <text:p>4.97%</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce52" table:formula="of:=[.$G6]/[.$G$2]" office:value-type="percentage" office:value="0.0140086206896552" calcext:value-type="percentage">
+      <text:p>1.40%</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce46" table:formula="of:=[.$K6]/[.$L6]" office:value-type="float" office:value="3.54706163401816" calcext:value-type="float">
+      <text:p>3.54706163401816</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce46" table:number-columns-repeated="1011"/>
+    </table:table-row>
+    <table:table-row table:style-name="ro4">
+     <table:table-cell table:style-name="ce40" office:value-type="string" calcext:value-type="string">
+      <text:p>Column availability</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce40" office:value-type="string" calcext:value-type="string">
+      <text:p>Front-End Interface</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce40" office:value-type="string" calcext:value-type="string">
+      <text:p>As a player, I would like to know which columns of the game board are available to place tokens, so that I can pick a column to place a token.</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce40"/>
+     <table:table-cell table:style-name="ce40" office:value-type="string" calcext:value-type="string">
+      <text:p>It should be obvious which columns can accept a dropped token.</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce46" office:value-type="string" calcext:value-type="string">
+      <text:p>Mandatory</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce46" office:value-type="float" office:value="18" calcext:value-type="float">
+      <text:p>18</text:p>
+     </table:table-cell>
+     <table:table-cell table:number-columns-repeated="2" table:style-name="ce46" office:value-type="float" office:value="8" calcext:value-type="float">
+      <text:p>8</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce46" table:formula="of:=SUM([.$H7:.$I7])" office:value-type="float" office:value="16" calcext:value-type="float">
+      <text:p>16</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce52" table:formula="of:=[.$J7]/[.$J$2]" office:value-type="percentage" office:value="0.0496894409937888" calcext:value-type="percentage">
+      <text:p>4.97%</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce52" table:formula="of:=[.$G7]/[.$G$2]" office:value-type="percentage" office:value="0.0193965517241379" calcext:value-type="percentage">
+      <text:p>1.94%</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce46" table:formula="of:=[.$K7]/[.$L7]" office:value-type="float" office:value="2.56176673567978" calcext:value-type="float">
+      <text:p>2.56176673567978</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce46" table:number-columns-repeated="1011"/>
+    </table:table-row>
+    <table:table-row table:style-name="ro5">
+     <table:table-cell table:style-name="ce40" office:value-type="string" calcext:value-type="string">
+      <text:p>Token placing</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce40" office:value-type="string" calcext:value-type="string">
+      <text:p>Front-End Interface</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce40" office:value-type="string" calcext:value-type="string">
+      <text:p>As a player, I would like to place a token in an available column of my choosing, so that I could finish my turn.</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce40" office:value-type="string" calcext:value-type="string">
+      <text:p>An available column is a column in the game board that is not full.</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce40" office:value-type="string" calcext:value-type="string">
+      <text:p>A player should be able to place a token into an available column.</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce46" office:value-type="string" calcext:value-type="string">
+      <text:p>Mandatory</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce46" office:value-type="float" office:value="25" calcext:value-type="float">
+      <text:p>25</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce46" office:value-type="float" office:value="9" calcext:value-type="float">
+      <text:p>9</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce46" office:value-type="float" office:value="8" calcext:value-type="float">
+      <text:p>8</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce46" table:formula="of:=SUM([.$H8:.$I8])" office:value-type="float" office:value="17" calcext:value-type="float">
+      <text:p>17</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce52" table:formula="of:=[.$J8]/[.$J$2]" office:value-type="percentage" office:value="0.0527950310559006" calcext:value-type="percentage">
+      <text:p>5.28%</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce52" table:formula="of:=[.$G8]/[.$G$2]" office:value-type="percentage" office:value="0.0269396551724138" calcext:value-type="percentage">
+      <text:p>2.69%</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce46" table:formula="of:=[.$K8]/[.$L8]" office:value-type="float" office:value="1.95975155279503" calcext:value-type="float">
+      <text:p>1.95975155279503</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce46" table:number-columns-repeated="1011"/>
+    </table:table-row>
+    <table:table-row table:style-name="ro5">
+     <table:table-cell table:style-name="ce40" office:value-type="string" calcext:value-type="string">
+      <text:p>Visible game board</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce40" office:value-type="string" calcext:value-type="string">
+      <text:p>Front-End Interface</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce40" office:value-type="string" calcext:value-type="string">
+      <text:p>As a player, I would like to see the game board, so that I can see the current state of the game and plan accordingly.</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce40" office:value-type="string" calcext:value-type="string">
+      <text:p>The game board is 7 tokens wide and 8 tokens tall.</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce40" office:value-type="string" calcext:value-type="string">
+      <text:p>The size of the board and all tokens on the board should be visible.</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce46" office:value-type="string" calcext:value-type="string">
+      <text:p>Mandatory</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce46" office:value-type="float" office:value="23" calcext:value-type="float">
+      <text:p>23</text:p>
+     </table:table-cell>
+     <table:table-cell table:number-columns-repeated="2" table:style-name="ce46" office:value-type="float" office:value="9" calcext:value-type="float">
+      <text:p>9</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce46" table:formula="of:=SUM([.$H9:.$I9])" office:value-type="float" office:value="18" calcext:value-type="float">
+      <text:p>18</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce52" table:formula="of:=[.$J9]/[.$J$2]" office:value-type="percentage" office:value="0.0559006211180124" calcext:value-type="percentage">
+      <text:p>5.59%</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce52" table:formula="of:=[.$G9]/[.$G$2]" office:value-type="percentage" office:value="0.0247844827586207" calcext:value-type="percentage">
+      <text:p>2.48%</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce46" table:formula="of:=[.$K9]/[.$L9]" office:value-type="float" office:value="2.25546853902241" calcext:value-type="float">
+      <text:p>2.25546853902241</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce46" table:number-columns-repeated="1011"/>
+    </table:table-row>
+    <table:table-row table:style-name="ro5">
+     <table:table-cell table:style-name="ce40" office:value-type="string" calcext:value-type="string">
+      <text:p>Final game results</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce40" office:value-type="string" calcext:value-type="string">
+      <text:p>Front-End Interface</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce40" office:value-type="string" calcext:value-type="string">
+      <text:p>As a player, I would like to see if the game is over, so that I can know if the game is over and if I have won or not.</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce40"/>
+     <table:table-cell table:style-name="ce40" office:value-type="string" calcext:value-type="string">
+      <text:p>It should be obvious if the game has ended and who the winner is in that case.</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce46" office:value-type="string" calcext:value-type="string">
+      <text:p>Mandatory</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce46" office:value-type="float" office:value="20" calcext:value-type="float">
+      <text:p>20</text:p>
+     </table:table-cell>
+     <table:table-cell table:number-columns-repeated="2" table:style-name="ce46" office:value-type="float" office:value="8" calcext:value-type="float">
+      <text:p>8</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce46" table:formula="of:=SUM([.$H10:.$I10])" office:value-type="float" office:value="16" calcext:value-type="float">
+      <text:p>16</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce52" table:formula="of:=[.$J10]/[.$J$2]" office:value-type="percentage" office:value="0.0496894409937888" calcext:value-type="percentage">
+      <text:p>4.97%</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce52" table:formula="of:=[.$G10]/[.$G$2]" office:value-type="percentage" office:value="0.021551724137931" calcext:value-type="percentage">
+      <text:p>2.16%</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce46" table:formula="of:=[.$K10]/[.$L10]" office:value-type="float" office:value="2.3055900621118" calcext:value-type="float">
+      <text:p>2.3055900621118</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce46" table:number-columns-repeated="1011"/>
+    </table:table-row>
+    <table:table-row table:style-name="ro5">
+     <table:table-cell table:style-name="ce41" office:value-type="string" calcext:value-type="string">
+      <text:p>End game options</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce41" office:value-type="string" calcext:value-type="string">
+      <text:p>Front-End Interface</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce41" office:value-type="string" calcext:value-type="string">
+      <text:p>As a player, I would like to choose to play again if the game has ended, so that I can continue playing.</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce41"/>
+     <table:table-cell table:style-name="ce41" office:value-type="string" calcext:value-type="string">
+      <text:p>The player should be able to return to the very first state of the game to start over.</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce47" office:value-type="string" calcext:value-type="string">
+      <text:p>Exciter</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce47" office:value-type="float" office:value="13" calcext:value-type="float">
+      <text:p>13</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce47" office:value-type="float" office:value="6" calcext:value-type="float">
+      <text:p>6</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce47" office:value-type="float" office:value="3" calcext:value-type="float">
+      <text:p>3</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce47" table:formula="of:=SUM([.$H11:.$I11])" office:value-type="float" office:value="9" calcext:value-type="float">
+      <text:p>9</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce53" table:formula="of:=[.$J11]/[.$J$2]" office:value-type="percentage" office:value="0.0279503105590062" calcext:value-type="percentage">
+      <text:p>2.80%</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce53" table:formula="of:=[.$G11]/[.$G$2]" office:value-type="percentage" office:value="0.0140086206896552" calcext:value-type="percentage">
+      <text:p>1.40%</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce47" table:formula="of:=[.$K11]/[.$L11]" office:value-type="float" office:value="1.99522216913521" calcext:value-type="float">
+      <text:p>1.99522216913521</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce47" table:number-columns-repeated="1011"/>
+    </table:table-row>
+    <table:table-row table:style-name="ro5">
+     <table:table-cell table:style-name="ce42" office:value-type="string" calcext:value-type="string">
+      <text:p>Website URL and availability</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce42" office:value-type="string" calcext:value-type="string">
+      <text:p>Front-End Interface</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce42" office:value-type="string" calcext:value-type="string">
+      <text:p>As a player, I would like to know the URL of the website for Four-Line Dropper, so that I can visit the website and play the game.</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce42"/>
+     <table:table-cell table:style-name="ce42" office:value-type="string" calcext:value-type="string">
+      <text:p>A webserver should serve the game’s front-end and the URL of the webserver should be given to Players.</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce48" office:value-type="string" calcext:value-type="string">
+      <text:p>Linear</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce48" office:value-type="float" office:value="24" calcext:value-type="float">
+      <text:p>24</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce48" office:value-type="float" office:value="9" calcext:value-type="float">
+      <text:p>9</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce48" office:value-type="float" office:value="8" calcext:value-type="float">
+      <text:p>8</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce48" table:formula="of:=SUM([.$H12:.$I12])" office:value-type="float" office:value="17" calcext:value-type="float">
+      <text:p>17</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce54" table:formula="of:=[.$J12]/[.$J$2]" office:value-type="percentage" office:value="0.0527950310559006" calcext:value-type="percentage">
+      <text:p>5.28%</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce54" table:formula="of:=[.$G12]/[.$G$2]" office:value-type="percentage" office:value="0.0258620689655172" calcext:value-type="percentage">
+      <text:p>2.59%</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce48" table:formula="of:=[.$K12]/[.$L12]" office:value-type="float" office:value="2.04140786749482" calcext:value-type="float">
+      <text:p>2.04140786749482</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce48" table:number-columns-repeated="1011"/>
+    </table:table-row>
+    <table:table-row table:style-name="ro5">
+     <table:table-cell table:style-name="ce41" office:value-type="string" calcext:value-type="string">
+      <text:p>AI implementation</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce41" office:value-type="string" calcext:value-type="string">
+      <text:p>Back-End Implementation</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce41" office:value-type="string" calcext:value-type="string">
+      <text:p>As a player, I would like to play against the AI, so that I can play “singleplayer mode”.</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce41" office:value-type="string" calcext:value-type="string">
+      <text:p>AI is expected to be “Utility-AI” based.</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce41" office:value-type="string" calcext:value-type="string">
+      <text:p>The AI should be implemented such that a full game of Four-Line Dropper can be played with it.</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce47" office:value-type="string" calcext:value-type="string">
+      <text:p>Exciter</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce47" office:value-type="float" office:value="100" calcext:value-type="float">
+      <text:p>100</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce47" office:value-type="float" office:value="7" calcext:value-type="float">
+      <text:p>7</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce47" office:value-type="float" office:value="4" calcext:value-type="float">
+      <text:p>4</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce47" table:formula="of:=SUM([.$H13:.$I13])" office:value-type="float" office:value="11" calcext:value-type="float">
+      <text:p>11</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce53" table:formula="of:=[.$J13]/[.$J$2]" office:value-type="percentage" office:value="0.0341614906832298" calcext:value-type="percentage">
+      <text:p>3.42%</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce53" table:formula="of:=[.$G13]/[.$G$2]" office:value-type="percentage" office:value="0.107758620689655" calcext:value-type="percentage">
+      <text:p>10.78%</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce47" table:formula="of:=[.$K13]/[.$L13]" office:value-type="float" office:value="0.317018633540373" calcext:value-type="float">
+      <text:p>0.317018633540373</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce47" table:number-columns-repeated="1011"/>
+    </table:table-row>
+    <table:table-row table:style-name="ro5">
+     <table:table-cell table:style-name="ce40" office:value-type="string" calcext:value-type="string">
+      <text:p>Game logic turn implementation</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce40" office:value-type="string" calcext:value-type="string">
+      <text:p>Back-End Implementation</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce40" office:value-type="string" calcext:value-type="string">
+      <text:p>As a player, I would like to play the game expecting that the game knows whose turn it is, so that the game can progress.</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce40"/>
+     <table:table-cell table:style-name="ce40" office:value-type="string" calcext:value-type="string">
+      <text:p>The game should keep track of whose turn it is.</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce46" office:value-type="string" calcext:value-type="string">
+      <text:p>Mandatory</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce46" office:value-type="float" office:value="30" calcext:value-type="float">
+      <text:p>30</text:p>
+     </table:table-cell>
+     <table:table-cell table:number-columns-repeated="2" table:style-name="ce46" office:value-type="float" office:value="8" calcext:value-type="float">
+      <text:p>8</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce46" table:formula="of:=SUM([.$H14:.$I14])" office:value-type="float" office:value="16" calcext:value-type="float">
+      <text:p>16</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce52" table:formula="of:=[.$J14]/[.$J$2]" office:value-type="percentage" office:value="0.0496894409937888" calcext:value-type="percentage">
+      <text:p>4.97%</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce52" table:formula="of:=[.$G14]/[.$G$2]" office:value-type="percentage" office:value="0.0323275862068966" calcext:value-type="percentage">
+      <text:p>3.23%</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce46" table:formula="of:=[.$K14]/[.$L14]" office:value-type="float" office:value="1.53706004140787" calcext:value-type="float">
+      <text:p>1.53706004140787</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce46" table:number-columns-repeated="1011"/>
+    </table:table-row>
+    <table:table-row table:style-name="ro4">
+     <table:table-cell table:style-name="ce40" office:value-type="string" calcext:value-type="string">
+      <text:p>Game logic record token drop implementation</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce40" office:value-type="string" calcext:value-type="string">
+      <text:p>Back-End Implementation</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce40" office:value-type="string" calcext:value-type="string">
+      <text:p>As a player, I would like to play the game expecting that my moves are recorded, so that the game keeps track of everyone’s moves.</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce40"/>
+     <table:table-cell table:style-name="ce40" office:value-type="string" calcext:value-type="string">
+      <text:p>The game should be able to record and keep track of tokens placed by Player(s) and/or AI.</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce46" office:value-type="string" calcext:value-type="string">
+      <text:p>Mandatory</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce46" office:value-type="float" office:value="65" calcext:value-type="float">
+      <text:p>65</text:p>
+     </table:table-cell>
+     <table:table-cell table:number-columns-repeated="2" table:style-name="ce46" office:value-type="float" office:value="8" calcext:value-type="float">
+      <text:p>8</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce46" table:formula="of:=SUM([.$H15:.$I15])" office:value-type="float" office:value="16" calcext:value-type="float">
+      <text:p>16</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce52" table:formula="of:=[.$J15]/[.$J$2]" office:value-type="percentage" office:value="0.0496894409937888" calcext:value-type="percentage">
+      <text:p>4.97%</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce52" table:formula="of:=[.$G15]/[.$G$2]" office:value-type="percentage" office:value="0.0700431034482759" calcext:value-type="percentage">
+      <text:p>7.00%</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce46" table:formula="of:=[.$K15]/[.$L15]" office:value-type="float" office:value="0.709412326803631" calcext:value-type="float">
+      <text:p>0.709412326803631</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce46" table:number-columns-repeated="1011"/>
+    </table:table-row>
+    <table:table-row table:style-name="ro4">
+     <table:table-cell table:style-name="ce40" office:value-type="string" calcext:value-type="string">
+      <text:p>Game logic win/lose/draw state detection</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce40" office:value-type="string" calcext:value-type="string">
+      <text:p>Back-End Implementation</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce40" office:value-type="string" calcext:value-type="string">
+      <text:p>As a player, I would like to play the game expecting that the game knows when it has ended, so that the game works as expected.</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce40" office:value-type="string" calcext:value-type="string">
+      <text:p>Win/Lose if a player has 4 in a row/column/diagonal or a draw if no more tokens can be placed.</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce40" office:value-type="string" calcext:value-type="string">
+      <text:p>The game should be able to detect end-game state.</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce46" office:value-type="string" calcext:value-type="string">
+      <text:p>Mandatory</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce46" office:value-type="float" office:value="70" calcext:value-type="float">
+      <text:p>70</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce46" office:value-type="float" office:value="8" calcext:value-type="float">
+      <text:p>8</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce46" office:value-type="float" office:value="7" calcext:value-type="float">
+      <text:p>7</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce46" table:formula="of:=SUM([.$H16:.$I16])" office:value-type="float" office:value="15" calcext:value-type="float">
+      <text:p>15</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce52" table:formula="of:=[.$J16]/[.$J$2]" office:value-type="percentage" office:value="0.046583850931677" calcext:value-type="percentage">
+      <text:p>4.66%</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce52" table:formula="of:=[.$G16]/[.$G$2]" office:value-type="percentage" office:value="0.0754310344827586" calcext:value-type="percentage">
+      <text:p>7.54%</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce46" table:formula="of:=[.$K16]/[.$L16]" office:value-type="float" office:value="0.61756876663709" calcext:value-type="float">
+      <text:p>0.61756876663709</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce46" table:number-columns-repeated="1011"/>
+    </table:table-row>
+    <table:table-row table:style-name="ro4">
+     <table:table-cell table:style-name="ce41" office:value-type="string" calcext:value-type="string">
+      <text:p>Multiplayer pairing</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce41" office:value-type="string" calcext:value-type="string">
+      <text:p>Networking</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce41" office:value-type="string" calcext:value-type="string">
+      <text:p>As a player, I would like to be able to pair with another Player, so that I can play a multiplayer game.</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce41"/>
+     <table:table-cell table:style-name="ce41" office:value-type="string" calcext:value-type="string">
+      <text:p>The front-end should be able to communicate with the back-end server to enqueue a Player to pair against another Player.</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce47" office:value-type="string" calcext:value-type="string">
+      <text:p>Exciter</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce47" office:value-type="float" office:value="77" calcext:value-type="float">
+      <text:p>77</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce47" office:value-type="float" office:value="8" calcext:value-type="float">
+      <text:p>8</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce47" office:value-type="float" office:value="5" calcext:value-type="float">
+      <text:p>5</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce47" table:formula="of:=SUM([.$H17:.$I17])" office:value-type="float" office:value="13" calcext:value-type="float">
+      <text:p>13</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce53" table:formula="of:=[.$J17]/[.$J$2]" office:value-type="percentage" office:value="0.0403726708074534" calcext:value-type="percentage">
+      <text:p>4.04%</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce53" table:formula="of:=[.$G17]/[.$G$2]" office:value-type="percentage" office:value="0.0829741379310345" calcext:value-type="percentage">
+      <text:p>8.30%</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce47" table:formula="of:=[.$K17]/[.$L17]" office:value-type="float" office:value="0.486569331289828" calcext:value-type="float">
+      <text:p>0.486569331289828</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce47" table:number-columns-repeated="1011"/>
+    </table:table-row>
+    <table:table-row table:style-name="ro4">
+     <table:table-cell table:style-name="ce40" office:value-type="string" calcext:value-type="string">
+      <text:p>Multiplayer game start</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce40" office:value-type="string" calcext:value-type="string">
+      <text:p>Networking</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce40" office:value-type="string" calcext:value-type="string">
+      <text:p>As a player, I would like to know when the game has started a multiplayer game, so that I can play a multiplayer game.</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce40"/>
+     <table:table-cell table:style-name="ce40" office:value-type="string" calcext:value-type="string">
+      <text:p>The back-end should communicate to the front-end(s) that the game has started and whose turn it is. This will occur after a Player has been paired.</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce46" office:value-type="string" calcext:value-type="string">
+      <text:p>Mandatory</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce46" office:value-type="float" office:value="45" calcext:value-type="float">
+      <text:p>45</text:p>
+     </table:table-cell>
+     <table:table-cell table:number-columns-repeated="2" table:style-name="ce46" office:value-type="float" office:value="9" calcext:value-type="float">
+      <text:p>9</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce46" table:formula="of:=SUM([.$H18:.$I18])" office:value-type="float" office:value="18" calcext:value-type="float">
+      <text:p>18</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce52" table:formula="of:=[.$J18]/[.$J$2]" office:value-type="percentage" office:value="0.0559006211180124" calcext:value-type="percentage">
+      <text:p>5.59%</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce52" table:formula="of:=[.$G18]/[.$G$2]" office:value-type="percentage" office:value="0.0484913793103448" calcext:value-type="percentage">
+      <text:p>4.85%</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce46" table:formula="of:=[.$K18]/[.$L18]" office:value-type="float" office:value="1.1527950310559" calcext:value-type="float">
+      <text:p>1.1527950310559</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce46" table:number-columns-repeated="1011"/>
+    </table:table-row>
+    <table:table-row table:style-name="ro5">
+     <table:table-cell table:style-name="ce40" office:value-type="string" calcext:value-type="string">
+      <text:p>Multiplayer game whose turn it is</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce40" office:value-type="string" calcext:value-type="string">
+      <text:p>Networking</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce40" office:value-type="string" calcext:value-type="string">
+      <text:p>As a player, I would like to play a multiplayer game knowing whose turn it is, so that the game can progress.</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce40"/>
+     <table:table-cell table:style-name="ce40" office:value-type="string" calcext:value-type="string">
+      <text:p>The back-end should communicate whose turn it is to the front-end(s).</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce46" office:value-type="string" calcext:value-type="string">
+      <text:p>Mandatory</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce46" office:value-type="float" office:value="50" calcext:value-type="float">
+      <text:p>50</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce46" office:value-type="float" office:value="9" calcext:value-type="float">
+      <text:p>9</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce46" office:value-type="float" office:value="8" calcext:value-type="float">
+      <text:p>8</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce46" table:formula="of:=SUM([.$H19:.$I19])" office:value-type="float" office:value="17" calcext:value-type="float">
+      <text:p>17</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce52" table:formula="of:=[.$J19]/[.$J$2]" office:value-type="percentage" office:value="0.0527950310559006" calcext:value-type="percentage">
+      <text:p>5.28%</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce52" table:formula="of:=[.$G19]/[.$G$2]" office:value-type="percentage" office:value="0.0538793103448276" calcext:value-type="percentage">
+      <text:p>5.39%</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce46" table:formula="of:=[.$K19]/[.$L19]" office:value-type="float" office:value="0.979875776397516" calcext:value-type="float">
+      <text:p>0.979875776397516</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce46" table:number-columns-repeated="1011"/>
+    </table:table-row>
+    <table:table-row table:style-name="ro4">
+     <table:table-cell table:style-name="ce40" office:value-type="string" calcext:value-type="string">
+      <text:p>Multiplayer record turn action</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce40" office:value-type="string" calcext:value-type="string">
+      <text:p>Networking</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce40" office:value-type="string" calcext:value-type="string">
+      <text:p>As a player, I would like to play a multiplayer game knowing that the game keeps track of each Player’s turn, so that the game can progress.</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce40"/>
+     <table:table-cell table:style-name="ce40" office:value-type="string" calcext:value-type="string">
+      <text:p>The front-end and back-end should communicate a Player’s decision on their turn to be stored in the back-end.</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce46" office:value-type="string" calcext:value-type="string">
+      <text:p>Mandatory</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce46" office:value-type="float" office:value="68" calcext:value-type="float">
+      <text:p>68</text:p>
+     </table:table-cell>
+     <table:table-cell table:number-columns-repeated="2" table:style-name="ce46" office:value-type="float" office:value="8" calcext:value-type="float">
+      <text:p>8</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce46" table:formula="of:=SUM([.$H20:.$I20])" office:value-type="float" office:value="16" calcext:value-type="float">
+      <text:p>16</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce52" table:formula="of:=[.$J20]/[.$J$2]" office:value-type="percentage" office:value="0.0496894409937888" calcext:value-type="percentage">
+      <text:p>4.97%</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce52" table:formula="of:=[.$G20]/[.$G$2]" office:value-type="percentage" office:value="0.0732758620689655" calcext:value-type="percentage">
+      <text:p>7.33%</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce46" table:formula="of:=[.$K20]/[.$L20]" office:value-type="float" office:value="0.67811472415053" calcext:value-type="float">
+      <text:p>0.67811472415053</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce46" table:number-columns-repeated="1011"/>
+    </table:table-row>
+    <table:table-row table:style-name="ro4">
+     <table:table-cell table:style-name="ce42" office:value-type="string" calcext:value-type="string">
+      <text:p>Multiplayer game board state</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce42" office:value-type="string" calcext:value-type="string">
+      <text:p>Networking</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce42" office:value-type="string" calcext:value-type="string">
+      <text:p>As a player, I would like to play a multiplayer game knowing the board’s state, so that I can accurately know the board’s state.</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce42"/>
+     <table:table-cell table:style-name="ce42" office:value-type="string" calcext:value-type="string">
+      <text:p>The back-end should communicate the state of the game board to the front-end(s).</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce48" office:value-type="string" calcext:value-type="string">
+      <text:p>Linear</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce48" office:value-type="float" office:value="53" calcext:value-type="float">
+      <text:p>53</text:p>
+     </table:table-cell>
+     <table:table-cell table:number-columns-repeated="2" table:style-name="ce48" office:value-type="float" office:value="9" calcext:value-type="float">
+      <text:p>9</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce48" table:formula="of:=SUM([.$H21:.$I21])" office:value-type="float" office:value="18" calcext:value-type="float">
+      <text:p>18</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce54" table:formula="of:=[.$J21]/[.$J$2]" office:value-type="percentage" office:value="0.0559006211180124" calcext:value-type="percentage">
+      <text:p>5.59%</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce54" table:formula="of:=[.$G21]/[.$G$2]" office:value-type="percentage" office:value="0.0571120689655172" calcext:value-type="percentage">
+      <text:p>5.71%</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce48" table:formula="of:=[.$K21]/[.$L21]" office:value-type="float" office:value="0.978788233915387" calcext:value-type="float">
+      <text:p>0.978788233915387</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce48" table:number-columns-repeated="1011"/>
+    </table:table-row>
+    <table:table-row table:style-name="ro4">
+     <table:table-cell table:style-name="ce42" office:value-type="string" calcext:value-type="string">
+      <text:p>Multiplayer end-game state</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce42" office:value-type="string" calcext:value-type="string">
+      <text:p>Networking</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce42" office:value-type="string" calcext:value-type="string">
+      <text:p>As a player, I would like to know if a multiplayer game has ended, so that I can see the results.</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce42"/>
+     <table:table-cell table:style-name="ce42" office:value-type="string" calcext:value-type="string">
+      <text:p>The back-end should communicate to the front-end(s) that the game has ended and who the winner/loser is or if it has ended in a draw.</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce48" office:value-type="string" calcext:value-type="string">
+      <text:p>Linear</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce48" office:value-type="float" office:value="48" calcext:value-type="float">
+      <text:p>48</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce48" office:value-type="float" office:value="8" calcext:value-type="float">
+      <text:p>8</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce48" office:value-type="float" office:value="7" calcext:value-type="float">
+      <text:p>7</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce48" table:formula="of:=SUM([.$H22:.$I22])" office:value-type="float" office:value="15" calcext:value-type="float">
+      <text:p>15</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce54" table:formula="of:=[.$J22]/[.$J$2]" office:value-type="percentage" office:value="0.046583850931677" calcext:value-type="percentage">
+      <text:p>4.66%</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce54" table:formula="of:=[.$G22]/[.$G$2]" office:value-type="percentage" office:value="0.0517241379310345" calcext:value-type="percentage">
+      <text:p>5.17%</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce48" table:formula="of:=[.$K22]/[.$L22]" office:value-type="float" office:value="0.900621118012422" calcext:value-type="float">
+      <text:p>0.900621118012422</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce48" table:number-columns-repeated="1011"/>
+    </table:table-row>
+    <table:table-row table:style-name="ro4">
+     <table:table-cell table:style-name="ce41" office:value-type="string" calcext:value-type="string">
+      <text:p>In-game emotes</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce41" office:value-type="string" calcext:value-type="string">
+      <text:p>Extra</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce41" office:value-type="string" calcext:value-type="string">
+      <text:p>As a player, I would like to communicate with the other player with the available in-game emotes, so that I can have some banter with the opponent.</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce41"/>
+     <table:table-cell table:style-name="ce41" office:value-type="string" calcext:value-type="string">
+      <text:p>The front-end should be able to send user-selected emotes to the back-end, to be communicated to the other player’s front-end.</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce47" office:value-type="string" calcext:value-type="string">
+      <text:p>Exciter</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce47" office:value-type="float" office:value="47" calcext:value-type="float">
+      <text:p>47</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce47" office:value-type="float" office:value="7" calcext:value-type="float">
+      <text:p>7</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce47" office:value-type="float" office:value="2" calcext:value-type="float">
+      <text:p>2</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce47" table:formula="of:=SUM([.$H23:.$I23])" office:value-type="float" office:value="9" calcext:value-type="float">
+      <text:p>9</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce53" table:formula="of:=[.$J23]/[.$J$2]" office:value-type="percentage" office:value="0.0279503105590062" calcext:value-type="percentage">
+      <text:p>2.80%</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce53" table:formula="of:=[.$G23]/[.$G$2]" office:value-type="percentage" office:value="0.0506465517241379" calcext:value-type="percentage">
+      <text:p>5.06%</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce47" table:formula="of:=[.$K23]/[.$L23]" office:value-type="float" office:value="0.551869961675697" calcext:value-type="float">
+      <text:p>0.551869961675697</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce47" table:number-columns-repeated="1011"/>
+    </table:table-row>
+    <table:table-row table:style-name="ro6">
+     <table:table-cell table:style-name="ce41" office:value-type="string" calcext:value-type="string">
+      <text:p>In-game column emotes</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce41" office:value-type="string" calcext:value-type="string">
+      <text:p>Extra</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce41" office:value-type="string" calcext:value-type="string">
+      <text:p>As a player, I would like to communicate with the other player with the available in-game emotes to highlight a specific column, so that I can have some banter with the opponent.</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce41"/>
+     <table:table-cell table:style-name="ce41" office:value-type="string" calcext:value-type="string">
+      <text:p>The front-end should be able to send user-selected emotes on a specific column to the back-end, to be communicated to the other player’s front-end.</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce47" office:value-type="string" calcext:value-type="string">
+      <text:p>Exciter</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce47" office:value-type="float" office:value="52" calcext:value-type="float">
+      <text:p>52</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce47" office:value-type="float" office:value="7" calcext:value-type="float">
+      <text:p>7</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce47" office:value-type="float" office:value="2" calcext:value-type="float">
+      <text:p>2</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce47" table:formula="of:=SUM([.$H24:.$I24])" office:value-type="float" office:value="9" calcext:value-type="float">
+      <text:p>9</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce53" table:formula="of:=[.$J24]/[.$J$2]" office:value-type="percentage" office:value="0.0279503105590062" calcext:value-type="percentage">
+      <text:p>2.80%</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce53" table:formula="of:=[.$G24]/[.$G$2]" office:value-type="percentage" office:value="0.0560344827586207" calcext:value-type="percentage">
+      <text:p>5.60%</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce47" table:formula="of:=[.$K24]/[.$L24]" office:value-type="float" office:value="0.498805542283803" calcext:value-type="float">
+      <text:p>0.498805542283803</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce47" table:number-columns-repeated="1011"/>
+    </table:table-row>
+    <table:table-row table:style-name="ro1" table:number-rows-repeated="1048551">
+     <table:table-cell table:number-columns-repeated="1024"/>
+    </table:table-row>
+    <table:table-row table:style-name="ro1">
+     <table:table-cell table:number-columns-repeated="1024"/>
+    </table:table-row>
+   </table:table>
+   <table:named-expressions/>
+   <table:database-ranges>
+    <table:database-range table:name="KanoCategory" table:target-range-address="&apos;User Stories&apos;.F1:&apos;User Stories&apos;.F1048576" table:display-filter-buttons="true" table:on-update-keep-styles="true" table:on-update-keep-size="false"/>
+    <table:database-range table:name="Theme" table:target-range-address="&apos;User Stories&apos;.B1:&apos;User Stories&apos;.B1048576"/>
+    <table:database-range table:name="__Anonymous_Sheet_DB__0" table:target-range-address="&apos;User Stories&apos;.B1:&apos;User Stories&apos;.B1048576" table:display-filter-buttons="true"/>
+   </table:database-ranges>
+  </office:spreadsheet>
+ </office:body>
+</office:document>
