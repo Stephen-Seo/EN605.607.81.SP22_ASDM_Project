@@ -179,7 +179,8 @@ impl Component for Slot {
                 if let Err(e) = result {
                     log::error!("Error pushing msg to bus: {}", e);
                 } else {
-                    log::info!("Pushed \"pressed {idx}\" msg to bus");
+                    // DEBUG
+                    //log::info!("Pushed \"pressed {idx}\" msg to bus");
                 }
             }
         }
@@ -286,7 +287,8 @@ impl Component for Wrapper {
                     if split_str[0] == "pressed" {
                         if let Ok(idx) = split_str[1].parse::<u8>() {
                             let output_str: String = format!("Got {idx} pressed.");
-                            log::info!("{}", &output_str);
+                            // DEBUG
+                            //log::info!("{}", &output_str);
                             if let Some(info_text) =
                                 shared.info_text_ref.cast::<web_sys::HtmlParagraphElement>()
                             {
