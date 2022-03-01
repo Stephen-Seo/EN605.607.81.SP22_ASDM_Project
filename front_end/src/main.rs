@@ -1,4 +1,4 @@
-use std::cell::{Cell, RefCell};
+use std::cell::Cell;
 use std::rc::Rc;
 use yew::prelude::*;
 
@@ -20,13 +20,71 @@ impl Default for BoardState {
 
 #[derive(Clone, Debug, PartialEq, Eq)]
 struct SharedState {
-    board: Rc<RefCell<[BoardState; 56]>>,
+    board: [Rc<Cell<BoardState>>; 56],
 }
 
 impl Default for SharedState {
     fn default() -> Self {
         Self {
-            board: Rc::new(RefCell::new([BoardState::default(); 56])),
+            // cannot use [<type>; 56] because Rc does not impl Copy
+            board: [
+                Rc::new(Cell::new(BoardState::default())),
+                Rc::new(Cell::new(BoardState::default())),
+                Rc::new(Cell::new(BoardState::default())),
+                Rc::new(Cell::new(BoardState::default())),
+                Rc::new(Cell::new(BoardState::default())),
+                Rc::new(Cell::new(BoardState::default())),
+                Rc::new(Cell::new(BoardState::default())),
+                Rc::new(Cell::new(BoardState::default())),
+                Rc::new(Cell::new(BoardState::default())),
+                Rc::new(Cell::new(BoardState::default())),
+                Rc::new(Cell::new(BoardState::default())),
+                Rc::new(Cell::new(BoardState::default())),
+                Rc::new(Cell::new(BoardState::default())),
+                Rc::new(Cell::new(BoardState::default())),
+                Rc::new(Cell::new(BoardState::default())),
+                Rc::new(Cell::new(BoardState::default())),
+                Rc::new(Cell::new(BoardState::default())),
+                Rc::new(Cell::new(BoardState::default())),
+                Rc::new(Cell::new(BoardState::default())),
+                Rc::new(Cell::new(BoardState::default())),
+                Rc::new(Cell::new(BoardState::default())),
+                Rc::new(Cell::new(BoardState::default())),
+                Rc::new(Cell::new(BoardState::default())),
+                Rc::new(Cell::new(BoardState::default())),
+                Rc::new(Cell::new(BoardState::default())),
+                Rc::new(Cell::new(BoardState::default())),
+                Rc::new(Cell::new(BoardState::default())),
+                Rc::new(Cell::new(BoardState::default())),
+                Rc::new(Cell::new(BoardState::default())),
+                Rc::new(Cell::new(BoardState::default())),
+                Rc::new(Cell::new(BoardState::default())),
+                Rc::new(Cell::new(BoardState::default())),
+                Rc::new(Cell::new(BoardState::default())),
+                Rc::new(Cell::new(BoardState::default())),
+                Rc::new(Cell::new(BoardState::default())),
+                Rc::new(Cell::new(BoardState::default())),
+                Rc::new(Cell::new(BoardState::default())),
+                Rc::new(Cell::new(BoardState::default())),
+                Rc::new(Cell::new(BoardState::default())),
+                Rc::new(Cell::new(BoardState::default())),
+                Rc::new(Cell::new(BoardState::default())),
+                Rc::new(Cell::new(BoardState::default())),
+                Rc::new(Cell::new(BoardState::default())),
+                Rc::new(Cell::new(BoardState::default())),
+                Rc::new(Cell::new(BoardState::default())),
+                Rc::new(Cell::new(BoardState::default())),
+                Rc::new(Cell::new(BoardState::default())),
+                Rc::new(Cell::new(BoardState::default())),
+                Rc::new(Cell::new(BoardState::default())),
+                Rc::new(Cell::new(BoardState::default())),
+                Rc::new(Cell::new(BoardState::default())),
+                Rc::new(Cell::new(BoardState::default())),
+                Rc::new(Cell::new(BoardState::default())),
+                Rc::new(Cell::new(BoardState::default())),
+                Rc::new(Cell::new(BoardState::default())),
+                Rc::new(Cell::new(BoardState::default())),
+            ],
         }
     }
 }
@@ -75,22 +133,18 @@ impl Component for Slot {
                     .link()
                     .context::<SharedState>(Callback::noop())
                     .expect("shared to be set");
-                let value_at_idx = shared.board.as_ref().borrow()[idx as usize];
+                let value_at_idx = shared.board[idx as usize].get();
                 match value_at_idx {
                     BoardState::Empty => {
-                        shared.board.as_ref().borrow_mut()[idx as usize] = BoardState::Cyan
+                        shared.board[idx as usize].replace(BoardState::Cyan);
                     }
                     BoardState::Cyan => {
-                        shared.board.as_ref().borrow_mut()[idx as usize] = BoardState::Magenta
+                        shared.board[idx as usize].replace(BoardState::Magenta);
                     }
                     BoardState::Magenta => {
-                        shared.board.as_ref().borrow_mut()[idx as usize] = BoardState::Empty
+                        shared.board[idx as usize].replace(BoardState::Empty);
                     }
                 }
-                ctx.props()
-                    .state
-                    .as_ref()
-                    .replace(shared.board.as_ref().borrow()[idx as usize]);
             }
         }
         true
@@ -114,62 +168,62 @@ impl Component for Wrapper {
             .expect("state to be set");
         html! {
             <div class="wrapper">
-                <Slot idx=0 state={Rc::new(Cell::new(shared.board.as_ref().borrow()[0]))} />
-                <Slot idx=1 state={Rc::new(Cell::new(shared.board.as_ref().borrow()[1]))} />
-                <Slot idx=2 state={Rc::new(Cell::new(shared.board.as_ref().borrow()[2]))} />
-                <Slot idx=3 state={Rc::new(Cell::new(shared.board.as_ref().borrow()[3]))} />
-                <Slot idx=4 state={Rc::new(Cell::new(shared.board.as_ref().borrow()[4]))} />
-                <Slot idx=5 state={Rc::new(Cell::new(shared.board.as_ref().borrow()[5]))} />
-                <Slot idx=6 state={Rc::new(Cell::new(shared.board.as_ref().borrow()[6]))} />
-                <Slot idx=7 state={Rc::new(Cell::new(shared.board.as_ref().borrow()[7]))} />
-                <Slot idx=8 state={Rc::new(Cell::new(shared.board.as_ref().borrow()[8]))} />
-                <Slot idx=9 state={Rc::new(Cell::new(shared.board.as_ref().borrow()[9]))} />
-                <Slot idx=10 state={Rc::new(Cell::new(shared.board.as_ref().borrow()[10]))} />
-                <Slot idx=11 state={Rc::new(Cell::new(shared.board.as_ref().borrow()[11]))} />
-                <Slot idx=12 state={Rc::new(Cell::new(shared.board.as_ref().borrow()[12]))} />
-                <Slot idx=13 state={Rc::new(Cell::new(shared.board.as_ref().borrow()[13]))} />
-                <Slot idx=14 state={Rc::new(Cell::new(shared.board.as_ref().borrow()[14]))} />
-                <Slot idx=15 state={Rc::new(Cell::new(shared.board.as_ref().borrow()[15]))} />
-                <Slot idx=16 state={Rc::new(Cell::new(shared.board.as_ref().borrow()[16]))} />
-                <Slot idx=17 state={Rc::new(Cell::new(shared.board.as_ref().borrow()[17]))} />
-                <Slot idx=18 state={Rc::new(Cell::new(shared.board.as_ref().borrow()[18]))} />
-                <Slot idx=19 state={Rc::new(Cell::new(shared.board.as_ref().borrow()[19]))} />
-                <Slot idx=20 state={Rc::new(Cell::new(shared.board.as_ref().borrow()[20]))} />
-                <Slot idx=21 state={Rc::new(Cell::new(shared.board.as_ref().borrow()[21]))} />
-                <Slot idx=22 state={Rc::new(Cell::new(shared.board.as_ref().borrow()[22]))} />
-                <Slot idx=23 state={Rc::new(Cell::new(shared.board.as_ref().borrow()[23]))} />
-                <Slot idx=24 state={Rc::new(Cell::new(shared.board.as_ref().borrow()[24]))} />
-                <Slot idx=25 state={Rc::new(Cell::new(shared.board.as_ref().borrow()[25]))} />
-                <Slot idx=26 state={Rc::new(Cell::new(shared.board.as_ref().borrow()[26]))} />
-                <Slot idx=27 state={Rc::new(Cell::new(shared.board.as_ref().borrow()[27]))} />
-                <Slot idx=28 state={Rc::new(Cell::new(shared.board.as_ref().borrow()[28]))} />
-                <Slot idx=29 state={Rc::new(Cell::new(shared.board.as_ref().borrow()[29]))} />
-                <Slot idx=30 state={Rc::new(Cell::new(shared.board.as_ref().borrow()[30]))} />
-                <Slot idx=31 state={Rc::new(Cell::new(shared.board.as_ref().borrow()[31]))} />
-                <Slot idx=32 state={Rc::new(Cell::new(shared.board.as_ref().borrow()[32]))} />
-                <Slot idx=33 state={Rc::new(Cell::new(shared.board.as_ref().borrow()[33]))} />
-                <Slot idx=34 state={Rc::new(Cell::new(shared.board.as_ref().borrow()[34]))} />
-                <Slot idx=35 state={Rc::new(Cell::new(shared.board.as_ref().borrow()[35]))} />
-                <Slot idx=36 state={Rc::new(Cell::new(shared.board.as_ref().borrow()[36]))} />
-                <Slot idx=37 state={Rc::new(Cell::new(shared.board.as_ref().borrow()[37]))} />
-                <Slot idx=38 state={Rc::new(Cell::new(shared.board.as_ref().borrow()[38]))} />
-                <Slot idx=39 state={Rc::new(Cell::new(shared.board.as_ref().borrow()[39]))} />
-                <Slot idx=40 state={Rc::new(Cell::new(shared.board.as_ref().borrow()[40]))} />
-                <Slot idx=41 state={Rc::new(Cell::new(shared.board.as_ref().borrow()[41]))} />
-                <Slot idx=42 state={Rc::new(Cell::new(shared.board.as_ref().borrow()[42]))} />
-                <Slot idx=43 state={Rc::new(Cell::new(shared.board.as_ref().borrow()[43]))} />
-                <Slot idx=44 state={Rc::new(Cell::new(shared.board.as_ref().borrow()[44]))} />
-                <Slot idx=45 state={Rc::new(Cell::new(shared.board.as_ref().borrow()[45]))} />
-                <Slot idx=46 state={Rc::new(Cell::new(shared.board.as_ref().borrow()[46]))} />
-                <Slot idx=47 state={Rc::new(Cell::new(shared.board.as_ref().borrow()[47]))} />
-                <Slot idx=48 state={Rc::new(Cell::new(shared.board.as_ref().borrow()[48]))} />
-                <Slot idx=49 state={Rc::new(Cell::new(shared.board.as_ref().borrow()[49]))} />
-                <Slot idx=50 state={Rc::new(Cell::new(shared.board.as_ref().borrow()[50]))} />
-                <Slot idx=51 state={Rc::new(Cell::new(shared.board.as_ref().borrow()[51]))} />
-                <Slot idx=52 state={Rc::new(Cell::new(shared.board.as_ref().borrow()[52]))} />
-                <Slot idx=53 state={Rc::new(Cell::new(shared.board.as_ref().borrow()[53]))} />
-                <Slot idx=54 state={Rc::new(Cell::new(shared.board.as_ref().borrow()[54]))} />
-                <Slot idx=55 state={Rc::new(Cell::new(shared.board.as_ref().borrow()[55]))} />
+                <Slot idx=0 state={shared.board[0].clone()} />
+                <Slot idx=1 state={shared.board[1].clone()} />
+                <Slot idx=2 state={shared.board[2].clone()} />
+                <Slot idx=3 state={shared.board[3].clone()} />
+                <Slot idx=4 state={shared.board[4].clone()} />
+                <Slot idx=5 state={shared.board[5].clone()} />
+                <Slot idx=6 state={shared.board[6].clone()} />
+                <Slot idx=7 state={shared.board[7].clone()} />
+                <Slot idx=8 state={shared.board[8].clone()} />
+                <Slot idx=9 state={shared.board[9].clone()} />
+                <Slot idx=10 state={shared.board[10].clone()} />
+                <Slot idx=11 state={shared.board[11].clone()} />
+                <Slot idx=12 state={shared.board[12].clone()} />
+                <Slot idx=13 state={shared.board[13].clone()} />
+                <Slot idx=14 state={shared.board[14].clone()} />
+                <Slot idx=15 state={shared.board[15].clone()} />
+                <Slot idx=16 state={shared.board[16].clone()} />
+                <Slot idx=17 state={shared.board[17].clone()} />
+                <Slot idx=18 state={shared.board[18].clone()} />
+                <Slot idx=19 state={shared.board[19].clone()} />
+                <Slot idx=20 state={shared.board[20].clone()} />
+                <Slot idx=21 state={shared.board[21].clone()} />
+                <Slot idx=22 state={shared.board[22].clone()} />
+                <Slot idx=23 state={shared.board[23].clone()} />
+                <Slot idx=24 state={shared.board[24].clone()} />
+                <Slot idx=25 state={shared.board[25].clone()} />
+                <Slot idx=26 state={shared.board[26].clone()} />
+                <Slot idx=27 state={shared.board[27].clone()} />
+                <Slot idx=28 state={shared.board[28].clone()} />
+                <Slot idx=29 state={shared.board[29].clone()} />
+                <Slot idx=30 state={shared.board[30].clone()} />
+                <Slot idx=31 state={shared.board[31].clone()} />
+                <Slot idx=32 state={shared.board[32].clone()} />
+                <Slot idx=33 state={shared.board[33].clone()} />
+                <Slot idx=34 state={shared.board[34].clone()} />
+                <Slot idx=35 state={shared.board[35].clone()} />
+                <Slot idx=36 state={shared.board[36].clone()} />
+                <Slot idx=37 state={shared.board[37].clone()} />
+                <Slot idx=38 state={shared.board[38].clone()} />
+                <Slot idx=39 state={shared.board[39].clone()} />
+                <Slot idx=40 state={shared.board[40].clone()} />
+                <Slot idx=41 state={shared.board[41].clone()} />
+                <Slot idx=42 state={shared.board[42].clone()} />
+                <Slot idx=43 state={shared.board[43].clone()} />
+                <Slot idx=44 state={shared.board[44].clone()} />
+                <Slot idx=45 state={shared.board[45].clone()} />
+                <Slot idx=46 state={shared.board[46].clone()} />
+                <Slot idx=47 state={shared.board[47].clone()} />
+                <Slot idx=48 state={shared.board[48].clone()} />
+                <Slot idx=49 state={shared.board[49].clone()} />
+                <Slot idx=50 state={shared.board[50].clone()} />
+                <Slot idx=51 state={shared.board[51].clone()} />
+                <Slot idx=52 state={shared.board[52].clone()} />
+                <Slot idx=53 state={shared.board[53].clone()} />
+                <Slot idx=54 state={shared.board[54].clone()} />
+                <Slot idx=55 state={shared.board[55].clone()} />
             </div> // wrapper
         }
     }
