@@ -164,7 +164,7 @@ impl Component for Wrapper {
                         // DEBUG
                         //log::info!("{}", &output_str);
                         if let Some(info_text) =
-                            shared.info_text_ref.cast::<web_sys::HtmlParagraphElement>()
+                            shared.info_text_ref.cast::<web_sys::HtmlDivElement>()
                         {
                             // create the new text to be appended in the output
                             let window = web_sys::window().expect("no window exists");
