@@ -42,7 +42,7 @@ impl Component for Slot {
         match msg {
             SlotMessage::Press(idx) => {
                 // notify Wrapper with message
-                let msg = format!("pressed {idx}");
+                let msg = WrapperMsg::Pressed(idx);
                 if let Some(p) = ctx.link().get_parent() {
                     p.clone().downcast::<Wrapper>().send_message(msg);
                 }
@@ -55,8 +55,12 @@ impl Component for Slot {
 
 pub struct Wrapper {}
 
+pub enum WrapperMsg {
+    Pressed(u8),
+}
+
 impl Component for Wrapper {
-    type Message = String;
+    type Message = WrapperMsg;
     type Properties = ();
 
     fn create(_ctx: &Context<Self>) -> Self {
@@ -144,9 +148,8 @@ impl Component for Wrapper {
         let window = web_sys::window().expect("no window exists");
         let document = window.document().expect("window should have a document");
 
-        let split_str: Vec<&str> = msg.split_whitespace().collect();
-        if split_str.len() == 2 && split_str[0] == "pressed" {
-            if let Ok(idx) = split_str[1].parse::<u8>() {
+        match msg {
+            WrapperMsg::Pressed(idx) => {
                 let mut bottom_idx = idx;
                 let mut placed = false;
                 let current_player = shared.turn.get();
@@ -277,8 +280,8 @@ impl Component for Wrapper {
                 } else {
                     log::warn!("Failed to get side \"info_text\"");
                 }
-            } // let Ok(idx) = split_str[1].parse::<u8>()
-        } // split_str.len() == 2 && split_str[0] == "pressed"
+            } // WrapperMsg::Pressed(idx) =>
+        } // match (msg)
 
         true
     }
