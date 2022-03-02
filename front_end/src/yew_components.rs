@@ -310,6 +310,7 @@ impl Component for InfoText {
             .expect("state to be set");
         html! {
             <div ref={shared.info_text_ref[ctx.props().id].clone()} class={format!("info_text{}", ctx.props().id)}>
+            { if ctx.props().id == 1 { "It is CyanPlayer's turn" } else { "Hello" } }
             </div>
         }
     }
