@@ -1,10 +1,10 @@
+mod constants;
 mod state;
 mod yew_components;
-mod constants;
 
 use state::SharedState;
-use yew_components::Wrapper;
 use yew::prelude::*;
+use yew_components::Wrapper;
 
 #[function_component(App)]
 pub fn app() -> Html {

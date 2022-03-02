@@ -1,9 +1,9 @@
-use std::collections::VecDeque;
 use std::cell::{Cell, RefCell};
+use std::collections::VecDeque;
 use std::rc::Rc;
 use yew::prelude::*;
 
-#[derive(Clone, Debug, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Eq, Default)]
 pub struct MessageBus {
     queued: VecDeque<String>,
 }
@@ -16,14 +16,6 @@ impl MessageBus {
     pub fn push_msg(&mut self, msg: String) -> Result<(), String> {
         self.queued.push_back(msg);
         Ok(())
-    }
-}
-
-impl Default for MessageBus {
-    fn default() -> Self {
-        Self {
-            queued: VecDeque::new(),
-        }
     }
 }
 

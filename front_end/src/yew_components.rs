@@ -1,8 +1,8 @@
-use crate::state::{MessageBus, BoardState, Turn, SharedState};
 use crate::constants::{COLS, INFO_TEXT_HEIGHT, INFO_TEXT_MAX_ITEMS};
-use yew::prelude::*;
+use crate::state::{BoardState, MessageBus, SharedState, Turn};
 use std::cell::{Cell, RefCell};
 use std::rc::Rc;
+use yew::prelude::*;
 
 pub struct Slot {}
 
@@ -155,53 +155,68 @@ impl Component for Wrapper {
             .context::<SharedState>(Callback::noop())
             .expect("state to be set");
 
-        loop {
-            if let Some(msg) = shared.bus.borrow_mut().get_next_msg() {
-                let split_str: Vec<&str> = msg.split_whitespace().collect();
-                if split_str.len() == 2 {
-                    if split_str[0] == "pressed" {
-                        if let Ok(idx) = split_str[1].parse::<u8>() {
-                            let output_str: String = format!("Got {idx} pressed.");
+        while let Some(msg) = shared.bus.borrow_mut().get_next_msg() {
+            let split_str: Vec<&str> = msg.split_whitespace().collect();
+            if split_str.len() == 2 {
+                if split_str[0] == "pressed" {
+                    if let Ok(idx) = split_str[1].parse::<u8>() {
+                        let output_str: String = format!("Got {idx} pressed.");
+                        // DEBUG
+                        //log::info!("{}", &output_str);
+                        if let Some(info_text) =
+                            shared.info_text_ref.cast::<web_sys::HtmlParagraphElement>()
+                        {
+                            // create the new text to be appended in the output
+                            let window = web_sys::window().expect("no window exists");
+                            let document =
+                                window.document().expect("window should have a document");
+                            let p = document
+                                .create_element("p")
+                                .expect("document should be able to create <p>");
+                            p.set_text_content(Some(&output_str));
+
+                            // check if scrolled to top
+
                             // DEBUG
-                            //log::info!("{}", &output_str);
-                            if let Some(info_text) =
-                                shared.info_text_ref.cast::<web_sys::HtmlParagraphElement>()
-                            {
-                                // create the new text to be appended in the output
-                                let window = web_sys::window().expect("no window exists");
-                                let document =
-                                    window.document().expect("window should have a document");
-                                let p = document
-                                    .create_element("p")
-                                    .expect("document should be able to create <p>");
-                                p.set_text_content(Some(&output_str));
+                            //log::info!(
+                            //    "pre: scroll top is {}, scroll height is {}",
+                            //    info_text.scroll_top(),
+                            //    info_text.scroll_height()
+                            //);
+                            let at_top: bool = info_text.scroll_top()
+                                <= INFO_TEXT_HEIGHT - info_text.scroll_height();
 
-                                // check if scrolled to bottom
-                                let at_bottom: bool = info_text.scroll_top() + INFO_TEXT_HEIGHT
-                                    >= info_text.scroll_height();
-
-                                // append text to output
+                            // append text to output
+                            info_text
+                                .append_with_node_1(&p)
+                                .expect("should be able to append to info_text");
+                            while info_text.child_element_count() > INFO_TEXT_MAX_ITEMS {
                                 info_text
-                                    .append_with_node_1(&p)
-                                    .expect("should be able to append to info_text");
-                                while info_text.child_element_count() > INFO_TEXT_MAX_ITEMS {
-                                    info_text
-                                        .remove_child(&info_text.first_child().unwrap())
-                                        .expect("should be able to limit items in info_text");
-                                }
-
-                                // scroll to bottom only if at bottom
-                                if at_bottom {
-                                    info_text.set_scroll_top(info_text.scroll_height());
-                                }
-                            } else {
-                                log::warn!("Failed to get \"info_text\"");
+                                    .remove_child(&info_text.first_child().unwrap())
+                                    .expect("should be able to limit items in info_text");
                             }
+
+                            // scroll to bottom only if at bottom
+
+                            // DEBUG
+                            //log::info!("at_top is {}", if at_top { "true" } else { "false" });
+
+                            if at_top {
+                                info_text
+                                    .set_scroll_top(INFO_TEXT_HEIGHT - info_text.scroll_height());
+                            }
+
+                            // DEBUG
+                            //log::info!(
+                            //    "post: scroll top is {}, scroll height is {}",
+                            //    info_text.scroll_top(),
+                            //    info_text.scroll_height()
+                            //);
+                        } else {
+                            log::warn!("Failed to get \"info_text\"");
                         }
                     }
                 }
-            } else {
-                break;
             }
         }
     }
