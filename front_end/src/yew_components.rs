@@ -189,7 +189,7 @@ impl Component for Wrapper {
                                 .expect("should be able to limit items in info_text");
                         }
 
-                        // scroll to bottom only if at bottom
+                        // scroll to top only if at top
 
                         // DEBUG
                         //log::info!("at_top is {}", if at_top { "true" } else { "false" });
