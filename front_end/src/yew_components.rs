@@ -32,7 +32,7 @@ impl Component for Slot {
         let col = idx % COLS;
         let row = idx / COLS;
         html! {
-            <button class={format!("slot {} r{} c{}", state, row, col)} id={format!("{}", idx)} onclick={onclick}>
+            <button class={format!("slot {} r{} c{}", state, row, col)} id={format!("slot{}", idx)} onclick={onclick}>
             {idx}
             </button>
         }
@@ -74,62 +74,62 @@ impl Component for Wrapper {
             .expect("state to be set");
         html! {
             <div class="wrapper">
-                <Slot idx=0 state={shared.board[0].clone()} ref={shared.slot_refs[0].clone()} />
-                <Slot idx=1 state={shared.board[1].clone()} ref={shared.slot_refs[1].clone()} />
-                <Slot idx=2 state={shared.board[2].clone()} ref={shared.slot_refs[2].clone()} />
-                <Slot idx=3 state={shared.board[3].clone()} ref={shared.slot_refs[3].clone()} />
-                <Slot idx=4 state={shared.board[4].clone()} ref={shared.slot_refs[4].clone()} />
-                <Slot idx=5 state={shared.board[5].clone()} ref={shared.slot_refs[5].clone()} />
-                <Slot idx=6 state={shared.board[6].clone()} ref={shared.slot_refs[6].clone()} />
-                <Slot idx=7 state={shared.board[7].clone()} ref={shared.slot_refs[7].clone()} />
-                <Slot idx=8 state={shared.board[8].clone()} ref={shared.slot_refs[8].clone()} />
-                <Slot idx=9 state={shared.board[9].clone()} ref={shared.slot_refs[9].clone()} />
-                <Slot idx=10 state={shared.board[10].clone()} ref={shared.slot_refs[10].clone()} />
-                <Slot idx=11 state={shared.board[11].clone()} ref={shared.slot_refs[11].clone()} />
-                <Slot idx=12 state={shared.board[12].clone()} ref={shared.slot_refs[12].clone()} />
-                <Slot idx=13 state={shared.board[13].clone()} ref={shared.slot_refs[13].clone()} />
-                <Slot idx=14 state={shared.board[14].clone()} ref={shared.slot_refs[14].clone()} />
-                <Slot idx=15 state={shared.board[15].clone()} ref={shared.slot_refs[15].clone()} />
-                <Slot idx=16 state={shared.board[16].clone()} ref={shared.slot_refs[16].clone()} />
-                <Slot idx=17 state={shared.board[17].clone()} ref={shared.slot_refs[17].clone()} />
-                <Slot idx=18 state={shared.board[18].clone()} ref={shared.slot_refs[18].clone()} />
-                <Slot idx=19 state={shared.board[19].clone()} ref={shared.slot_refs[19].clone()} />
-                <Slot idx=20 state={shared.board[20].clone()} ref={shared.slot_refs[20].clone()} />
-                <Slot idx=21 state={shared.board[21].clone()} ref={shared.slot_refs[21].clone()} />
-                <Slot idx=22 state={shared.board[22].clone()} ref={shared.slot_refs[22].clone()} />
-                <Slot idx=23 state={shared.board[23].clone()} ref={shared.slot_refs[23].clone()} />
-                <Slot idx=24 state={shared.board[24].clone()} ref={shared.slot_refs[24].clone()} />
-                <Slot idx=25 state={shared.board[25].clone()} ref={shared.slot_refs[25].clone()} />
-                <Slot idx=26 state={shared.board[26].clone()} ref={shared.slot_refs[26].clone()} />
-                <Slot idx=27 state={shared.board[27].clone()} ref={shared.slot_refs[27].clone()} />
-                <Slot idx=28 state={shared.board[28].clone()} ref={shared.slot_refs[28].clone()} />
-                <Slot idx=29 state={shared.board[29].clone()} ref={shared.slot_refs[29].clone()} />
-                <Slot idx=30 state={shared.board[30].clone()} ref={shared.slot_refs[30].clone()} />
-                <Slot idx=31 state={shared.board[31].clone()} ref={shared.slot_refs[31].clone()} />
-                <Slot idx=32 state={shared.board[32].clone()} ref={shared.slot_refs[32].clone()} />
-                <Slot idx=33 state={shared.board[33].clone()} ref={shared.slot_refs[33].clone()} />
-                <Slot idx=34 state={shared.board[34].clone()} ref={shared.slot_refs[34].clone()} />
-                <Slot idx=35 state={shared.board[35].clone()} ref={shared.slot_refs[35].clone()} />
-                <Slot idx=36 state={shared.board[36].clone()} ref={shared.slot_refs[36].clone()} />
-                <Slot idx=37 state={shared.board[37].clone()} ref={shared.slot_refs[37].clone()} />
-                <Slot idx=38 state={shared.board[38].clone()} ref={shared.slot_refs[38].clone()} />
-                <Slot idx=39 state={shared.board[39].clone()} ref={shared.slot_refs[39].clone()} />
-                <Slot idx=40 state={shared.board[40].clone()} ref={shared.slot_refs[40].clone()} />
-                <Slot idx=41 state={shared.board[41].clone()} ref={shared.slot_refs[41].clone()} />
-                <Slot idx=42 state={shared.board[42].clone()} ref={shared.slot_refs[42].clone()} />
-                <Slot idx=43 state={shared.board[43].clone()} ref={shared.slot_refs[43].clone()} />
-                <Slot idx=44 state={shared.board[44].clone()} ref={shared.slot_refs[44].clone()} />
-                <Slot idx=45 state={shared.board[45].clone()} ref={shared.slot_refs[45].clone()} />
-                <Slot idx=46 state={shared.board[46].clone()} ref={shared.slot_refs[46].clone()} />
-                <Slot idx=47 state={shared.board[47].clone()} ref={shared.slot_refs[47].clone()} />
-                <Slot idx=48 state={shared.board[48].clone()} ref={shared.slot_refs[48].clone()} />
-                <Slot idx=49 state={shared.board[49].clone()} ref={shared.slot_refs[49].clone()} />
-                <Slot idx=50 state={shared.board[50].clone()} ref={shared.slot_refs[50].clone()} />
-                <Slot idx=51 state={shared.board[51].clone()} ref={shared.slot_refs[51].clone()} />
-                <Slot idx=52 state={shared.board[52].clone()} ref={shared.slot_refs[52].clone()} />
-                <Slot idx=53 state={shared.board[53].clone()} ref={shared.slot_refs[53].clone()} />
-                <Slot idx=54 state={shared.board[54].clone()} ref={shared.slot_refs[54].clone()} />
-                <Slot idx=55 state={shared.board[55].clone()} ref={shared.slot_refs[55].clone()} />
+                <Slot idx=0 state={shared.board[0].clone()} />
+                <Slot idx=1 state={shared.board[1].clone()} />
+                <Slot idx=2 state={shared.board[2].clone()} />
+                <Slot idx=3 state={shared.board[3].clone()} />
+                <Slot idx=4 state={shared.board[4].clone()} />
+                <Slot idx=5 state={shared.board[5].clone()} />
+                <Slot idx=6 state={shared.board[6].clone()} />
+                <Slot idx=7 state={shared.board[7].clone()} />
+                <Slot idx=8 state={shared.board[8].clone()} />
+                <Slot idx=9 state={shared.board[9].clone()} />
+                <Slot idx=10 state={shared.board[10].clone()} />
+                <Slot idx=11 state={shared.board[11].clone()} />
+                <Slot idx=12 state={shared.board[12].clone()} />
+                <Slot idx=13 state={shared.board[13].clone()} />
+                <Slot idx=14 state={shared.board[14].clone()} />
+                <Slot idx=15 state={shared.board[15].clone()} />
+                <Slot idx=16 state={shared.board[16].clone()} />
+                <Slot idx=17 state={shared.board[17].clone()} />
+                <Slot idx=18 state={shared.board[18].clone()} />
+                <Slot idx=19 state={shared.board[19].clone()} />
+                <Slot idx=20 state={shared.board[20].clone()} />
+                <Slot idx=21 state={shared.board[21].clone()} />
+                <Slot idx=22 state={shared.board[22].clone()} />
+                <Slot idx=23 state={shared.board[23].clone()} />
+                <Slot idx=24 state={shared.board[24].clone()} />
+                <Slot idx=25 state={shared.board[25].clone()} />
+                <Slot idx=26 state={shared.board[26].clone()} />
+                <Slot idx=27 state={shared.board[27].clone()} />
+                <Slot idx=28 state={shared.board[28].clone()} />
+                <Slot idx=29 state={shared.board[29].clone()} />
+                <Slot idx=30 state={shared.board[30].clone()} />
+                <Slot idx=31 state={shared.board[31].clone()} />
+                <Slot idx=32 state={shared.board[32].clone()} />
+                <Slot idx=33 state={shared.board[33].clone()} />
+                <Slot idx=34 state={shared.board[34].clone()} />
+                <Slot idx=35 state={shared.board[35].clone()} />
+                <Slot idx=36 state={shared.board[36].clone()} />
+                <Slot idx=37 state={shared.board[37].clone()} />
+                <Slot idx=38 state={shared.board[38].clone()} />
+                <Slot idx=39 state={shared.board[39].clone()} />
+                <Slot idx=40 state={shared.board[40].clone()} />
+                <Slot idx=41 state={shared.board[41].clone()} />
+                <Slot idx=42 state={shared.board[42].clone()} />
+                <Slot idx=43 state={shared.board[43].clone()} />
+                <Slot idx=44 state={shared.board[44].clone()} />
+                <Slot idx=45 state={shared.board[45].clone()} />
+                <Slot idx=46 state={shared.board[46].clone()} />
+                <Slot idx=47 state={shared.board[47].clone()} />
+                <Slot idx=48 state={shared.board[48].clone()} />
+                <Slot idx=49 state={shared.board[49].clone()} />
+                <Slot idx=50 state={shared.board[50].clone()} />
+                <Slot idx=51 state={shared.board[51].clone()} />
+                <Slot idx=52 state={shared.board[52].clone()} />
+                <Slot idx=53 state={shared.board[53].clone()} />
+                <Slot idx=54 state={shared.board[54].clone()} />
+                <Slot idx=55 state={shared.board[55].clone()} />
                 <div class="info_text_wrapper">
                     <InfoText id=0 />
                 </div>
@@ -177,9 +177,7 @@ impl Component for Wrapper {
                     });
 
                     // get handle to slot
-                    if let Some(slot) =
-                        shared.slot_refs[bottom_idx as usize].cast::<web_sys::HtmlButtonElement>()
-                    {
+                    if let Some(slot) = document.get_element_by_id(&format!("slot{bottom_idx}")) {
                         // set slot info
                         slot.set_class_name(&format!(
                             "slot {} r{} c{}",
