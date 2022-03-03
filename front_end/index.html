@@ -15,8 +15,8 @@
         grid-row: 9;
         grid-column: 1 / 8;
       }
-      div.info_text_side_wrapper {
-        grid-row: 1 / 9;
+      div.info_text_turn_wrapper {
+        grid-row: 1;
         grid-column: 8;
       }
       div.info_text0 {
@@ -30,14 +30,20 @@
         flex-direction: column-reverse;
       }
       div.info_text1 {
-        background-color: #DDD;
+        background-color: #333;
         width: 100%;
         height: 100%;
         overflow-x: hidden;
-        overflow-y: auto;
+        overflow-y: hidden;
         word-wrap: break-word;
         display: flex;
         flex-direction: column-reverse;
+      }
+      b.cyan {
+        color: #0FF;
+      }
+      b.magenta {
+        color: #F0F;
       }
       button.slot {
         width: 50px;

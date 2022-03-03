@@ -133,7 +133,7 @@ impl Component for Wrapper {
                 <div class="info_text_wrapper">
                     <InfoText id=0 />
                 </div>
-                <div class="info_text_side_wrapper">
+                <div class="info_text_turn_wrapper">
                     <InfoText id=1 />
                 </div>
             </div> // wrapper
@@ -197,7 +197,7 @@ impl Component for Wrapper {
                 //log::info!("{}", &output_str);
 
                 // info text below the grid
-                if let Some(info_text) = shared.info_text_ref[0].cast::<web_sys::HtmlDivElement>() {
+                if let Some(info_text) = document.get_element_by_id("info_text0") {
                     let height = info_text.client_height();
 
                     // create the new text to be appended in the output
@@ -249,14 +249,19 @@ impl Component for Wrapper {
                 }
 
                 // info text right of the grid
-                if let Some(info_text) = shared.info_text_ref[1].cast::<web_sys::HtmlDivElement>() {
+                if let Some(info_text) = document.get_element_by_id("info_text1") {
                     let height = info_text.client_height();
 
                     // create the new text to be appended in the output
                     let p = document
                         .create_element("p")
                         .expect("document should be able to create <p>");
-                    p.set_text_content(Some(&format!("It is {}'s turn", shared.turn.get())));
+                    let turn = shared.turn.get();
+                    p.set_inner_html(&format!(
+                        "<b class=\"{}\">It is {}'s turn</b>",
+                        turn.get_color(),
+                        turn
+                    ));
 
                     // check if scrolled to top
                     let at_top: bool = info_text.scroll_top() <= height - info_text.scroll_height();
@@ -265,7 +270,7 @@ impl Component for Wrapper {
                     info_text
                         .append_with_node_1(&p)
                         .expect("should be able to append to info_text");
-                    while info_text.child_element_count() > INFO_TEXT_MAX_ITEMS {
+                    while info_text.child_element_count() > 1 {
                         info_text
                             .remove_child(&info_text.first_child().unwrap())
                             .expect("should be able to limit items in info_text");
@@ -302,14 +307,28 @@ impl Component for InfoText {
     }
 
     fn view(&self, ctx: &Context<Self>) -> Html {
-        let (shared, _) = ctx
-            .link()
-            .context::<SharedState>(Callback::noop())
-            .expect("state to be set");
-        html! {
-            <div ref={shared.info_text_ref[ctx.props().id].clone()} class={format!("info_text{}", ctx.props().id)}>
-            { if ctx.props().id == 1 { "It is CyanPlayer's turn" } else { "Hello" } }
-            </div>
+        match ctx.props().id {
+            0 => {
+                html! {
+                    <div id={format!("info_text{}", ctx.props().id)} class={format!("info_text{}", ctx.props().id)}>
+                        {"Hello"}
+                    </div>
+                }
+            }
+            1 => {
+                html! {
+                    <div id={format!("info_text{}", ctx.props().id)} class={format!("info_text{}", ctx.props().id)}>
+                        <p>
+                            <b class={"cyan"}>
+                                {"It is CyanPlayer's turn"}
+                            </b>
+                        </p>
+                    </div>
+                }
+            }
+            _ => {
+                unreachable!();
+            }
         }
     }
 }

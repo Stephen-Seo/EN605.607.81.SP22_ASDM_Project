@@ -1,7 +1,6 @@
 use std::cell::Cell;
 use std::fmt::Display;
 use std::rc::Rc;
-use yew::prelude::*;
 
 #[derive(Copy, Clone, Debug, PartialEq, Eq)]
 pub enum BoardState {
@@ -41,11 +40,19 @@ impl Display for Turn {
     }
 }
 
+impl Turn {
+    pub fn get_color(&self) -> &str {
+        match *self {
+            Turn::CyanPlayer => "cyan",
+            Turn::MagentaPlayer => "magenta",
+        }
+    }
+}
+
 #[derive(Clone, Debug, PartialEq)]
 pub struct SharedState {
     pub board: [Rc<Cell<BoardState>>; 56],
     pub turn: Rc<Cell<Turn>>,
-    pub info_text_ref: [NodeRef; 2],
 }
 
 impl Default for SharedState {
@@ -111,8 +118,6 @@ impl Default for SharedState {
                 Rc::new(Cell::new(BoardState::default())),
             ],
             turn: Rc::new(Cell::new(Turn::CyanPlayer)),
-            // NodeRef array needs to have unique values
-            info_text_ref: [NodeRef::default(), NodeRef::default()],
         }
     }
 }
