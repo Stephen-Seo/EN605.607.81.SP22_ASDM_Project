@@ -1,5 +1,5 @@
 use crate::constants::{COLS, INFO_TEXT_MAX_ITEMS, ROWS};
-use crate::state::{BoardState, SharedState, Turn};
+use crate::state::{BoardState, SharedState};
 use std::cell::Cell;
 use std::rc::Rc;
 use yew::prelude::*;
@@ -155,26 +155,21 @@ impl Component for Wrapper {
                 let current_player = shared.turn.get();
 
                 // check if clicked on empty slot
-                if shared.board[idx as usize].get() == BoardState::Empty {
+                if shared.board[idx as usize].get().is_empty() {
                     // get bottom-most empty slot
                     while bottom_idx + COLS < ROWS * COLS
-                        && shared.board[(bottom_idx + COLS) as usize].get() == BoardState::Empty
+                        && shared.board[(bottom_idx + COLS) as usize].get().is_empty()
                     {
                         bottom_idx += COLS;
                     }
 
                     // apply current player's color to bottom-most empty slot
-                    shared.board[bottom_idx as usize].replace(match shared.turn.get() {
-                        Turn::CyanPlayer => BoardState::Cyan,
-                        Turn::MagentaPlayer => BoardState::Magenta,
-                    });
+                    shared.board[bottom_idx as usize].replace(shared.turn.get().into());
+
                     let current_board_state = shared.board[bottom_idx as usize].get();
 
                     // swap turn
-                    shared.turn.replace(match shared.turn.get() {
-                        Turn::CyanPlayer => Turn::MagentaPlayer,
-                        Turn::MagentaPlayer => Turn::CyanPlayer,
-                    });
+                    shared.turn.replace(shared.turn.get().get_opposite());
 
                     // get handle to slot
                     if let Some(slot) = document.get_element_by_id(&format!("slot{bottom_idx}")) {

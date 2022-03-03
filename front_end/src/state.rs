@@ -25,6 +25,21 @@ impl Display for BoardState {
     }
 }
 
+impl From<Turn> for BoardState {
+    fn from(t: Turn) -> Self {
+        match t {
+            Turn::CyanPlayer => BoardState::Cyan,
+            Turn::MagentaPlayer => BoardState::Magenta,
+        }
+    }
+}
+
+impl BoardState {
+    pub fn is_empty(&self) -> bool {
+        *self == BoardState::Empty
+    }
+}
+
 #[derive(Copy, Clone, Debug, PartialEq, Eq)]
 pub enum Turn {
     CyanPlayer,
@@ -40,11 +55,27 @@ impl Display for Turn {
     }
 }
 
+impl From<BoardState> for Turn {
+    fn from(board_state: BoardState) -> Self {
+        match board_state {
+            BoardState::Empty | BoardState::Cyan => Turn::CyanPlayer,
+            BoardState::Magenta => Turn::MagentaPlayer,
+        }
+    }
+}
+
 impl Turn {
     pub fn get_color(&self) -> &str {
         match *self {
             Turn::CyanPlayer => "cyan",
             Turn::MagentaPlayer => "magenta",
+        }
+    }
+
+    pub fn get_opposite(&self) -> Self {
+        match *self {
+            Turn::CyanPlayer => Turn::MagentaPlayer,
+            Turn::MagentaPlayer => Turn::CyanPlayer,
         }
     }
 }
