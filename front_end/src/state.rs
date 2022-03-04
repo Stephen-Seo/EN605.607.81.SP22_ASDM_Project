@@ -3,6 +3,21 @@ use std::fmt::Display;
 use std::rc::Rc;
 
 #[derive(Copy, Clone, Debug, PartialEq, Eq)]
+pub enum GameState {
+    MainMenu,
+    SinglePlayer,
+    LocalMultiplayer,
+    NetworkedMultiplayer,
+    PostGameResults(Turn),
+}
+
+impl Default for GameState {
+    fn default() -> Self {
+        GameState::MainMenu
+    }
+}
+
+#[derive(Copy, Clone, Debug, PartialEq, Eq)]
 pub enum BoardState {
     Empty,
     Cyan,
@@ -83,6 +98,7 @@ impl Turn {
 #[derive(Clone, Debug, PartialEq)]
 pub struct SharedState {
     pub board: [Rc<Cell<BoardState>>; 56],
+    pub game_state: Rc<Cell<GameState>>,
     pub turn: Rc<Cell<Turn>>,
 }
 
@@ -148,6 +164,7 @@ impl Default for SharedState {
                 Rc::new(Cell::new(BoardState::default())),
                 Rc::new(Cell::new(BoardState::default())),
             ],
+            game_state: Rc::new(Cell::new(GameState::default())),
             turn: Rc::new(Cell::new(Turn::CyanPlayer)),
         }
     }

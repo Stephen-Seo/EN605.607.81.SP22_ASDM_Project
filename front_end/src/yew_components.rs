@@ -1,8 +1,92 @@
 use crate::constants::{COLS, INFO_TEXT_MAX_ITEMS, ROWS};
-use crate::state::{BoardState, SharedState};
+use crate::state::{BoardState, GameState, SharedState, Turn};
 use std::cell::Cell;
 use std::rc::Rc;
 use yew::prelude::*;
+
+pub struct MainMenu {}
+
+pub enum MainMenuMessage {
+    SinglePlayer,
+    LocalMultiplayer,
+    NetworkedMultiplayer,
+}
+
+#[allow(clippy::from_over_into)]
+impl Into<GameState> for MainMenuMessage {
+    fn into(self) -> GameState {
+        match self {
+            MainMenuMessage::SinglePlayer => GameState::SinglePlayer,
+            MainMenuMessage::LocalMultiplayer => GameState::LocalMultiplayer,
+            MainMenuMessage::NetworkedMultiplayer => GameState::NetworkedMultiplayer,
+        }
+    }
+}
+
+impl Component for MainMenu {
+    type Message = MainMenuMessage;
+    type Properties = ();
+
+    fn create(_ctx: &Context<Self>) -> Self {
+        Self {}
+    }
+
+    fn view(&self, ctx: &Context<Self>) -> Html {
+        let (shared, _) = ctx
+            .link()
+            .context::<SharedState>(Callback::noop())
+            .expect("state to be set");
+        match shared.game_state.get() {
+            GameState::MainMenu => {
+                let onclick_local_multiplayer =
+                    ctx.link().callback(|_| MainMenuMessage::LocalMultiplayer);
+                html! {
+                    <div class={"menu"} id={"mainmenu"}>
+                        <b class={"menuText"}>{"Please pick a game mode."}</b>
+                        <button class={"menuSinglePlayer"}>
+                            {"Singleplayer"}
+                        </button>
+                        <button class={"menuLocalMultiplayer"} onclick={onclick_local_multiplayer}>
+                            {"Local Multiplayer"}
+                        </button>
+                        <button class={"menuMultiplayer"}>
+                            {"Networked Multiplayer"}
+                        </button>
+                    </div>
+                }
+            }
+            _ => html! {
+                <div class={"hidden_menu"} id={"mainmenu"}>
+                </div>
+            },
+        }
+    }
+
+    fn update(&mut self, ctx: &Context<Self>, msg: Self::Message) -> bool {
+        let (shared, _) = ctx
+            .link()
+            .context::<SharedState>(Callback::noop())
+            .expect("state to be set");
+        let window = web_sys::window().expect("no window exists");
+        let document = window.document().expect("window should have a document");
+
+        shared.game_state.replace(msg.into());
+        if shared.game_state.get() != GameState::MainMenu {
+            let mainmenu = document
+                .get_element_by_id("mainmenu")
+                .expect("mainmenu should exist");
+            mainmenu.set_class_name("hidden_menu");
+            mainmenu.set_inner_html("");
+
+            let info_text_turn = document
+                .get_element_by_id("info_text1")
+                .expect("info_text1 should exist");
+            info_text_turn.set_inner_html("<p><b class=\"cyan\">It is CyanPlayer's Turn</b></p>");
+        }
+
+        true
+    }
+}
 
 pub struct Slot {}
 
@@ -39,6 +123,15 @@ impl Component for Slot {
     }
 
     fn update(&mut self, ctx: &Context<Self>, msg: Self::Message) -> bool {
+        let (shared, _) = ctx
+            .link()
+            .context::<SharedState>(Callback::noop())
+            .expect("state to be set");
+
+        if shared.game_state.get() == GameState::MainMenu {
+            return false;
+        }
+
         match msg {
             SlotMessage::Press(idx) => {
                 // notify Wrapper with message
@@ -74,6 +167,7 @@ impl Component for Wrapper {
             .expect("state to be set");
         html! {
             <div class="wrapper">
+                <MainMenu />
                 <Slot idx=0 state={shared.board[0].clone()} />
                 <Slot idx=1 state={shared.board[1].clone()} />
                 <Slot idx=2 state={shared.board[2].clone()} />
@@ -302,6 +396,10 @@ impl Component for InfoText {
     }
 
     fn view(&self, ctx: &Context<Self>) -> Html {
+        let (shared, _) = ctx
+            .link()
+            .context::<SharedState>(Callback::noop())
+            .expect("state to be set");
         match ctx.props().id {
             0 => {
                 html! {
@@ -311,14 +409,36 @@ impl Component for InfoText {
                 }
             }
             1 => {
-                html! {
-                    <div id={format!("info_text{}", ctx.props().id)} class={format!("info_text{}", ctx.props().id)}>
-                        <p>
-                            <b class={"cyan"}>
-                                {"It is CyanPlayer's turn"}
-                            </b>
-                        </p>
-                    </div>
+                if shared.game_state.get() == GameState::MainMenu {
+                    html! {
+                        <div id={format!("info_text{}", ctx.props().id)} class={format!("info_text{}", ctx.props().id)}>
+                            <p>
+                                <b>
+                                    {"Waiting to choose game-mode..."}
+                                </b>
+                            </p>
+                        </div>
+                    }
+                } else if shared.turn.get() == Turn::CyanPlayer {
+                    html! {
+                        <div id={format!("info_text{}", ctx.props().id)} class={format!("info_text{}", ctx.props().id)}>
+                            <p>
+                                <b class={"cyan"}>
+                                    {"It is CyanPlayer's turn"}
+                                </b>
+                            </p>
+                        </div>
+                    }
+                } else {
+                    html! {
+                        <div id={format!("info_text{}", ctx.props().id)} class={format!("info_text{}", ctx.props().id)}>
+                            <p>
+                                <b class={"magenta"}>
+                                    {"It is MagentaPlayer's turn"}
+                                </b>
+                            </p>
+                        </div>
+                    }
                 }
             }
             _ => {

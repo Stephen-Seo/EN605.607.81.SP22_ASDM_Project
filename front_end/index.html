@@ -4,6 +4,44 @@
     <meta charset="utf-8" />
     <title>Four-Line Dropper</title>
     <style>
+      b {
+        color: #FFF;
+      }
+
+      div.menu {
+        background-color: #555;
+        position: absolute;
+        top: 25%;
+        left: 25%;
+        width: 50%;
+        height: 50%;
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 8px;
+        grid-auto-rows: 33%;
+      }
+      button.menuSinglePlayer {
+        grid-row: 2;
+        grid-column: 2;
+      }
+      button.menuLocalMultiplayer {
+        grid-row: 2;
+        grid-column: 3;
+      }
+      button.menuMultiplayer {
+        grid-row: 2;
+        grid-column: 4;
+      }
+      b.menuText {
+        color: #FFF;
+        grid-row: 1;
+        grid-column: 2 / 5;
+        line-height: 64px;
+        text-align: center;
+      }
+      div.hidden_menu {
+        display: none;
+      }
       div.wrapper {
         display: grid;
         grid-template-columns: repeat(7, 50px) 400px;
