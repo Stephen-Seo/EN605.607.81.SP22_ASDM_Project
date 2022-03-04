@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <office:document xmlns:presentation="urn:oasis:names:tc:opendocument:xmlns:presentation:1.0" xmlns:css3t="http://www.w3.org/TR/css3-text/" xmlns:grddl="http://www.w3.org/2003/g/data-view#" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:formx="urn:openoffice:names:experimental:ooxml-odf-interop:xmlns:form:1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:chart="urn:oasis:names:tc:opendocument:xmlns:chart:1.0" xmlns:svg="urn:oasis:names:tc:opendocument:xmlns:svg-compatible:1.0" xmlns:text="urn:oasis:names:tc:opendocument:xmlns:text:1.0" xmlns:oooc="http://openoffice.org/2004/calc" xmlns:style="urn:oasis:names:tc:opendocument:xmlns:style:1.0" xmlns:ooow="http://openoffice.org/2004/writer" xmlns:meta="urn:oasis:names:tc:opendocument:xmlns:meta:1.0" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:rpt="http://openoffice.org/2005/report" xmlns:draw="urn:oasis:names:tc:opendocument:xmlns:drawing:1.0" xmlns:config="urn:oasis:names:tc:opendocument:xmlns:config:1.0" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:fo="urn:oasis:names:tc:opendocument:xmlns:xsl-fo-compatible:1.0" xmlns:ooo="http://openoffice.org/2004/office" xmlns:office="urn:oasis:names:tc:opendocument:xmlns:office:1.0" xmlns:dr3d="urn:oasis:names:tc:opendocument:xmlns:dr3d:1.0" xmlns:table="urn:oasis:names:tc:opendocument:xmlns:table:1.0" xmlns:number="urn:oasis:names:tc:opendocument:xmlns:datastyle:1.0" xmlns:of="urn:oasis:names:tc:opendocument:xmlns:of:1.2" xmlns:calcext="urn:org:documentfoundation:names:experimental:calc:xmlns:calcext:1.0" xmlns:tableooo="http://openoffice.org/2009/table" xmlns:drawooo="http://openoffice.org/2010/draw" xmlns:loext="urn:org:documentfoundation:names:experimental:office:xmlns:loext:1.0" xmlns:dom="http://www.w3.org/2001/xml-events" xmlns:field="urn:openoffice:names:experimental:ooo-ms-interop:xmlns:field:1.0" xmlns:math="http://www.w3.org/1998/Math/MathML" xmlns:form="urn:oasis:names:tc:opendocument:xmlns:form:1.0" xmlns:script="urn:oasis:names:tc:opendocument:xmlns:script:1.0" xmlns:xforms="http://www.w3.org/2002/xforms" office:version="1.3" office:mimetype="application/vnd.oasis.opendocument.spreadsheet">
- <office:meta><meta:creation-date>2022-02-27T19:47:52.548879164</meta:creation-date><meta:generator>LibreOffice/7.3.0.3$Linux_X86_64 LibreOffice_project/30$Build-3</meta:generator><dc:date>2022-03-04T16:25:08.801447712</dc:date><meta:editing-duration>PT6H28M31S</meta:editing-duration><meta:editing-cycles>31</meta:editing-cycles><meta:document-statistic meta:table-count="1" meta:cell-count="83" meta:object-count="0"/></office:meta>
+ <office:meta><meta:creation-date>2022-02-27T19:47:52.548879164</meta:creation-date><meta:generator>LibreOffice/7.3.0.3$Linux_X86_64 LibreOffice_project/30$Build-3</meta:generator><dc:date>2022-03-04T16:31:46.269801708</dc:date><meta:editing-duration>PT6H31M49S</meta:editing-duration><meta:editing-cycles>35</meta:editing-cycles><meta:document-statistic meta:table-count="1" meta:cell-count="92" meta:object-count="0"/></office:meta>
  <office:settings>
   <config:config-item-set config:name="ooo:view-settings">
    <config:config-item config:name="VisibleAreaTop" config:type="int">0</config:config-item>
    <config:config-item config:name="VisibleAreaLeft" config:type="int">0</config:config-item>
    <config:config-item config:name="VisibleAreaWidth" config:type="int">26176</config:config-item>
-   <config:config-item config:name="VisibleAreaHeight" config:type="int">8518</config:config-item>
+   <config:config-item config:name="VisibleAreaHeight" config:type="int">9421</config:config-item>
    <config:config-item-map-indexed config:name="Views">
     <config:config-item-map-entry>
      <config:config-item config:name="ViewId" config:type="string">view1</config:config-item>
      <config:config-item-map-named config:name="Tables">
       <config:config-item-map-entry config:name="Sheet1">
-       <config:config-item config:name="CursorPositionX" config:type="int">10</config:config-item>
-       <config:config-item config:name="CursorPositionY" config:type="int">8</config:config-item>
+       <config:config-item config:name="CursorPositionX" config:type="int">12</config:config-item>
+       <config:config-item config:name="CursorPositionY" config:type="int">13</config:config-item>
        <config:config-item config:name="ActiveSplitRange" config:type="short">2</config:config-item>
        <config:config-item config:name="PositionLeft" config:type="int">0</config:config-item>
        <config:config-item config:name="PositionRight" config:type="int">0</config:config-item>
@@ -84,7 +84,7 @@
    <config:config-item config:name="LoadReadonly" config:type="boolean">false</config:config-item>
    <config:config-item config:name="PrinterName" config:type="string">Generic Printer</config:config-item>
    <config:config-item config:name="PrinterPaperFromSetup" config:type="boolean">false</config:config-item>
-   <config:config-item config:name="PrinterSetup" config:type="base64Binary">pAH+/0dlbmVyaWMgUHJpbnRlcgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAU0dFTlBSVAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWAAMAxQAAAAAAAAAIAFZUAAAkbQAASm9iRGF0YSAxCnByaW50ZXI9R2VuZXJpYyBQcmludGVyCm9yaWVudGF0aW9uPVBvcnRyYWl0CmNvcGllcz0xCmNvbGxhdGU9ZmFsc2UKbWFyZ2luYWRqdXN0bWVudD0wLDAsMCwwCmNvbG9yZGVwdGg9MjQKcHNsZXZlbD0wCnBkZmRldmljZT0xCmNvbG9yZGV2aWNlPTAKUFBEQ29udGV4dERhdGEKUGFnZVNpemU6TGV0dGVyAER1cGxleDpOb25lAAASAENPTVBBVF9EVVBMRVhfTU9ERQ8ARHVwbGV4TW9kZTo6T2Zm</config:config-item>
+   <config:config-item config:name="PrinterSetup" config:type="base64Binary">pAH+/0dlbmVyaWMgUHJpbnRlcgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAU0dFTlBSVAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWAAMAxQAAAAAAAAAIAFZUAAAkbQAASm9iRGF0YSAxCnByaW50ZXI9R2VuZXJpYyBQcmludGVyCm9yaWVudGF0aW9uPVBvcnRyYWl0CmNvcGllcz0xCmNvbGxhdGU9ZmFsc2UKbWFyZ2luYWRqdXN0bWVudD0wLDAsMCwwCmNvbG9yZGVwdGg9MjQKcHNsZXZlbD0wCnBkZmRldmljZT0xCmNvbG9yZGV2aWNlPTAKUFBEQ29udGV4dERhdGEKRHVwbGV4Ok5vbmUAUGFnZVNpemU6TGV0dGVyAAASAENPTVBBVF9EVVBMRVhfTU9ERQ8ARHVwbGV4TW9kZTo6T2Zm</config:config-item>
    <config:config-item config:name="RasterIsVisible" config:type="boolean">false</config:config-item>
    <config:config-item config:name="RasterResolutionX" config:type="int">1270</config:config-item>
    <config:config-item config:name="RasterResolutionY" config:type="int">1270</config:config-item>
@@ -238,8 +238,8 @@
    <style:table-cell-properties fo:background-color="#dde8cb" fo:border="0.74pt solid #000000"/>
    <style:text-properties fo:font-weight="bold" style:font-weight-asian="bold" style:font-weight-complex="bold"/>
   </style:style>
-  <style:style style:name="ce19" style:family="table-cell" style:parent-style-name="Default">
-   <style:table-cell-properties fo:background-color="transparent" fo:wrap-option="wrap" fo:border="0.74pt solid #000000"/>
+  <style:style style:name="ce38" style:family="table-cell" style:parent-style-name="Default">
+   <style:table-cell-properties fo:background-color="#b2b2b2" fo:wrap-option="wrap" fo:border="0.74pt solid #000000"/>
    <style:text-properties fo:font-style="normal" fo:font-weight="normal" style:font-style-asian="normal" style:font-weight-asian="normal" style:font-style-complex="normal" style:font-weight-complex="normal"/>
   </style:style>
   <style:style style:name="ce6" style:family="table-cell" style:parent-style-name="Default">
@@ -263,6 +263,10 @@
    <style:table-cell-properties fo:border="0.74pt solid #000000"/>
    <style:text-properties fo:font-weight="normal" style:font-weight-asian="normal" style:font-weight-complex="normal"/>
   </style:style>
+  <style:style style:name="ce21" style:family="table-cell" style:parent-style-name="Default">
+   <style:table-cell-properties fo:background-color="#b2b2b2" fo:border="0.74pt solid #000000"/>
+   <style:text-properties fo:font-weight="normal" style:font-weight-asian="normal" style:font-weight-complex="normal"/>
+  </style:style>
   <style:style style:name="ce13" style:family="table-cell" style:parent-style-name="Default">
    <style:table-cell-properties fo:background-color="#ffd7d7" fo:border="0.74pt solid #000000"/>
   </style:style>
@@ -272,34 +276,33 @@
   <style:style style:name="ce22" style:family="table-cell" style:parent-style-name="Default">
    <style:table-cell-properties fo:background-color="#dde8cb" fo:border="0.74pt solid #000000"/>
   </style:style>
+  <style:style style:name="ce41" style:family="table-cell" style:parent-style-name="Default">
+   <style:table-cell-properties fo:background-color="#b2b2b2" fo:border="0.74pt solid #000000"/>
+  </style:style>
   <style:style style:name="ce10" style:family="table-cell" style:parent-style-name="Default">
    <style:table-cell-properties fo:background-color="#ffffff" fo:border="0.74pt solid #000000"/>
-  </style:style>
-  <style:style style:name="ce21" style:family="table-cell" style:parent-style-name="Default">
-   <style:table-cell-properties fo:background-color="#b2b2b2" fo:border="0.74pt solid #000000"/>
-   <style:text-properties fo:font-weight="normal" style:font-weight-asian="normal" style:font-weight-complex="normal"/>
   </style:style>
   <style:style style:name="ce36" style:family="table-cell" style:parent-style-name="Default">
    <style:table-cell-properties fo:background-color="#ffffff" fo:border="0.74pt solid #000000"/>
    <style:text-properties fo:font-weight="normal" style:font-weight-asian="normal" style:font-weight-complex="normal"/>
   </style:style>
   <style:style style:name="gr1" style:family="graphic">
-   <style:graphic-properties draw:marker-start="Arrowheads_20_1" draw:marker-start-width="0.0787in" draw:marker-start-center="false" draw:fill="solid" draw:fill-color="#ffffc0" draw:auto-grow-height="true" draw:auto-grow-width="false" fo:min-height="0.6295in" fo:padding-top="0.0394in" fo:padding-bottom="0.0394in" fo:padding-left="0.0394in" fo:padding-right="0.0394in" draw:shadow="hidden" draw:shadow-offset-x="0.0394in" draw:shadow-offset-y="0.0394in" draw:caption-escape-direction="auto"/>
+   <style:graphic-properties draw:marker-start="Arrowheads_20_1" draw:marker-start-width="0.0787in" draw:marker-start-center="false" draw:fill="solid" draw:fill-color="#ffffc0" draw:auto-grow-height="true" draw:auto-grow-width="false" fo:min-height="1.711in" fo:padding-top="0.0394in" fo:padding-bottom="0.0394in" fo:padding-left="0.0394in" fo:padding-right="0.0394in" draw:shadow="hidden" draw:shadow-offset-x="0.0394in" draw:shadow-offset-y="0.0394in" draw:caption-escape-direction="auto"/>
    <style:paragraph-properties style:text-autospace="none" style:line-break="normal"/>
    <style:text-properties style:text-outline="false" style:text-line-through-style="none" style:text-line-through-type="none" style:font-name="Liberation Sans" fo:font-size="10pt" fo:language="en" fo:country="US" fo:font-style="normal" fo:text-shadow="none" style:text-underline-style="none" fo:font-weight="normal" style:text-underline-mode="continuous" style:text-overline-mode="continuous" style:text-line-through-mode="continuous" style:font-name-asian="Noto Sans CJK SC" style:font-size-asian="10pt" style:language-asian="zh" style:country-asian="CN" style:font-style-asian="normal" style:font-weight-asian="normal" style:font-name-complex="Noto Sans Devanagari" style:font-size-complex="10pt" style:language-complex="hi" style:country-complex="IN" style:font-style-complex="normal" style:font-weight-complex="normal" style:text-emphasize="none" style:font-relief="none" style:text-overline-style="none" style:text-overline-color="font-color" fo:hyphenate="false"/>
   </style:style>
   <style:style style:name="gr2" style:family="graphic">
-   <style:graphic-properties draw:marker-start="Arrowheads_20_1" draw:marker-start-width="0.0787in" draw:marker-start-center="false" draw:fill="solid" draw:fill-color="#ffffc0" draw:auto-grow-height="true" draw:auto-grow-width="false" fo:min-height="0.9335in" fo:padding-top="0.0394in" fo:padding-bottom="0.0394in" fo:padding-left="0.0394in" fo:padding-right="0.0394in" draw:shadow="hidden" draw:shadow-offset-x="0.0394in" draw:shadow-offset-y="0.0394in" draw:caption-escape-direction="auto"/>
+   <style:graphic-properties draw:marker-start="Arrowheads_20_1" draw:marker-start-width="0.0787in" draw:marker-start-center="false" draw:fill="solid" draw:fill-color="#ffffc0" draw:auto-grow-height="true" draw:auto-grow-width="false" fo:min-height="0.6295in" fo:padding-top="0.0394in" fo:padding-bottom="0.0394in" fo:padding-left="0.0394in" fo:padding-right="0.0394in" draw:shadow="hidden" draw:shadow-offset-x="0.0394in" draw:shadow-offset-y="0.0394in" draw:caption-escape-direction="auto"/>
    <style:paragraph-properties style:text-autospace="none" style:line-break="normal"/>
    <style:text-properties style:text-outline="false" style:text-line-through-style="none" style:text-line-through-type="none" style:font-name="Liberation Sans" fo:font-size="10pt" fo:language="en" fo:country="US" fo:font-style="normal" fo:text-shadow="none" style:text-underline-style="none" fo:font-weight="normal" style:text-underline-mode="continuous" style:text-overline-mode="continuous" style:text-line-through-mode="continuous" style:font-name-asian="Noto Sans CJK SC" style:font-size-asian="10pt" style:language-asian="zh" style:country-asian="CN" style:font-style-asian="normal" style:font-weight-asian="normal" style:font-name-complex="Noto Sans Devanagari" style:font-size-complex="10pt" style:language-complex="hi" style:country-complex="IN" style:font-style-complex="normal" style:font-weight-complex="normal" style:text-emphasize="none" style:font-relief="none" style:text-overline-style="none" style:text-overline-color="font-color" fo:hyphenate="false"/>
   </style:style>
   <style:style style:name="gr3" style:family="graphic">
-   <style:graphic-properties draw:marker-start="Arrowheads_20_1" draw:marker-start-width="0.0787in" draw:marker-start-center="false" draw:fill="solid" draw:fill-color="#ffffc0" draw:auto-grow-height="true" draw:auto-grow-width="false" fo:min-height="1.2445in" fo:padding-top="0.0394in" fo:padding-bottom="0.0394in" fo:padding-left="0.0394in" fo:padding-right="0.0394in" draw:shadow="hidden" draw:shadow-offset-x="0.0394in" draw:shadow-offset-y="0.0394in" draw:caption-escape-direction="auto"/>
+   <style:graphic-properties draw:marker-start="Arrowheads_20_1" draw:marker-start-width="0.0787in" draw:marker-start-center="false" draw:fill="solid" draw:fill-color="#ffffc0" draw:auto-grow-height="true" draw:auto-grow-width="false" fo:min-height="0.9335in" fo:padding-top="0.0394in" fo:padding-bottom="0.0394in" fo:padding-left="0.0394in" fo:padding-right="0.0394in" draw:shadow="hidden" draw:shadow-offset-x="0.0394in" draw:shadow-offset-y="0.0394in" draw:caption-escape-direction="auto"/>
    <style:paragraph-properties style:text-autospace="none" style:line-break="normal"/>
    <style:text-properties style:text-outline="false" style:text-line-through-style="none" style:text-line-through-type="none" style:font-name="Liberation Sans" fo:font-size="10pt" fo:language="en" fo:country="US" fo:font-style="normal" fo:text-shadow="none" style:text-underline-style="none" fo:font-weight="normal" style:text-underline-mode="continuous" style:text-overline-mode="continuous" style:text-line-through-mode="continuous" style:font-name-asian="Noto Sans CJK SC" style:font-size-asian="10pt" style:language-asian="zh" style:country-asian="CN" style:font-style-asian="normal" style:font-weight-asian="normal" style:font-name-complex="Noto Sans Devanagari" style:font-size-complex="10pt" style:language-complex="hi" style:country-complex="IN" style:font-style-complex="normal" style:font-weight-complex="normal" style:text-emphasize="none" style:font-relief="none" style:text-overline-style="none" style:text-overline-color="font-color" fo:hyphenate="false"/>
   </style:style>
   <style:style style:name="gr4" style:family="graphic">
-   <style:graphic-properties draw:marker-start="Arrowheads_20_1" draw:marker-start-width="0.0787in" draw:marker-start-center="false" draw:fill="solid" draw:fill-color="#ffffc0" draw:auto-grow-height="true" draw:auto-grow-width="false" fo:min-height="1.711in" fo:padding-top="0.0394in" fo:padding-bottom="0.0394in" fo:padding-left="0.0394in" fo:padding-right="0.0394in" draw:shadow="hidden" draw:shadow-offset-x="0.0394in" draw:shadow-offset-y="0.0394in" draw:caption-escape-direction="auto"/>
+   <style:graphic-properties draw:marker-start="Arrowheads_20_1" draw:marker-start-width="0.0787in" draw:marker-start-center="false" draw:fill="solid" draw:fill-color="#ffffc0" draw:auto-grow-height="true" draw:auto-grow-width="false" fo:min-height="1.2445in" fo:padding-top="0.0394in" fo:padding-bottom="0.0394in" fo:padding-left="0.0394in" fo:padding-right="0.0394in" draw:shadow="hidden" draw:shadow-offset-x="0.0394in" draw:shadow-offset-y="0.0394in" draw:caption-escape-direction="auto"/>
    <style:paragraph-properties style:text-autospace="none" style:line-break="normal"/>
    <style:text-properties style:text-outline="false" style:text-line-through-style="none" style:text-line-through-type="none" style:font-name="Liberation Sans" fo:font-size="10pt" fo:language="en" fo:country="US" fo:font-style="normal" fo:text-shadow="none" style:text-underline-style="none" fo:font-weight="normal" style:text-underline-mode="continuous" style:text-overline-mode="continuous" style:text-line-through-mode="continuous" style:font-name-asian="Noto Sans CJK SC" style:font-size-asian="10pt" style:language-asian="zh" style:country-asian="CN" style:font-style-asian="normal" style:font-weight-asian="normal" style:font-name-complex="Noto Sans Devanagari" style:font-size-complex="10pt" style:language-complex="hi" style:country-complex="IN" style:font-style-complex="normal" style:font-weight-complex="normal" style:text-emphasize="none" style:font-relief="none" style:text-overline-style="none" style:text-overline-color="font-color" fo:hyphenate="false"/>
   </style:style>
@@ -367,7 +370,7 @@
      <text:p><text:sheet-name>???</text:sheet-name><text:s/>(<text:title>???</text:title>)</text:p>
     </style:region-left>
     <style:region-right>
-     <text:p><text:date style:data-style-name="N2" text:date-value="2022-03-04">00/00/0000</text:date>, <text:time style:data-style-name="N2" text:time-value="16:23:18.137387533">00:00:00</text:time></text:p>
+     <text:p><text:date style:data-style-name="N2" text:date-value="2022-03-04">00/00/0000</text:date>, <text:time style:data-style-name="N2" text:time-value="16:31:07.141621556">00:00:00</text:time></text:p>
     </style:region-right>
    </style:header>
    <style:header-left style:display="false"/>
@@ -424,9 +427,8 @@
      <table:table-cell table:style-name="ce16" office:value-type="string" calcext:value-type="string">
       <text:p>Choose game type</text:p>
      </table:table-cell>
-     <table:table-cell table:style-name="ce19" table:number-columns-repeated="2"/>
-     <table:table-cell table:style-name="ce20"/>
-     <table:table-cell table:style-name="ce21" table:number-columns-repeated="6"/>
+     <table:table-cell table:style-name="ce38" table:number-columns-repeated="2"/>
+     <table:table-cell table:style-name="ce21" table:number-columns-repeated="7"/>
      <table:table-cell table:number-columns-repeated="1014"/>
     </table:table-row>
     <table:table-row table:style-name="ro1">
@@ -448,7 +450,43 @@
      <table:table-cell table:style-name="ce21" office:value-type="float" office:value="0" calcext:value-type="float">
       <office:annotation draw:style-name="gr1" draw:text-style-name="P2" svg:width="1.1413in" svg:height="1.7898in" svg:x="8.7642in" svg:y="0in" draw:caption-point-x="-0.2402in" draw:caption-point-y="0.3594in">
        <dc:date>2022-03-04T00:00:00</dc:date>
-       <text:p text:style-name="P1">Main menu was implemented, but allowing other game modes will be added once they are implemented (against AI and against networked player).</text:p>
+       <text:p text:style-name="P1"><text:span text:style-name="T1">Main menu was implemented, but allowing other game modes will be added once they are implemented (against AI and against networked player).</text:span></text:p>
+      </office:annotation>
+      <text:p>0</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce21" table:number-columns-repeated="2"/>
+     <table:table-cell table:number-columns-repeated="1014"/>
+    </table:table-row>
+    <table:table-row table:style-name="ro1">
+     <table:table-cell table:style-name="ce16" office:value-type="string" calcext:value-type="string">
+      <text:p>Game start</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce38"/>
+     <table:table-cell table:style-name="ce21"/>
+     <table:table-cell table:style-name="ce41" table:number-columns-repeated="3"/>
+     <table:table-cell table:style-name="ce21" table:number-columns-repeated="4"/>
+     <table:table-cell table:number-columns-repeated="1014"/>
+    </table:table-row>
+    <table:table-row table:style-name="ro1">
+     <table:table-cell table:style-name="ce17" office:value-type="string" calcext:value-type="string">
+      <text:p>Impl. Game start</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce6" office:value-type="string" calcext:value-type="string">
+      <text:p>done</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce20" office:value-type="float" office:value="2" calcext:value-type="float">
+      <text:p>2</text:p>
+     </table:table-cell>
+     <table:table-cell table:number-columns-repeated="3" office:value-type="float" office:value="2" calcext:value-type="float">
+      <text:p>2</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce36" office:value-type="float" office:value="2" calcext:value-type="float">
+      <text:p>2</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce21" office:value-type="float" office:value="0" calcext:value-type="float">
+      <office:annotation draw:style-name="gr2" draw:text-style-name="P2" svg:width="1.1413in" svg:height="0.7083in" svg:x="8.7642in" svg:y="0.1205in" draw:caption-point-x="-0.2402in" draw:caption-point-y="0.5945in">
+       <dc:date>2022-03-04T00:00:00</dc:date>
+       <text:p text:style-name="P1"><text:span text:style-name="T1">Game start implemented alongside main menu.</text:span></text:p>
       </office:annotation>
       <text:p>0</text:p>
      </table:table-cell>
@@ -459,9 +497,9 @@
      <table:table-cell table:style-name="ce16" office:value-type="string" calcext:value-type="string">
       <text:p>Visible “whose turn it is”</text:p>
      </table:table-cell>
-     <table:table-cell table:style-name="ce19"/>
-     <table:table-cell table:style-name="ce20"/>
-     <table:table-cell/>
+     <table:table-cell table:style-name="ce38"/>
+     <table:table-cell table:style-name="ce21"/>
+     <table:table-cell table:style-name="ce41"/>
      <table:table-cell table:style-name="ce21" table:number-columns-repeated="6"/>
      <table:table-cell table:number-columns-repeated="1014"/>
     </table:table-row>
@@ -479,14 +517,14 @@
       <text:p>2</text:p>
      </table:table-cell>
      <table:table-cell table:style-name="ce36" office:value-type="float" office:value="1" calcext:value-type="float">
-      <office:annotation draw:style-name="gr2" draw:text-style-name="P2" svg:width="1.1413in" svg:height="1.0122in" svg:x="6.9862in" svg:y="0.1205in" draw:caption-point-x="-0.2402in" draw:caption-point-y="0.5945in">
+      <office:annotation draw:style-name="gr3" draw:text-style-name="P2" svg:width="1.1413in" svg:height="1.0122in" svg:x="6.9862in" svg:y="0.476in" draw:caption-point-x="-0.2402in" draw:caption-point-y="0.5945in">
        <dc:date>2022-03-02T00:00:00</dc:date>
        <text:p text:style-name="P1"><text:span text:style-name="T1">Side text indicates turn, but would be nicer to color-code the text as well.</text:span></text:p>
       </office:annotation>
       <text:p>1</text:p>
      </table:table-cell>
      <table:table-cell table:style-name="ce21" office:value-type="float" office:value="0" calcext:value-type="float">
-      <office:annotation draw:style-name="gr1" draw:text-style-name="P2" svg:width="1.1413in" svg:height="0.7083in" svg:x="7.8752in" svg:y="0.1205in" draw:caption-point-x="-0.2402in" draw:caption-point-y="0.5945in">
+      <office:annotation draw:style-name="gr2" draw:text-style-name="P2" svg:width="1.1413in" svg:height="0.7083in" svg:x="7.8752in" svg:y="0.476in" draw:caption-point-x="-0.2402in" draw:caption-point-y="0.5945in">
        <dc:date>2022-03-03T00:00:00</dc:date>
        <text:p text:style-name="P1"><text:span text:style-name="T1">Turn indicator has been made much more obvious.</text:span></text:p>
       </office:annotation>
@@ -499,9 +537,9 @@
      <table:table-cell table:style-name="ce16" office:value-type="string" calcext:value-type="string">
       <text:p>Column Availability</text:p>
      </table:table-cell>
-     <table:table-cell table:style-name="ce19"/>
-     <table:table-cell table:style-name="ce20"/>
-     <table:table-cell/>
+     <table:table-cell table:style-name="ce38"/>
+     <table:table-cell table:style-name="ce21"/>
+     <table:table-cell table:style-name="ce41"/>
      <table:table-cell table:style-name="ce21" table:number-columns-repeated="6"/>
      <table:table-cell table:number-columns-repeated="1014"/>
     </table:table-row>
@@ -519,7 +557,7 @@
       <text:p>2</text:p>
      </table:table-cell>
      <table:table-cell table:style-name="ce21" office:value-type="float" office:value="0" calcext:value-type="float">
-      <office:annotation draw:style-name="gr1" draw:text-style-name="P2" svg:width="1.1413in" svg:height="0.7083in" svg:x="6.9862in" svg:y="0.476in" draw:caption-point-x="-0.2402in" draw:caption-point-y="0.5945in">
+      <office:annotation draw:style-name="gr2" draw:text-style-name="P2" svg:width="1.1413in" svg:height="0.7083in" svg:x="6.9862in" svg:y="0.8315in" draw:caption-point-x="-0.2402in" draw:caption-point-y="0.5945in">
        <dc:date>2022-03-02T00:00:00</dc:date>
        <text:p text:style-name="P1"><text:span text:style-name="T1">Color-coded buttons indicate in the UI if it is an open slot.</text:span></text:p>
       </office:annotation>
@@ -532,9 +570,9 @@
      <table:table-cell table:style-name="ce16" office:value-type="string" calcext:value-type="string">
       <text:p>Visible game board</text:p>
      </table:table-cell>
-     <table:table-cell table:style-name="ce19"/>
-     <table:table-cell table:style-name="ce20"/>
-     <table:table-cell/>
+     <table:table-cell table:style-name="ce38"/>
+     <table:table-cell table:style-name="ce21"/>
+     <table:table-cell table:style-name="ce41"/>
      <table:table-cell table:style-name="ce21" table:number-columns-repeated="6"/>
      <table:table-cell table:number-columns-repeated="1014"/>
     </table:table-row>
@@ -546,21 +584,21 @@
       <text:p>done</text:p>
      </table:table-cell>
      <table:table-cell table:style-name="ce20" office:value-type="float" office:value="6" calcext:value-type="float">
-      <office:annotation draw:style-name="gr1" draw:text-style-name="P2" svg:width="1.1413in" svg:height="0.7083in" svg:x="4.3197in" svg:y="1.0665in" draw:caption-point-x="-0.2402in" draw:caption-point-y="0.3594in">
+      <office:annotation draw:style-name="gr2" draw:text-style-name="P2" svg:width="1.1413in" svg:height="0.7083in" svg:x="4.3197in" svg:y="1.4224in" draw:caption-point-x="-0.2402in" draw:caption-point-y="0.3594in">
        <dc:date>2022-03-01T00:00:00</dc:date>
        <text:p text:style-name="P1"><text:span text:style-name="T1">Was originally “3” here.</text:span></text:p>
       </office:annotation>
       <text:p>6</text:p>
      </table:table-cell>
      <table:table-cell table:style-name="ce10" office:value-type="float" office:value="3" calcext:value-type="float">
-      <office:annotation draw:style-name="gr3" draw:text-style-name="P2" svg:width="1.1413in" svg:height="1.3232in" svg:x="5.2083in" svg:y="1.0665in" draw:caption-point-x="-0.2402in" draw:caption-point-y="0.3594in">
+      <office:annotation draw:style-name="gr4" draw:text-style-name="P2" svg:width="1.1413in" svg:height="1.3232in" svg:x="5.2083in" svg:y="1.4224in" draw:caption-point-x="-0.2402in" draw:caption-point-y="0.3594in">
        <dc:date>2022-03-01T00:00:00</dc:date>
        <text:p text:style-name="P1"><text:span text:style-name="T1">Took all of Monday to get a basic skeleton front-end working. EDIT: Ended up adding more, see next comment.</text:span></text:p>
       </office:annotation>
       <text:p>3</text:p>
      </table:table-cell>
      <table:table-cell table:style-name="ce21" office:value-type="float" office:value="0" calcext:value-type="float">
-      <office:annotation draw:style-name="gr4" draw:text-style-name="P2" svg:width="1.1413in" svg:height="1.7898in" svg:x="6.0972in" svg:y="1.0665in" draw:caption-point-x="-0.2402in" draw:caption-point-y="0.3594in">
+      <office:annotation draw:style-name="gr1" draw:text-style-name="P2" svg:width="1.1413in" svg:height="1.7898in" svg:x="6.0972in" svg:y="1.4224in" draw:caption-point-x="-0.2402in" draw:caption-point-y="0.3594in">
        <dc:date>2022-03-01T00:00:00</dc:date>
        <text:p text:style-name="P1"><text:span text:style-name="T1">Added more to the front-end skeleton necessary for a proper app to work, such as connectivity between components and an output-text-box.</text:span></text:p>
       </office:annotation>
@@ -586,7 +624,7 @@
       <text:p>2</text:p>
      </table:table-cell>
      <table:table-cell table:style-name="ce21" office:value-type="float" office:value="0" calcext:value-type="float">
-      <office:annotation draw:style-name="gr5" draw:text-style-name="P2" svg:width="1.1413in" svg:height="0.8567in" svg:x="6.9862in" svg:y="1.0094in" draw:caption-point-x="-0.2402in" draw:caption-point-y="0.5945in">
+      <office:annotation draw:style-name="gr5" draw:text-style-name="P2" svg:width="1.1413in" svg:height="0.8567in" svg:x="6.9862in" svg:y="1.365in" draw:caption-point-x="-0.2402in" draw:caption-point-y="0.5945in">
        <dc:date>2022-03-02T00:00:00</dc:date>
        <text:p text:style-name="P1"><text:span text:style-name="T1">Game board works as expected with the current implementation.</text:span></text:p>
       </office:annotation>
@@ -609,7 +647,7 @@
       <text:p>2</text:p>
      </table:table-cell>
      <table:table-cell table:style-name="ce21" office:value-type="float" office:value="0" calcext:value-type="float">
-      <office:annotation draw:style-name="gr1" draw:text-style-name="P2" svg:width="1.1413in" svg:height="0.7083in" svg:x="6.9862in" svg:y="1.1874in" draw:caption-point-x="-0.2402in" draw:caption-point-y="0.5945in">
+      <office:annotation draw:style-name="gr2" draw:text-style-name="P2" svg:width="1.1413in" svg:height="0.7083in" svg:x="6.9862in" svg:y="1.5429in" draw:caption-point-x="-0.2402in" draw:caption-point-y="0.5945in">
        <dc:date>2022-03-02T00:00:00</dc:date>
        <text:p text:style-name="P1"><text:span text:style-name="T1">Support for the two player colors are implemented.</text:span></text:p>
       </office:annotation>
@@ -622,9 +660,9 @@
      <table:table-cell table:style-name="ce16" office:value-type="string" calcext:value-type="string">
       <text:p>Game logic turn implementation</text:p>
      </table:table-cell>
-     <table:table-cell table:style-name="ce19"/>
-     <table:table-cell table:style-name="ce20"/>
-     <table:table-cell/>
+     <table:table-cell table:style-name="ce38"/>
+     <table:table-cell table:style-name="ce21"/>
+     <table:table-cell table:style-name="ce41"/>
      <table:table-cell table:style-name="ce21" table:number-columns-repeated="6"/>
      <table:table-cell table:number-columns-repeated="1014"/>
     </table:table-row>
@@ -633,7 +671,7 @@
       <text:p>Impl. Turn changer</text:p>
      </table:table-cell>
      <table:table-cell table:style-name="ce30" office:value-type="string" calcext:value-type="string">
-      <office:annotation draw:style-name="gr5" draw:text-style-name="P2" svg:width="1.1413in" svg:height="0.8567in" svg:x="3.3654in" svg:y="1.5429in" draw:caption-point-x="-0.2402in" draw:caption-point-y="0.5945in">
+      <office:annotation draw:style-name="gr5" draw:text-style-name="P2" svg:width="1.1413in" svg:height="0.8567in" svg:x="3.3654in" svg:y="1.8984in" draw:caption-point-x="-0.2402in" draw:caption-point-y="0.5945in">
        <dc:date>2022-03-02T00:00:00</dc:date>
        <text:p text:style-name="P1"><text:span text:style-name="T1">As mentioned in comment, may need to be reworked for multiplayer.</text:span></text:p>
       </office:annotation>
@@ -646,7 +684,7 @@
       <text:p>2</text:p>
      </table:table-cell>
      <table:table-cell table:style-name="ce36" office:value-type="float" office:value="2" calcext:value-type="float">
-      <office:annotation draw:style-name="gr6" draw:text-style-name="P2" svg:width="1.1413in" svg:height="1.4787in" svg:x="6.9862in" svg:y="1.5429in" draw:caption-point-x="-0.2402in" draw:caption-point-y="0.5945in">
+      <office:annotation draw:style-name="gr6" draw:text-style-name="P2" svg:width="1.1413in" svg:height="1.4787in" svg:x="6.9862in" svg:y="1.8984in" draw:caption-point-x="-0.2402in" draw:caption-point-y="0.5945in">
        <dc:date>2022-03-02T00:00:00</dc:date>
        <text:p text:style-name="P1"><text:span text:style-name="T1">Implemented for the “local multiplayer” state, but may need to be reworked when implementing actual multiplayer.</text:span></text:p>
       </office:annotation>
@@ -662,9 +700,10 @@
      <table:table-cell table:style-name="ce4" office:value-type="string" calcext:value-type="string">
       <text:p>Reactivity (constraint)</text:p>
      </table:table-cell>
-     <table:table-cell table:style-name="ce19"/>
-     <table:table-cell table:style-name="ce20"/>
-     <table:table-cell table:number-columns-repeated="1021"/>
+     <table:table-cell table:style-name="ce38"/>
+     <table:table-cell table:style-name="ce21"/>
+     <table:table-cell table:style-name="ce41" table:number-columns-repeated="7"/>
+     <table:table-cell table:number-columns-repeated="1014"/>
     </table:table-row>
     <table:table-row table:style-name="ro1">
      <table:table-cell table:number-columns-repeated="1024"/>
@@ -677,14 +716,11 @@
      <table:table-cell table:number-columns-repeated="2" table:style-name="ce13" office:value-type="float" office:value="17" calcext:value-type="float">
       <text:p>17</text:p>
      </table:table-cell>
-     <table:table-cell table:number-columns-repeated="2" table:style-name="ce13" office:value-type="float" office:value="20" calcext:value-type="float">
+     <table:table-cell table:number-columns-repeated="3" table:style-name="ce13" office:value-type="float" office:value="20" calcext:value-type="float">
       <text:p>20</text:p>
      </table:table-cell>
-     <table:table-cell table:style-name="ce13" table:formula="of:=SUM([.$C$3:.$C$13])" office:value-type="float" office:value="20" calcext:value-type="float">
-      <text:p>20</text:p>
-     </table:table-cell>
-     <table:table-cell table:style-name="ce13" table:formula="of:=SUM([.$C$3:.$C$13])" office:value-type="float" office:value="20" calcext:value-type="float">
-      <text:p>20</text:p>
+     <table:table-cell table:style-name="ce13" table:formula="of:=SUM([.$C$3:.$C$15])" office:value-type="float" office:value="22" calcext:value-type="float">
+      <text:p>22</text:p>
      </table:table-cell>
      <table:table-cell table:style-name="ce13" table:number-columns-repeated="2"/>
      <table:table-cell table:number-columns-repeated="1014"/>
@@ -703,13 +739,13 @@
      <table:table-cell table:style-name="ce14" office:value-type="float" office:value="12" calcext:value-type="float">
       <text:p>12</text:p>
      </table:table-cell>
-     <table:table-cell table:style-name="ce14" table:formula="of:=SUM([.$F2:.$F13])" office:value-type="float" office:value="5" calcext:value-type="float">
-      <text:p>5</text:p>
+     <table:table-cell table:style-name="ce14" table:formula="of:=SUM([.$F2:.$F15])" office:value-type="float" office:value="7" calcext:value-type="float">
+      <text:p>7</text:p>
      </table:table-cell>
-     <table:table-cell table:style-name="ce14" table:formula="of:=SUM([.G$3:.G$13])" office:value-type="float" office:value="4" calcext:value-type="float">
-      <text:p>4</text:p>
+     <table:table-cell table:style-name="ce14" table:formula="of:=SUM([.G$3:.G$15])" office:value-type="float" office:value="6" calcext:value-type="float">
+      <text:p>6</text:p>
      </table:table-cell>
-     <table:table-cell table:style-name="ce14" table:formula="of:=SUM([.H$3:.H$13])" office:value-type="float" office:value="2" calcext:value-type="float">
+     <table:table-cell table:style-name="ce14" table:formula="of:=SUM([.H$3:.H$15])" office:value-type="float" office:value="2" calcext:value-type="float">
       <text:p>2</text:p>
      </table:table-cell>
      <table:table-cell table:style-name="ce14" table:number-columns-repeated="2"/>
@@ -720,28 +756,28 @@
       <text:p>Hours Completed</text:p>
      </table:table-cell>
      <table:covered-table-cell table:style-name="ce29"/>
-     <table:table-cell table:style-name="ce22" table:formula="of:=[.C$16] - [.C$17]" office:value-type="float" office:value="0" calcext:value-type="float">
+     <table:table-cell table:style-name="ce22" table:formula="of:=[.C$18] - [.C$19]" office:value-type="float" office:value="0" calcext:value-type="float">
       <text:p>0</text:p>
      </table:table-cell>
-     <table:table-cell table:style-name="ce22" table:formula="of:=[.D$16] - [.D$17]" office:value-type="float" office:value="3" calcext:value-type="float">
+     <table:table-cell table:style-name="ce22" table:formula="of:=[.D$18] - [.D$19]" office:value-type="float" office:value="3" calcext:value-type="float">
       <text:p>3</text:p>
      </table:table-cell>
-     <table:table-cell table:style-name="ce22" table:formula="of:=[.E$16] - [.E$17]" office:value-type="float" office:value="8" calcext:value-type="float">
+     <table:table-cell table:style-name="ce22" table:formula="of:=[.E$18] - [.E$19]" office:value-type="float" office:value="8" calcext:value-type="float">
       <text:p>8</text:p>
      </table:table-cell>
-     <table:table-cell table:style-name="ce22" table:formula="of:=[.F$16] - [.F$17]" office:value-type="float" office:value="15" calcext:value-type="float">
-      <text:p>15</text:p>
+     <table:table-cell table:style-name="ce22" table:formula="of:=[.F$18] - [.F$19]" office:value-type="float" office:value="13" calcext:value-type="float">
+      <text:p>13</text:p>
      </table:table-cell>
-     <table:table-cell table:style-name="ce22" table:formula="of:=[.G$16] - [.G$17]" office:value-type="float" office:value="16" calcext:value-type="float">
-      <text:p>16</text:p>
+     <table:table-cell table:style-name="ce22" table:formula="of:=[.G$18] - [.G$19]" office:value-type="float" office:value="14" calcext:value-type="float">
+      <text:p>14</text:p>
      </table:table-cell>
-     <table:table-cell table:style-name="ce22" table:formula="of:=[.H$16] - [.H$17]" office:value-type="float" office:value="18" calcext:value-type="float">
-      <text:p>18</text:p>
+     <table:table-cell table:style-name="ce22" table:formula="of:=[.H$18] - [.H$19]" office:value-type="float" office:value="20" calcext:value-type="float">
+      <text:p>20</text:p>
      </table:table-cell>
      <table:table-cell table:style-name="ce22" table:number-columns-repeated="2"/>
      <table:table-cell table:number-columns-repeated="1014"/>
     </table:table-row>
-    <table:table-row table:style-name="ro1" table:number-rows-repeated="1048557">
+    <table:table-row table:style-name="ro1" table:number-rows-repeated="1048555">
      <table:table-cell table:number-columns-repeated="1024"/>
     </table:table-row>
     <table:table-row table:style-name="ro1">
