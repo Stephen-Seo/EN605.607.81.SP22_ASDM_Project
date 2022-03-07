@@ -115,12 +115,19 @@ pub fn get_ai_choice(
         AIDifficulty::Easy => pick_some_of_choices(AI_EASY_MAX_CHOICES),
         AIDifficulty::Normal => pick_some_of_choices(AI_NORMAL_MAX_CHOICES),
         AIDifficulty::Hard => {
+            let mut utilities: Vec<(usize, f64)> = utilities.into_iter().enumerate().collect();
+            // shuffle utilities for the cases where there are equivalent utilities
+            if utilities.len() > 1 {
+                for i in 1..utilities.len() {
+                    utilities.swap(i, thread_rng().gen_range(0..=i));
+                }
+            }
             // only pick the best option all the time
-            let mut max = 0.0f64;
+            let mut max = -1.0f64;
             let mut max_idx: usize = 0;
-            for (idx, utility) in utilities.iter().enumerate() {
-                if *utility > max {
-                    max = *utility;
+            for (idx, utility) in utilities {
+                if utility > max {
+                    max = utility;
                     max_idx = idx;
                 }
             }
