@@ -142,18 +142,48 @@ fn get_utility_for_slot(player: Turn, slot: SlotChoice, board: &BoardType) -> Op
         idx += COLS as usize;
     }
 
-    // check if placing a token here blocks a win
-    if get_block_win(player, idx, board) {
+    // check if placing a token here is a win
+    if get_block_amount(player.get_opposite(), idx, 3, board) {
         return Some(1.0);
     }
 
-    // TODO more impl here
+    // check if placing a token here blocks a win
+    if get_block_amount(player, idx, 3, board) {
+        return Some(0.9);
+    }
 
-    Some(0.0)
+    let mut utility: f64 = 0.5;
+
+    // check if placing a token here connects 2 pieces
+    if get_block_amount(player.get_opposite(), idx, 2, board) {
+        utility *= 1.5;
+        if utility >= 0.8 {
+            utility = 0.8;
+        }
+    }
+
+    // check if placing a token here blocks 2 pieces
+    if get_block_amount(player, idx, 2, board) {
+        utility *= 1.2;
+        if utility >= 0.8 {
+            utility = 0.8;
+        }
+    }
+
+    // check if placing a token here connects 1 piece
+    if get_block_amount(player.get_opposite(), idx, 1, board) {
+        utility *= 1.09;
+        if utility >= 0.8 {
+            utility = 0.8;
+        }
+    }
+
+    Some(utility)
 }
 
-/// Returns true if placing a token at idx will block the opposite player from winning
-fn get_block_win(player: Turn, idx: usize, board: &BoardType) -> bool {
+/// Returns true if placing a token at idx will block the opposite player that
+/// has "amount" in a line (horizontally, vertically, and diagonally).
+fn get_block_amount(player: Turn, idx: usize, amount: usize, board: &BoardType) -> bool {
     let opposite = player.get_opposite();
 
     // setup for checks
@@ -165,7 +195,7 @@ fn get_block_win(player: Turn, idx: usize, board: &BoardType) -> bool {
         temp_idx -= 1;
         if board[temp_idx].get() == opposite.into() {
             count += 1;
-            if count >= 3 {
+            if count >= amount {
                 return true;
             }
         } else {
@@ -180,7 +210,7 @@ fn get_block_win(player: Turn, idx: usize, board: &BoardType) -> bool {
         temp_idx += 1;
         if board[temp_idx].get() == opposite.into() {
             count += 1;
-            if count >= 3 {
+            if count >= amount {
                 return true;
             }
         } else {
@@ -195,7 +225,7 @@ fn get_block_win(player: Turn, idx: usize, board: &BoardType) -> bool {
         temp_idx += COLS as usize;
         if board[temp_idx].get() == opposite.into() {
             count += 1;
-            if count >= 3 {
+            if count >= amount {
                 return true;
             }
         } else {
@@ -210,7 +240,7 @@ fn get_block_win(player: Turn, idx: usize, board: &BoardType) -> bool {
         temp_idx = temp_idx - 1 + COLS as usize;
         if board[temp_idx].get() == opposite.into() {
             count += 1;
-            if count >= 3 {
+            if count >= amount {
                 return true;
             }
         } else {
@@ -227,7 +257,7 @@ fn get_block_win(player: Turn, idx: usize, board: &BoardType) -> bool {
         temp_idx = temp_idx + 1 + COLS as usize;
         if board[temp_idx].get() == opposite.into() {
             count += 1;
-            if count >= 3 {
+            if count >= amount {
                 return true;
             }
         } else {
@@ -242,7 +272,7 @@ fn get_block_win(player: Turn, idx: usize, board: &BoardType) -> bool {
         temp_idx = temp_idx - 1 - COLS as usize;
         if board[temp_idx].get() == opposite.into() {
             count += 1;
-            if count >= 3 {
+            if count >= amount {
                 return true;
             }
         } else {
@@ -257,7 +287,7 @@ fn get_block_win(player: Turn, idx: usize, board: &BoardType) -> bool {
         temp_idx = temp_idx + 1 - COLS as usize;
         if board[temp_idx].get() == opposite.into() {
             count += 1;
-            if count >= 3 {
+            if count >= amount {
                 return true;
             }
         } else {
