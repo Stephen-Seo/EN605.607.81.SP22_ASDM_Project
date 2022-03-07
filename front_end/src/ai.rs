@@ -34,7 +34,7 @@ impl From<SlotChoice> for usize {
             SlotChoice::Slot4 => 4,
             SlotChoice::Slot5 => 5,
             SlotChoice::Slot6 => 6,
-            SlotChoice::Invalid => 10,
+            SlotChoice::Invalid => (ROWS * COLS) as usize,
         }
     }
 }
