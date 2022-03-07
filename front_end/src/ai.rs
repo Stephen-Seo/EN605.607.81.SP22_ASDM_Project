@@ -78,9 +78,17 @@ pub fn get_ai_choice(
         return Err("All slots are full".into());
     }
 
+    // shuffle utilities for the cases where there are equivalent utilities
+    let mut utilities: Vec<(usize, f64)> = utilities.into_iter().enumerate().collect();
+    if utilities.len() > 1 {
+        for i in 1..utilities.len() {
+            utilities.swap(i, thread_rng().gen_range(0..=i));
+        }
+    }
+
     let pick_some_of_choices = |amount: usize| -> Result<SlotChoice, String> {
         let mut maximums: BTreeMap<i64, usize> = BTreeMap::new();
-        for (idx, utility) in utilities.iter().enumerate() {
+        for (idx, utility) in &utilities {
             // f64 cannot be used as Key since it doesn't implement Ord.
             // Use i64 as a substitute, noting that the map stores in ascending
             // order.
@@ -88,7 +96,7 @@ pub fn get_ai_choice(
             while maximums.contains_key(&utility_value) {
                 utility_value += thread_rng().gen_range(-3..=3);
             }
-            maximums.insert(utility_value, idx);
+            maximums.insert(utility_value, *idx);
         }
 
         // don't pick from more items than what exists
@@ -108,6 +116,7 @@ pub fn get_ai_choice(
         let rand_idx = maximums.len() - 1 - random_number;
         // turns the map into a vector of (key, value), then pick out of the
         // last few values by index the "value" which is the SlotChoice.
+        // This is done because BTreeMap stores keys in ascending order.
         Ok((*maximums.iter().collect::<Vec<(&i64, &usize)>>()[rand_idx].1).into())
     };
 
@@ -115,13 +124,6 @@ pub fn get_ai_choice(
         AIDifficulty::Easy => pick_some_of_choices(AI_EASY_MAX_CHOICES),
         AIDifficulty::Normal => pick_some_of_choices(AI_NORMAL_MAX_CHOICES),
         AIDifficulty::Hard => {
-            let mut utilities: Vec<(usize, f64)> = utilities.into_iter().enumerate().collect();
-            // shuffle utilities for the cases where there are equivalent utilities
-            if utilities.len() > 1 {
-                for i in 1..utilities.len() {
-                    utilities.swap(i, thread_rng().gen_range(0..=i));
-                }
-            }
             // only pick the best option all the time
             let mut max = -1.0f64;
             let mut max_idx: usize = 0;
