@@ -1,7 +1,7 @@
+mod ai;
 mod constants;
 mod state;
 mod yew_components;
-mod ai;
 
 use state::SharedState;
 use yew::prelude::*;
