@@ -95,9 +95,11 @@ impl Turn {
     }
 }
 
+pub type BoardType = [Rc<Cell<BoardState>>; 56];
+
 #[derive(Clone, Debug, PartialEq)]
 pub struct SharedState {
-    pub board: [Rc<Cell<BoardState>>; 56],
+    pub board: BoardType,
     pub game_state: Rc<Cell<GameState>>,
     pub turn: Rc<Cell<Turn>>,
 }
