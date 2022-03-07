@@ -12,17 +12,6 @@ pub enum MainMenuMessage {
     NetworkedMultiplayer,
 }
 
-#[allow(clippy::from_over_into)]
-impl Into<GameState> for MainMenuMessage {
-    fn into(self) -> GameState {
-        match self {
-            MainMenuMessage::SinglePlayer => GameState::SinglePlayer,
-            MainMenuMessage::LocalMultiplayer => GameState::LocalMultiplayer,
-            MainMenuMessage::NetworkedMultiplayer => GameState::NetworkedMultiplayer,
-        }
-    }
-}
-
 impl Component for MainMenu {
     type Message = MainMenuMessage;
     type Properties = ();

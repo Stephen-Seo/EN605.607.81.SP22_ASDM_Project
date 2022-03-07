@@ -1,3 +1,4 @@
+use crate::yew_components::MainMenuMessage;
 use std::cell::Cell;
 use std::fmt::Display;
 use std::rc::Rc;
@@ -14,6 +15,16 @@ pub enum GameState {
 impl Default for GameState {
     fn default() -> Self {
         GameState::MainMenu
+    }
+}
+
+impl From<MainMenuMessage> for GameState {
+    fn from(msg: MainMenuMessage) -> Self {
+        match msg {
+            MainMenuMessage::SinglePlayer => GameState::SinglePlayer,
+            MainMenuMessage::LocalMultiplayer => GameState::LocalMultiplayer,
+            MainMenuMessage::NetworkedMultiplayer => GameState::NetworkedMultiplayer,
+        }
     }
 }
 
