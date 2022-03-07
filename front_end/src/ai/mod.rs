@@ -74,20 +74,37 @@ pub fn get_ai_choice(
         }
     }
 
+    if utilities.is_empty() {
+        return Err("All slots are full".into());
+    }
+
     let pick_some_of_choices = |amount: usize| -> Result<SlotChoice, String> {
         let mut maximums: BTreeMap<i64, usize> = BTreeMap::new();
         for (idx, utility) in utilities.iter().enumerate() {
-            if *utility <= 0.0 {
-                continue;
+            // f64 cannot be used as Key since it doesn't implement Ord.
+            // Use i64 as a substitute, noting that the map stores in ascending
+            // order.
+            let mut utility_value = (utility * 10000.0) as i64;
+            while maximums.contains_key(&utility_value) {
+                utility_value += thread_rng().gen_range(-3..=3);
             }
-            maximums.insert((utility * 10000.0) as i64, idx);
+            maximums.insert(utility_value, idx);
         }
+
+        // don't pick from more items than what exists
         let mod_amount = if maximums.len() < amount {
             maximums.len()
         } else {
             amount
         };
-        let random_number: usize = thread_rng().gen::<usize>() % mod_amount;
+
+        // don't use random if only 1 item is to be picked
+        let random_number: usize = if mod_amount > 1 {
+            thread_rng().gen::<usize>() % mod_amount
+        } else {
+            0
+        };
+
         let rand_idx = maximums.len() - 1 - random_number;
         // turns the map into a vector of (key, value), then pick out of the
         // last few values by index the "value" which is the SlotChoice.
