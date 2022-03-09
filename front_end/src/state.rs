@@ -81,7 +81,7 @@ impl BoardState {
         match self {
             BoardState::Empty => BoardState::Empty,
             BoardState::Cyan | BoardState::CyanWin => BoardState::Cyan,
-            BoardState::Magenta | BoardState::MagentaWin => BoardState::MagentaWin,
+            BoardState::Magenta | BoardState::MagentaWin => BoardState::Magenta,
         }
     }
 }
