@@ -1,9 +1,8 @@
 use std::collections::BTreeMap;
 
 use crate::constants::{AI_EASY_MAX_CHOICES, AI_NORMAL_MAX_CHOICES, COLS, ROWS};
+use crate::random_helper::get_seeded_random;
 use crate::state::{BoardState, BoardType, Turn};
-
-use rand::{thread_rng, Rng};
 
 #[derive(Copy, Clone, Debug, PartialEq, Eq)]
 pub enum AIDifficulty {
@@ -63,6 +62,8 @@ pub fn get_ai_choice(
     player: Turn,
     board: &BoardType,
 ) -> Result<SlotChoice, String> {
+    let mut rng = get_seeded_random()?;
+
     let mut utilities = Vec::with_capacity(COLS as usize);
     for i in 0..(COLS as usize) {
         let slot = i.into();
@@ -82,11 +83,11 @@ pub fn get_ai_choice(
     let mut utilities: Vec<(usize, f64)> = utilities.into_iter().enumerate().collect();
     if utilities.len() > 1 {
         for i in 1..utilities.len() {
-            utilities.swap(i, thread_rng().gen_range(0..=i));
+            utilities.swap(i, rng.rand_range(0..((i + 1) as u32)) as usize);
         }
     }
 
-    let pick_some_of_choices = |amount: usize| -> Result<SlotChoice, String> {
+    let mut pick_some_of_choices = |amount: usize| -> Result<SlotChoice, String> {
         let mut maximums: BTreeMap<i64, usize> = BTreeMap::new();
         for (idx, utility) in &utilities {
             // f64 cannot be used as Key since it doesn't implement Ord.
@@ -94,7 +95,7 @@ pub fn get_ai_choice(
             // order.
             let mut utility_value = (utility * 10000.0) as i64;
             while maximums.contains_key(&utility_value) {
-                utility_value += thread_rng().gen_range(-3..=3);
+                utility_value += rng.rand_range(0..7) as i64 - 3;
             }
             maximums.insert(utility_value, *idx);
         }
@@ -108,7 +109,7 @@ pub fn get_ai_choice(
 
         // don't use random if only 1 item is to be picked
         let random_number: usize = if mod_amount > 1 {
-            thread_rng().gen::<usize>() % mod_amount
+            rng.rand_u32() as usize % mod_amount
         } else {
             0
         };
