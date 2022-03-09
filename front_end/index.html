@@ -143,6 +143,20 @@
       button.magenta {
         background: #F0F;
       }
+      button.win {
+        animation-duration: 400ms;
+        animation-name: blink;
+        animation-iteration-count: infinite;
+        animation-direction: alternate;
+      }
+      @keyframes blink {
+        from {
+          opacity: 1;
+        }
+        to {
+          opacity: 0;
+        }
+      }
     </style>
   </head>
 </html>

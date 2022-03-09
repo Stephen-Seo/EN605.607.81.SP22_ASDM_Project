@@ -33,6 +33,8 @@ pub enum BoardState {
     Empty,
     Cyan,
     Magenta,
+    CyanWin,
+    MagentaWin,
 }
 
 impl Default for BoardState {
@@ -46,7 +48,9 @@ impl Display for BoardState {
         match *self {
             BoardState::Empty => f.write_str("open"),
             BoardState::Cyan => f.write_str("cyan"),
+            BoardState::CyanWin => f.write_str("cyan win"),
             BoardState::Magenta => f.write_str("magenta"),
+            BoardState::MagentaWin => f.write_str("magenta win"),
         }
     }
 }
@@ -63,6 +67,22 @@ impl From<Turn> for BoardState {
 impl BoardState {
     pub fn is_empty(&self) -> bool {
         *self == BoardState::Empty
+    }
+
+    pub fn into_win(&self) -> Self {
+        match *self {
+            BoardState::Empty => BoardState::Empty,
+            BoardState::Cyan | BoardState::CyanWin => BoardState::CyanWin,
+            BoardState::Magenta | BoardState::MagentaWin => BoardState::MagentaWin,
+        }
+    }
+
+    pub fn from_win(&self) -> Self {
+        match *self {
+            BoardState::Empty => BoardState::Empty,
+            BoardState::Cyan | BoardState::CyanWin => BoardState::Cyan,
+            BoardState::Magenta | BoardState::MagentaWin => BoardState::MagentaWin,
+        }
     }
 }
 
@@ -84,8 +104,8 @@ impl Display for Turn {
 impl From<BoardState> for Turn {
     fn from(board_state: BoardState) -> Self {
         match board_state {
-            BoardState::Empty | BoardState::Cyan => Turn::CyanPlayer,
-            BoardState::Magenta => Turn::MagentaPlayer,
+            BoardState::Empty | BoardState::Cyan | BoardState::CyanWin => Turn::CyanPlayer,
+            BoardState::Magenta | BoardState::MagentaWin => Turn::MagentaPlayer,
         }
     }
 }

@@ -1,6 +1,6 @@
 use crate::constants::{COLS, INFO_TEXT_MAX_ITEMS, ROWS};
-use crate::game_logic::check_win_draw;
-use crate::html_helper::{append_to_info_text, get_window_document};
+use crate::game_logic::{check_win_draw, WinType};
+use crate::html_helper::{append_to_info_text, element_append_class, get_window_document};
 use crate::state::{BoardState, GameState, SharedState, Turn};
 
 use std::cell::Cell;
@@ -281,7 +281,7 @@ impl Component for Wrapper {
 
                 // check for win
                 let check_win_draw_opt = check_win_draw(&shared.board);
-                if let Some(endgame_state) = check_win_draw_opt {
+                if let Some((endgame_state, win_type)) = check_win_draw_opt {
                     if endgame_state == BoardState::Empty {
                         // draw
                         let text_append_result = append_to_info_text(
@@ -306,6 +306,175 @@ impl Component for Wrapper {
                         );
                         if let Err(e) = text_append_result {
                             log::warn!("ERROR: text append to info_text0 failed: {}", e);
+                        }
+
+                        match win_type {
+                            WinType::Horizontal(idx) => {
+                                let append_result =
+                                    element_append_class(&document, &format!("slot{}", idx), "win");
+                                if let Err(e) = append_result {
+                                    log::warn!("ERROR: element_append_class failed: {}", e);
+                                }
+                                let append_result = element_append_class(
+                                    &document,
+                                    &format!("slot{}", idx + 1),
+                                    "win",
+                                );
+                                if let Err(e) = append_result {
+                                    log::warn!("ERROR: element_append_class failed: {}", e);
+                                }
+                                let append_result = element_append_class(
+                                    &document,
+                                    &format!("slot{}", idx + 2),
+                                    "win",
+                                );
+                                if let Err(e) = append_result {
+                                    log::warn!("ERROR: element_append_class failed: {}", e);
+                                }
+                                let append_result = element_append_class(
+                                    &document,
+                                    &format!("slot{}", idx + 3),
+                                    "win",
+                                );
+                                if let Err(e) = append_result {
+                                    log::warn!("ERROR: element_append_class failed: {}", e);
+                                }
+
+                                shared.board[idx].replace(shared.board[idx].get().into_win());
+                                shared.board[idx + 1]
+                                    .replace(shared.board[idx + 1].get().into_win());
+                                shared.board[idx + 2]
+                                    .replace(shared.board[idx + 2].get().into_win());
+                                shared.board[idx + 3]
+                                    .replace(shared.board[idx + 3].get().into_win());
+                            }
+                            WinType::Vertical(idx) => {
+                                let append_result =
+                                    element_append_class(&document, &format!("slot{}", idx), "win");
+                                if let Err(e) = append_result {
+                                    log::warn!("ERROR: element_append_class failed: {}", e);
+                                }
+                                let append_result = element_append_class(
+                                    &document,
+                                    &format!("slot{}", idx + 1 * (COLS as usize)),
+                                    "win",
+                                );
+                                if let Err(e) = append_result {
+                                    log::warn!("ERROR: element_append_class failed: {}", e);
+                                }
+                                let append_result = element_append_class(
+                                    &document,
+                                    &format!("slot{}", idx + 2 * (COLS as usize)),
+                                    "win",
+                                );
+                                if let Err(e) = append_result {
+                                    log::warn!("ERROR: element_append_class failed: {}", e);
+                                }
+                                let append_result = element_append_class(
+                                    &document,
+                                    &format!("slot{}", idx + 3 * (COLS as usize)),
+                                    "win",
+                                );
+                                if let Err(e) = append_result {
+                                    log::warn!("ERROR: element_append_class failed: {}", e);
+                                }
+
+                                shared.board[idx].replace(shared.board[idx].get().into_win());
+                                shared.board[idx + 1 * (COLS as usize)].replace(
+                                    shared.board[idx + 1 * (COLS as usize)].get().into_win(),
+                                );
+                                shared.board[idx + 2 * (COLS as usize)].replace(
+                                    shared.board[idx + 2 * (COLS as usize)].get().into_win(),
+                                );
+                                shared.board[idx + 3 * (COLS as usize)].replace(
+                                    shared.board[idx + 3 * (COLS as usize)].get().into_win(),
+                                );
+                            }
+                            WinType::DiagonalUp(idx) => {
+                                let append_result =
+                                    element_append_class(&document, &format!("slot{}", idx), "win");
+                                if let Err(e) = append_result {
+                                    log::warn!("ERROR: element_append_class failed: {}", e);
+                                }
+                                let append_result = element_append_class(
+                                    &document,
+                                    &format!("slot{}", idx + 1 - 1 * (COLS as usize)),
+                                    "win",
+                                );
+                                if let Err(e) = append_result {
+                                    log::warn!("ERROR: element_append_class failed: {}", e);
+                                }
+                                let append_result = element_append_class(
+                                    &document,
+                                    &format!("slot{}", idx + 2 - 2 * (COLS as usize)),
+                                    "win",
+                                );
+                                if let Err(e) = append_result {
+                                    log::warn!("ERROR: element_append_class failed: {}", e);
+                                }
+                                let append_result = element_append_class(
+                                    &document,
+                                    &format!("slot{}", idx + 3 - 3 * (COLS as usize)),
+                                    "win",
+                                );
+                                if let Err(e) = append_result {
+                                    log::warn!("ERROR: element_append_class failed: {}", e);
+                                }
+
+                                shared.board[idx].replace(shared.board[idx].get().into_win());
+                                shared.board[idx + 1 - 1 * (COLS as usize)].replace(
+                                    shared.board[idx + 1 - 1 * (COLS as usize)].get().into_win(),
+                                );
+                                shared.board[idx + 2 - 2 * (COLS as usize)].replace(
+                                    shared.board[idx + 2 - 2 * (COLS as usize)].get().into_win(),
+                                );
+                                shared.board[idx + 3 - 3 * (COLS as usize)].replace(
+                                    shared.board[idx + 3 - 3 * (COLS as usize)].get().into_win(),
+                                );
+                            }
+                            WinType::DiagonalDown(idx) => {
+                                let append_result =
+                                    element_append_class(&document, &format!("slot{}", idx), "win");
+                                if let Err(e) = append_result {
+                                    log::warn!("ERROR: element_append_class failed: {}", e);
+                                }
+                                let append_result = element_append_class(
+                                    &document,
+                                    &format!("slot{}", idx + 1 + 1 * (COLS as usize)),
+                                    "win",
+                                );
+                                if let Err(e) = append_result {
+                                    log::warn!("ERROR: element_append_class failed: {}", e);
+                                }
+                                let append_result = element_append_class(
+                                    &document,
+                                    &format!("slot{}", idx + 2 + 2 * (COLS as usize)),
+                                    "win",
+                                );
+                                if let Err(e) = append_result {
+                                    log::warn!("ERROR: element_append_class failed: {}", e);
+                                }
+                                let append_result = element_append_class(
+                                    &document,
+                                    &format!("slot{}", idx + 3 + 3 * (COLS as usize)),
+                                    "win",
+                                );
+                                if let Err(e) = append_result {
+                                    log::warn!("ERROR: element_append_class failed: {}", e);
+                                }
+
+                                shared.board[idx].replace(shared.board[idx].get().into_win());
+                                shared.board[idx + 1 + 1 * (COLS as usize)].replace(
+                                    shared.board[idx + 1 + 1 * (COLS as usize)].get().into_win(),
+                                );
+                                shared.board[idx + 2 + 2 * (COLS as usize)].replace(
+                                    shared.board[idx + 2 + 2 * (COLS as usize)].get().into_win(),
+                                );
+                                shared.board[idx + 3 + 3 * (COLS as usize)].replace(
+                                    shared.board[idx + 3 + 3 * (COLS as usize)].get().into_win(),
+                                );
+                            }
+                            WinType::None => todo!(),
                         }
                     }
 

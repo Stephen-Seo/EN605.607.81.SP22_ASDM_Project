@@ -52,3 +52,13 @@ pub fn append_to_info_text(
 
     Ok(())
 }
+
+pub fn element_append_class(document: &Document, id: &str, class: &str) -> Result<(), String> {
+    let element = document
+        .get_element_by_id(id)
+        .ok_or_else(|| format!("Failed to get element with id \"{}\"", id))?;
+    let new_class = format!("{} {}", element.class_name(), class);
+    element.set_class_name(&new_class);
+
+    Ok(())
+}

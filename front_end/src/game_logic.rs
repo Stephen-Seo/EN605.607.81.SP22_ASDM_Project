@@ -1,8 +1,17 @@
 use crate::constants::{COLS, ROWS};
 use crate::state::{BoardState, BoardType};
 
+#[derive(Copy, Clone, Debug, PartialEq, Eq)]
+pub enum WinType {
+    Horizontal(usize),
+    Vertical(usize),
+    DiagonalUp(usize),
+    DiagonalDown(usize),
+    None,
+}
+
 /// Returns a BoardState if win/draw, None if game is still going
-pub fn check_win_draw(board: &BoardType) -> Option<BoardState> {
+pub fn check_win_draw(board: &BoardType) -> Option<(BoardState, WinType)> {
     let mut has_empty_slot = false;
     for slot in board {
         match slot.get() {
@@ -10,28 +19,32 @@ pub fn check_win_draw(board: &BoardType) -> Option<BoardState> {
                 has_empty_slot = true;
                 break;
             }
-            BoardState::Cyan | BoardState::Magenta => (),
+            BoardState::Cyan
+            | BoardState::CyanWin
+            | BoardState::Magenta
+            | BoardState::MagentaWin => (),
         }
     }
 
     if !has_empty_slot {
-        return Some(BoardState::Empty);
+        return Some((BoardState::Empty, WinType::None));
     }
 
     let check_result = |state| -> Option<BoardState> {
         match state {
             BoardState::Empty => None,
-            BoardState::Cyan => Some(BoardState::Cyan),
-            BoardState::Magenta => Some(BoardState::Magenta),
+            BoardState::Cyan | BoardState::CyanWin => Some(BoardState::Cyan),
+            BoardState::Magenta | BoardState::MagentaWin => Some(BoardState::Magenta),
         }
     };
 
     // check horizontals
     for y in 0..(ROWS as usize) {
         for x in 0..((COLS - 3) as usize) {
-            let result = check_result(has_right_horizontal_at_idx(x + y * (COLS as usize), board));
+            let idx = x + y * (COLS as usize);
+            let result = check_result(has_right_horizontal_at_idx(idx, board));
             if result.is_some() {
-                return result;
+                return Some((result.unwrap(), WinType::Horizontal(idx)));
             }
         }
     }
@@ -39,9 +52,10 @@ pub fn check_win_draw(board: &BoardType) -> Option<BoardState> {
     // check verticals
     for y in 0..((ROWS - 3) as usize) {
         for x in 0..(COLS as usize) {
-            let result = check_result(has_down_vertical_at_idx(x + y * (COLS as usize), board));
+            let idx = x + y * (COLS as usize);
+            let result = check_result(has_down_vertical_at_idx(idx, board));
             if result.is_some() {
-                return result;
+                return Some((result.unwrap(), WinType::Vertical(idx)));
             }
         }
     }
@@ -49,9 +63,10 @@ pub fn check_win_draw(board: &BoardType) -> Option<BoardState> {
     // check up diagonals
     for y in 3..(ROWS as usize) {
         for x in 0..((COLS - 3) as usize) {
-            let result = check_result(has_right_up_diagonal_at_idx(x + y * (COLS as usize), board));
+            let idx = x + y * (COLS as usize);
+            let result = check_result(has_right_up_diagonal_at_idx(idx, board));
             if result.is_some() {
-                return result;
+                return Some((result.unwrap(), WinType::DiagonalUp(idx)));
             }
         }
     }
@@ -59,12 +74,10 @@ pub fn check_win_draw(board: &BoardType) -> Option<BoardState> {
     // check down diagonals
     for y in 0..((ROWS - 3) as usize) {
         for x in 0..((COLS - 3) as usize) {
-            let result = check_result(has_right_down_diagonal_at_idx(
-                x + y * (COLS as usize),
-                board,
-            ));
+            let idx = x + y * (COLS as usize);
+            let result = check_result(has_right_down_diagonal_at_idx(idx, board));
             if result.is_some() {
-                return result;
+                return Some((result.unwrap(), WinType::DiagonalDown(idx)));
             }
         }
     }
