@@ -1,7 +1,11 @@
 use crate::constants::{COLS, INFO_TEXT_MAX_ITEMS, ROWS};
+use crate::game_logic::check_win_draw;
+use crate::html_helper::{append_to_info_text, get_window_document};
 use crate::state::{BoardState, GameState, SharedState, Turn};
+
 use std::cell::Cell;
 use std::rc::Rc;
+
 use yew::prelude::*;
 
 pub struct MainMenu {}
@@ -117,6 +121,13 @@ impl Component for Slot {
             .context::<SharedState>(Callback::noop())
             .expect("state to be set");
 
+        match shared.game_state.get() {
+            GameState::MainMenu => return false,
+            GameState::SinglePlayer
+            | GameState::LocalMultiplayer
+            | GameState::NetworkedMultiplayer => (),
+            GameState::PostGameResults(_) => return false,
+        }
         if shared.game_state.get() == GameState::MainMenu {
             return false;
         }
@@ -228,8 +239,8 @@ impl Component for Wrapper {
             .link()
             .context::<SharedState>(Callback::noop())
             .expect("state to be set");
-        let window = web_sys::window().expect("no window exists");
-        let document = window.document().expect("window should have a document");
+        let (window, document) =
+            get_window_document().expect("Should be able to get Window and Document");
 
         match msg {
             WrapperMsg::Pressed(idx) => {
@@ -268,99 +279,82 @@ impl Component for Wrapper {
                     placed = true;
                 }
 
-                // DEBUG
-                //log::info!("{} is {:?}", idx, shared.board[idx as usize].get());
-
-                // DEBUG
-                //log::info!("{}", &output_str);
-
-                // info text below the grid
-                if let Some(info_text) = document.get_element_by_id("info_text0") {
-                    let height = info_text.client_height();
-
-                    // create the new text to be appended in the output
-                    let p = document
-                        .create_element("p")
-                        .expect("document should be able to create <p>");
-                    let output_str = match placed {
-                        true => format!("{} placed into slot {}", current_player, bottom_idx),
-                        false => "Invalid place to insert".into(),
-                    };
-                    p.set_text_content(Some(&output_str));
-
-                    // DEBUG
-                    //log::info!(
-                    //    "pre: scroll top is {}, scroll height is {}",
-                    //    info_text.scroll_top(),
-                    //    info_text.scroll_height()
-                    //);
-
-                    // check if scrolled to top
-                    let at_top: bool = info_text.scroll_top() <= height - info_text.scroll_height();
-
-                    // append text to output
-                    info_text
-                        .append_with_node_1(&p)
-                        .expect("should be able to append to info_text");
-                    while info_text.child_element_count() > INFO_TEXT_MAX_ITEMS {
-                        info_text
-                            .remove_child(&info_text.first_child().unwrap())
-                            .expect("should be able to limit items in info_text");
+                // check for win
+                let check_win_draw_opt = check_win_draw(&shared.board);
+                if let Some(endgame_state) = check_win_draw_opt {
+                    if endgame_state == BoardState::Empty {
+                        // draw
+                        let text_append_result = append_to_info_text(
+                            &document,
+                            "info_text0",
+                            "Game ended in a draw",
+                            INFO_TEXT_MAX_ITEMS,
+                        );
+                        if let Err(e) = text_append_result {
+                            log::warn!("ERROR: text append to info_text0 failed: {}", e);
+                        }
+                    } else {
+                        // a player won
+                        let turn = Turn::from(endgame_state);
+                        let text_string =
+                            format!("<b class=\"{}\">{} has won</b>", turn.get_color(), turn);
+                        let text_append_result = append_to_info_text(
+                            &document,
+                            "info_text0",
+                            &text_string,
+                            INFO_TEXT_MAX_ITEMS,
+                        );
+                        if let Err(e) = text_append_result {
+                            log::warn!("ERROR: text append to info_text0 failed: {}", e);
+                        }
                     }
 
-                    // DEBUG
-                    //log::info!("at_top is {}", if at_top { "true" } else { "false" });
-
-                    // scroll to top only if at top
-                    if at_top {
-                        info_text.set_scroll_top(height - info_text.scroll_height());
+                    let text_append_result =
+                        append_to_info_text(&document, "info_text1", "<b>Game Over</b>", 1);
+                    if let Err(e) = text_append_result {
+                        log::warn!("ERROR: text append to info_text1 failed: {}", e);
                     }
 
-                    // DEBUG
-                    //log::info!(
-                    //    "post: scroll top is {}, scroll height is {}",
-                    //    info_text.scroll_top(),
-                    //    info_text.scroll_height()
-                    //);
+                    shared
+                        .game_state
+                        .replace(GameState::PostGameResults(endgame_state));
                 } else {
-                    log::warn!("Failed to get bottom \"info_text\"");
-                }
+                    // game is still ongoing
 
-                // info text right of the grid
-                if let Some(info_text) = document.get_element_by_id("info_text1") {
-                    let height = info_text.client_height();
+                    // info text below the grid
+                    {
+                        let output_str = match placed {
+                            true => format!("{} placed into slot {}", current_player, bottom_idx),
+                            false => "Invalid place to insert".into(),
+                        };
 
-                    // create the new text to be appended in the output
-                    let p = document
-                        .create_element("p")
-                        .expect("document should be able to create <p>");
-                    let turn = shared.turn.get();
-                    p.set_inner_html(&format!(
-                        "<b class=\"{}\">It is {}'s turn</b>",
-                        turn.get_color(),
-                        turn
-                    ));
-
-                    // check if scrolled to top
-                    let at_top: bool = info_text.scroll_top() <= height - info_text.scroll_height();
-
-                    // append text to output
-                    info_text
-                        .append_with_node_1(&p)
-                        .expect("should be able to append to info_text");
-                    while info_text.child_element_count() > 1 {
-                        info_text
-                            .remove_child(&info_text.first_child().unwrap())
-                            .expect("should be able to limit items in info_text");
+                        let text_append_result = append_to_info_text(
+                            &document,
+                            "info_text0",
+                            &output_str,
+                            INFO_TEXT_MAX_ITEMS,
+                        );
+                        if let Err(e) = text_append_result {
+                            log::warn!("ERROR: text append to info_text0 failed: {}", e);
+                        }
                     }
 
-                    // scroll to top only if at top
-                    if at_top {
-                        info_text.set_scroll_top(height - info_text.scroll_height());
+                    // info text right of the grid
+                    {
+                        let turn = shared.turn.get();
+                        let output_str = format!(
+                            "<b class=\"{}\">It is {}'s turn</b>",
+                            turn.get_color(),
+                            turn
+                        );
+
+                        let text_append_result =
+                            append_to_info_text(&document, "info_text1", &output_str, 1);
+                        if let Err(e) = text_append_result {
+                            log::warn!("ERROR: text append to info_text1 failed: {}", e);
+                        }
                     }
-                } else {
-                    log::warn!("Failed to get side \"info_text\"");
-                }
+                } // else: game is still ongoing after logic check
             } // WrapperMsg::Pressed(idx) =>
         } // match (msg)
 

@@ -14,8 +14,8 @@ pub fn check_win_draw(board: &BoardType) -> Option<BoardState> {
         }
     }
 
-    if has_empty_slot {
-        return None;
+    if !has_empty_slot {
+        return Some(BoardState::Empty);
     }
 
     let check_result = |state| -> Option<BoardState> {
@@ -129,4 +129,201 @@ fn has_right_down_diagonal_at_idx(idx: usize, board: &BoardType) -> BoardState {
         }
     }
     BoardState::Empty
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::state::{new_empty_board, BoardState};
+
+    use super::*;
+
+    #[test]
+    fn test_horizontal_check() {
+        let board = new_empty_board();
+
+        for y in 0..(ROWS as usize) {
+            for x in 0..(COLS as usize) {
+                assert_eq!(
+                    has_right_horizontal_at_idx(x + y * (COLS as usize), &board),
+                    BoardState::Empty
+                );
+            }
+        }
+
+        board[50].replace(BoardState::Cyan);
+        board[51].replace(BoardState::Cyan);
+        board[52].replace(BoardState::Cyan);
+        board[53].replace(BoardState::Cyan);
+
+        for y in 0..(ROWS as usize) {
+            for x in 0..(COLS as usize) {
+                let idx = x + y * (COLS as usize);
+                if idx == 50 {
+                    assert_eq!(has_right_horizontal_at_idx(idx, &board), BoardState::Cyan);
+                } else {
+                    assert_eq!(has_right_horizontal_at_idx(idx, &board), BoardState::Empty);
+                }
+            }
+        }
+
+        board[51].replace(BoardState::Magenta);
+
+        board[43].replace(BoardState::Magenta);
+        board[44].replace(BoardState::Magenta);
+        board[45].replace(BoardState::Magenta);
+        board[46].replace(BoardState::Magenta);
+
+        for y in 0..(ROWS as usize) {
+            for x in 0..(COLS as usize) {
+                let idx = x + y * (COLS as usize);
+                if idx == 43 {
+                    assert_eq!(
+                        has_right_horizontal_at_idx(idx, &board),
+                        BoardState::Magenta
+                    );
+                } else {
+                    assert_eq!(has_right_horizontal_at_idx(idx, &board), BoardState::Empty);
+                }
+            }
+        }
+    }
+
+    #[test]
+    fn test_vertical_check() {
+        let board = new_empty_board();
+
+        for y in 0..(ROWS as usize) {
+            for x in 0..(COLS as usize) {
+                assert_eq!(
+                    has_down_vertical_at_idx(x + y * (COLS as usize), &board),
+                    BoardState::Empty
+                );
+            }
+        }
+
+        board[30].replace(BoardState::Cyan);
+        board[37].replace(BoardState::Cyan);
+        board[44].replace(BoardState::Cyan);
+        board[51].replace(BoardState::Cyan);
+
+        for y in 0..(ROWS as usize) {
+            for x in 0..(COLS as usize) {
+                let idx = x + y * (COLS as usize);
+                if idx == 30 {
+                    assert_eq!(has_down_vertical_at_idx(idx, &board), BoardState::Cyan);
+                } else {
+                    assert_eq!(has_down_vertical_at_idx(idx, &board), BoardState::Empty);
+                }
+            }
+        }
+
+        board[16].replace(BoardState::Magenta);
+        board[23].replace(BoardState::Magenta);
+        board[30].replace(BoardState::Magenta);
+        board[37].replace(BoardState::Magenta);
+
+        for y in 0..(ROWS as usize) {
+            for x in 0..(COLS as usize) {
+                let idx = x + y * (COLS as usize);
+                if idx == 16 {
+                    assert_eq!(has_down_vertical_at_idx(idx, &board), BoardState::Magenta);
+                } else {
+                    assert_eq!(has_down_vertical_at_idx(idx, &board), BoardState::Empty);
+                }
+            }
+        }
+    }
+
+    #[test]
+    fn test_upper_diagonal_check() {
+        let board = new_empty_board();
+
+        board[44].replace(BoardState::Cyan);
+        board[38].replace(BoardState::Cyan);
+        board[32].replace(BoardState::Cyan);
+        board[26].replace(BoardState::Cyan);
+
+        for y in 0..(ROWS as usize) {
+            for x in 0..(COLS as usize) {
+                let idx = x + y * (COLS as usize);
+                if idx == 44 {
+                    assert_eq!(has_right_up_diagonal_at_idx(idx, &board), BoardState::Cyan);
+                } else {
+                    assert_eq!(has_right_up_diagonal_at_idx(idx, &board), BoardState::Empty);
+                }
+            }
+        }
+
+        board[38].replace(BoardState::Magenta);
+
+        board[28].replace(BoardState::Magenta);
+        board[22].replace(BoardState::Magenta);
+        board[16].replace(BoardState::Magenta);
+        board[10].replace(BoardState::Magenta);
+
+        for y in 0..(ROWS as usize) {
+            for x in 0..(COLS as usize) {
+                let idx = x + y * (COLS as usize);
+                if idx == 28 {
+                    assert_eq!(
+                        has_right_up_diagonal_at_idx(idx, &board),
+                        BoardState::Magenta
+                    );
+                } else {
+                    assert_eq!(has_right_up_diagonal_at_idx(idx, &board), BoardState::Empty);
+                }
+            }
+        }
+    }
+
+    #[test]
+    fn test_lower_diagonal_check() {
+        let board = new_empty_board();
+
+        board[17].replace(BoardState::Cyan);
+        board[25].replace(BoardState::Cyan);
+        board[33].replace(BoardState::Cyan);
+        board[41].replace(BoardState::Cyan);
+
+        for y in 0..(ROWS as usize) {
+            for x in 0..(COLS as usize) {
+                let idx = x + y * (COLS as usize);
+                if idx == 17 {
+                    assert_eq!(
+                        has_right_down_diagonal_at_idx(idx, &board),
+                        BoardState::Cyan
+                    );
+                } else {
+                    assert_eq!(
+                        has_right_down_diagonal_at_idx(idx, &board),
+                        BoardState::Empty
+                    );
+                }
+            }
+        }
+
+        board[25].replace(BoardState::Magenta);
+
+        board[28].replace(BoardState::Magenta);
+        board[36].replace(BoardState::Magenta);
+        board[44].replace(BoardState::Magenta);
+        board[52].replace(BoardState::Magenta);
+
+        for y in 0..(ROWS as usize) {
+            for x in 0..(COLS as usize) {
+                let idx = x + y * (COLS as usize);
+                if idx == 28 {
+                    assert_eq!(
+                        has_right_down_diagonal_at_idx(idx, &board),
+                        BoardState::Magenta
+                    );
+                } else {
+                    assert_eq!(
+                        has_right_down_diagonal_at_idx(idx, &board),
+                        BoardState::Empty
+                    );
+                }
+            }
+        }
+    }
 }

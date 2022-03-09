@@ -1,6 +1,7 @@
 mod ai;
 mod constants;
 mod game_logic;
+mod html_helper;
 mod random_helper;
 mod state;
 mod yew_components;
