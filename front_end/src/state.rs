@@ -69,16 +69,16 @@ impl BoardState {
         *self == BoardState::Empty
     }
 
-    pub fn into_win(&self) -> Self {
-        match *self {
+    pub fn into_win(self) -> Self {
+        match self {
             BoardState::Empty => BoardState::Empty,
             BoardState::Cyan | BoardState::CyanWin => BoardState::CyanWin,
             BoardState::Magenta | BoardState::MagentaWin => BoardState::MagentaWin,
         }
     }
 
-    pub fn from_win(&self) -> Self {
-        match *self {
+    pub fn from_win(self) -> Self {
+        match self {
             BoardState::Empty => BoardState::Empty,
             BoardState::Cyan | BoardState::CyanWin => BoardState::Cyan,
             BoardState::Magenta | BoardState::MagentaWin => BoardState::MagentaWin,

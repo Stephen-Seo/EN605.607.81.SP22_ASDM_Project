@@ -43,8 +43,8 @@ pub fn check_win_draw(board: &BoardType) -> Option<(BoardState, WinType)> {
         for x in 0..((COLS - 3) as usize) {
             let idx = x + y * (COLS as usize);
             let result = check_result(has_right_horizontal_at_idx(idx, board));
-            if result.is_some() {
-                return Some((result.unwrap(), WinType::Horizontal(idx)));
+            if let Some(result) = result {
+                return Some((result, WinType::Horizontal(idx)));
             }
         }
     }
@@ -54,8 +54,8 @@ pub fn check_win_draw(board: &BoardType) -> Option<(BoardState, WinType)> {
         for x in 0..(COLS as usize) {
             let idx = x + y * (COLS as usize);
             let result = check_result(has_down_vertical_at_idx(idx, board));
-            if result.is_some() {
-                return Some((result.unwrap(), WinType::Vertical(idx)));
+            if let Some(result) = result {
+                return Some((result, WinType::Vertical(idx)));
             }
         }
     }
@@ -65,8 +65,8 @@ pub fn check_win_draw(board: &BoardType) -> Option<(BoardState, WinType)> {
         for x in 0..((COLS - 3) as usize) {
             let idx = x + y * (COLS as usize);
             let result = check_result(has_right_up_diagonal_at_idx(idx, board));
-            if result.is_some() {
-                return Some((result.unwrap(), WinType::DiagonalUp(idx)));
+            if let Some(result) = result {
+                return Some((result, WinType::DiagonalUp(idx)));
             }
         }
     }
@@ -76,8 +76,8 @@ pub fn check_win_draw(board: &BoardType) -> Option<(BoardState, WinType)> {
         for x in 0..((COLS - 3) as usize) {
             let idx = x + y * (COLS as usize);
             let result = check_result(has_right_down_diagonal_at_idx(idx, board));
-            if result.is_some() {
-                return Some((result.unwrap(), WinType::DiagonalDown(idx)));
+            if let Some(result) = result {
+                return Some((result, WinType::DiagonalDown(idx)));
             }
         }
     }

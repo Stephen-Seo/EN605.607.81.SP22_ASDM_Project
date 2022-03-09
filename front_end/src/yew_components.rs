@@ -356,7 +356,7 @@ impl Component for Wrapper {
                                 }
                                 let append_result = element_append_class(
                                     &document,
-                                    &format!("slot{}", idx + 1 * (COLS as usize)),
+                                    &format!("slot{}", idx + (COLS as usize)),
                                     "win",
                                 );
                                 if let Err(e) = append_result {
@@ -380,9 +380,8 @@ impl Component for Wrapper {
                                 }
 
                                 shared.board[idx].replace(shared.board[idx].get().into_win());
-                                shared.board[idx + 1 * (COLS as usize)].replace(
-                                    shared.board[idx + 1 * (COLS as usize)].get().into_win(),
-                                );
+                                shared.board[idx + (COLS as usize)]
+                                    .replace(shared.board[idx + (COLS as usize)].get().into_win());
                                 shared.board[idx + 2 * (COLS as usize)].replace(
                                     shared.board[idx + 2 * (COLS as usize)].get().into_win(),
                                 );
@@ -398,7 +397,7 @@ impl Component for Wrapper {
                                 }
                                 let append_result = element_append_class(
                                     &document,
-                                    &format!("slot{}", idx + 1 - 1 * (COLS as usize)),
+                                    &format!("slot{}", idx + 1 - (COLS as usize)),
                                     "win",
                                 );
                                 if let Err(e) = append_result {
@@ -422,8 +421,8 @@ impl Component for Wrapper {
                                 }
 
                                 shared.board[idx].replace(shared.board[idx].get().into_win());
-                                shared.board[idx + 1 - 1 * (COLS as usize)].replace(
-                                    shared.board[idx + 1 - 1 * (COLS as usize)].get().into_win(),
+                                shared.board[idx + 1 - (COLS as usize)].replace(
+                                    shared.board[idx + 1 - (COLS as usize)].get().into_win(),
                                 );
                                 shared.board[idx + 2 - 2 * (COLS as usize)].replace(
                                     shared.board[idx + 2 - 2 * (COLS as usize)].get().into_win(),
@@ -440,7 +439,7 @@ impl Component for Wrapper {
                                 }
                                 let append_result = element_append_class(
                                     &document,
-                                    &format!("slot{}", idx + 1 + 1 * (COLS as usize)),
+                                    &format!("slot{}", idx + 1 + (COLS as usize)),
                                     "win",
                                 );
                                 if let Err(e) = append_result {
@@ -464,8 +463,8 @@ impl Component for Wrapper {
                                 }
 
                                 shared.board[idx].replace(shared.board[idx].get().into_win());
-                                shared.board[idx + 1 + 1 * (COLS as usize)].replace(
-                                    shared.board[idx + 1 + 1 * (COLS as usize)].get().into_win(),
+                                shared.board[idx + 1 + (COLS as usize)].replace(
+                                    shared.board[idx + 1 + (COLS as usize)].get().into_win(),
                                 );
                                 shared.board[idx + 2 + 2 * (COLS as usize)].replace(
                                     shared.board[idx + 2 + 2 * (COLS as usize)].get().into_win(),
