@@ -1,8 +1,9 @@
 use std::collections::BTreeMap;
 
 use crate::constants::{AI_EASY_MAX_CHOICES, AI_NORMAL_MAX_CHOICES, COLS, ROWS};
+use crate::game_logic::check_win_draw;
 use crate::random_helper::get_seeded_random;
-use crate::state::{BoardState, BoardType, Turn};
+use crate::state::{board_deep_clone, BoardState, BoardType, Turn};
 
 #[derive(Copy, Clone, Debug, PartialEq, Eq)]
 pub enum AIDifficulty {
@@ -187,6 +188,18 @@ fn get_utility_for_slot(player: Turn, slot: SlotChoice, board: &BoardType) -> Op
         utility *= 1.09;
         if utility >= 0.8 {
             utility = 0.8;
+        }
+    }
+
+    // check if placing a token here allows the opposing player to win
+    if idx >= COLS as usize {
+        let cloned_board = board_deep_clone(board);
+        cloned_board[idx].replace(player.into());
+        cloned_board[idx - (COLS as usize)].replace(player.get_opposite().into());
+        if let Some((state, _)) = check_win_draw(&cloned_board) {
+            if state == player.get_opposite().into() {
+                utility *= 0.1;
+            }
         }
     }
 
