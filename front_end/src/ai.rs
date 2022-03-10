@@ -216,7 +216,7 @@ fn get_block_amount(player: Turn, idx: usize, amount: usize, board: &BoardType) 
     }
 
     // check right
-    count = 0;
+    // count = 0; // don't reset count, since horizontal may pass through idx
     temp_idx = idx;
     while temp_idx % (COLS as usize) < (COLS - 1) as usize {
         temp_idx += 1;
@@ -260,6 +260,21 @@ fn get_block_amount(player: Turn, idx: usize, amount: usize, board: &BoardType) 
         }
     }
 
+    // check diagonal right up
+    // count = 0; // don't reset count as diagonal may pass through idx
+    temp_idx = idx;
+    while temp_idx % (COLS as usize) < (COLS - 1) as usize && temp_idx / (COLS as usize) > 0 {
+        temp_idx = temp_idx + 1 - COLS as usize;
+        if board[temp_idx].get() == opposite.into() {
+            count += 1;
+            if count >= amount {
+                return true;
+            }
+        } else {
+            break;
+        }
+    }
+
     // check diagonal right down
     count = 0;
     temp_idx = idx;
@@ -278,25 +293,10 @@ fn get_block_amount(player: Turn, idx: usize, amount: usize, board: &BoardType) 
     }
 
     // check diagonal left up
-    count = 0;
+    // count = 0; // don't reset count as diagonal may pass through idx
     temp_idx = idx;
     while temp_idx % (COLS as usize) > 0 && temp_idx / (COLS as usize) > 0 {
         temp_idx = temp_idx - 1 - COLS as usize;
-        if board[temp_idx].get() == opposite.into() {
-            count += 1;
-            if count >= amount {
-                return true;
-            }
-        } else {
-            break;
-        }
-    }
-
-    // check diagonal right up
-    count = 0;
-    temp_idx = idx;
-    while temp_idx % (COLS as usize) < (COLS - 1) as usize && temp_idx / (COLS as usize) > 0 {
-        temp_idx = temp_idx + 1 - COLS as usize;
         if board[temp_idx].get() == opposite.into() {
             count += 1;
             if count >= amount {

@@ -197,6 +197,15 @@ pub fn new_empty_board() -> BoardType {
     ]
 }
 
+pub fn board_deep_clone(board: &BoardType) -> BoardType {
+    let cloned_board = new_empty_board();
+    for i in 0..board.len() {
+        cloned_board[i].replace(board[i].get());
+    }
+
+    cloned_board
+}
+
 pub type PlacedType = [Rc<Cell<bool>>; 56];
 
 pub fn new_placed() -> PlacedType {
