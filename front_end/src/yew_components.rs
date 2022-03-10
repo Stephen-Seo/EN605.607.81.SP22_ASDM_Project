@@ -351,6 +351,9 @@ impl Component for Wrapper {
                         if let Err(e) = text_append_result {
                             log::warn!("ERROR: text append to info_text0 failed: {}", e);
                         }
+                        shared
+                            .game_state
+                            .replace(GameState::PostGameResults(BoardState::Empty));
                     } else {
                         // a player won
                         let turn = Turn::from(endgame_state);
@@ -365,6 +368,10 @@ impl Component for Wrapper {
                         if let Err(e) = text_append_result {
                             log::warn!("ERROR: text append to info_text0 failed: {}", e);
                         }
+
+                        shared
+                            .game_state
+                            .replace(GameState::PostGameResults(turn.into()));
 
                         match win_type {
                             WinType::Horizontal(idx) => {
@@ -663,7 +670,7 @@ impl Component for Wrapper {
                                     shared.board[idx + 3 + 3 * (COLS as usize)].get().into_win(),
                                 );
                             }
-                            WinType::None => todo!(),
+                            WinType::None => unreachable!("WinType should never be None on win"),
                         }
                     }
 
@@ -719,8 +726,9 @@ impl Component for Wrapper {
                 {
                     if shared.turn.get() != player_type {
                         // get AI's choice
-                        let choice = get_ai_choice(ai_difficulty, Turn::CyanPlayer, &shared.board)
-                            .expect("AI should have an available choice");
+                        let choice =
+                            get_ai_choice(ai_difficulty, player_type.get_opposite(), &shared.board)
+                                .expect("AI should have an available choice");
                         ctx.link()
                             .send_message(WrapperMsg::Pressed(usize::from(choice) as u8));
                     }

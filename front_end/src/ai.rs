@@ -72,7 +72,7 @@ pub fn get_ai_choice(
             return Err("Internal error: get_ai_choice() iterated to SlotChoice::Invalid".into());
         }
         if let Some(utility) = get_utility_for_slot(player, slot, board) {
-            utilities.push(utility);
+            utilities.push((i, utility));
         }
     }
 
@@ -81,7 +81,6 @@ pub fn get_ai_choice(
     }
 
     // shuffle utilities for the cases where there are equivalent utilities
-    let mut utilities: Vec<(usize, f64)> = utilities.into_iter().enumerate().collect();
     if utilities.len() > 1 {
         for i in 1..utilities.len() {
             utilities.swap(i, rng.rand_range(0..((i + 1) as u32)) as usize);
