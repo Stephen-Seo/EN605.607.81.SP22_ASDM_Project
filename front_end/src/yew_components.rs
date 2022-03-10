@@ -337,6 +337,40 @@ impl Component for Wrapper {
                     placed = true;
                 }
 
+                // info text below the grid
+                {
+                    let output_str = match placed {
+                        true => format!("{} placed into slot {}", current_player, bottom_idx),
+                        false => "Invalid place to insert".into(),
+                    };
+
+                    let text_append_result = append_to_info_text(
+                        &document,
+                        "info_text0",
+                        &output_str,
+                        INFO_TEXT_MAX_ITEMS,
+                    );
+                    if let Err(e) = text_append_result {
+                        log::warn!("ERROR: text append to info_text0 failed: {}", e);
+                    }
+                }
+
+                // info text right of the grid
+                {
+                    let turn = shared.turn.get();
+                    let output_str = format!(
+                        "<b class=\"{}\">It is {}'s turn</b>",
+                        turn.get_color(),
+                        turn
+                    );
+
+                    let text_append_result =
+                        append_to_info_text(&document, "info_text1", &output_str, 1);
+                    if let Err(e) = text_append_result {
+                        log::warn!("ERROR: text append to info_text1 failed: {}", e);
+                    }
+                }
+
                 // check for win
                 let check_win_draw_opt = check_win_draw(&shared.board);
                 if let Some((endgame_state, win_type)) = check_win_draw_opt {
@@ -683,43 +717,7 @@ impl Component for Wrapper {
                     shared
                         .game_state
                         .replace(GameState::PostGameResults(endgame_state));
-                } else {
-                    // game is still ongoing
-
-                    // info text below the grid
-                    {
-                        let output_str = match placed {
-                            true => format!("{} placed into slot {}", current_player, bottom_idx),
-                            false => "Invalid place to insert".into(),
-                        };
-
-                        let text_append_result = append_to_info_text(
-                            &document,
-                            "info_text0",
-                            &output_str,
-                            INFO_TEXT_MAX_ITEMS,
-                        );
-                        if let Err(e) = text_append_result {
-                            log::warn!("ERROR: text append to info_text0 failed: {}", e);
-                        }
-                    }
-
-                    // info text right of the grid
-                    {
-                        let turn = shared.turn.get();
-                        let output_str = format!(
-                            "<b class=\"{}\">It is {}'s turn</b>",
-                            turn.get_color(),
-                            turn
-                        );
-
-                        let text_append_result =
-                            append_to_info_text(&document, "info_text1", &output_str, 1);
-                        if let Err(e) = text_append_result {
-                            log::warn!("ERROR: text append to info_text1 failed: {}", e);
-                        }
-                    }
-                } // else: game is still ongoing after logic check
+                } // if: check for win or draw
 
                 // check if it is AI's turn
                 if let GameState::SinglePlayer(player_type, ai_difficulty) = shared.game_state.get()
