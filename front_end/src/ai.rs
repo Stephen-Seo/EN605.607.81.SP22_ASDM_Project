@@ -148,7 +148,9 @@ fn get_utility_for_slot(player: Turn, slot: SlotChoice, board: &BoardType) -> Op
         // slot is full, cannot place in slot
         return None;
     }
-    while idx < (ROWS * COLS) as usize && board[idx + COLS as usize].get() == BoardState::Empty {
+    while idx < ((ROWS - 1) * COLS) as usize
+        && board[idx + COLS as usize].get() == BoardState::Empty
+    {
         idx += COLS as usize;
     }
 

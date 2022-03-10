@@ -40,6 +40,7 @@ dependencies = [
 name = "four_line_dropper_frontend"
 version = "0.1.0"
 dependencies = [
+ "js-sys",
  "log",
  "oorandom",
  "wasm-logger",

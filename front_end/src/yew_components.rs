@@ -1,8 +1,10 @@
+use crate::ai::{get_ai_choice, AIDifficulty};
 use crate::constants::{COLS, INFO_TEXT_MAX_ITEMS, ROWS};
 use crate::game_logic::{check_win_draw, WinType};
 use crate::html_helper::{
     append_to_info_text, element_append_class, element_remove_class, get_window_document,
 };
+use crate::random_helper::get_seeded_random;
 use crate::state::{BoardState, GameState, SharedState, Turn};
 
 use std::cell::Cell;
@@ -13,7 +15,7 @@ use yew::prelude::*;
 pub struct MainMenu {}
 
 pub enum MainMenuMessage {
-    SinglePlayer,
+    SinglePlayer(Turn, AIDifficulty),
     LocalMultiplayer,
     NetworkedMultiplayer,
 }
@@ -33,14 +35,47 @@ impl Component for MainMenu {
             .expect("state to be set");
         match shared.game_state.get() {
             GameState::MainMenu => {
+                let player_type: Turn;
+                {
+                    let mut rng = get_seeded_random().expect("Random should be available");
+                    player_type = if rng.rand_range(0..2) == 0 {
+                        Turn::CyanPlayer
+                    } else {
+                        Turn::MagentaPlayer
+                    };
+                }
+
+                let easy_player_type = player_type;
+                let normal_player_type = player_type;
+                let hard_player_type = player_type;
+
+                let onclick_singleplayer_easy = ctx.link().callback(move |_| {
+                    MainMenuMessage::SinglePlayer(easy_player_type, AIDifficulty::Easy)
+                });
+                let onclick_singleplayer_normal = ctx.link().callback(move |_| {
+                    MainMenuMessage::SinglePlayer(normal_player_type, AIDifficulty::Normal)
+                });
+                let onclick_singleplayer_hard = ctx.link().callback(move |_| {
+                    MainMenuMessage::SinglePlayer(hard_player_type, AIDifficulty::Hard)
+                });
+
                 let onclick_local_multiplayer =
                     ctx.link().callback(|_| MainMenuMessage::LocalMultiplayer);
+
                 html! {
                     <div class={"menu"} id={"mainmenu"}>
                         <b class={"menuText"}>{"Please pick a game mode."}</b>
-                        <button class={"menuSinglePlayer"}>
-                            {"Singleplayer"}
-                        </button>
+                        <div class={"singlePlayerMenu"}>
+                            <button class={"menuSinglePlayerEasy"} onclick={onclick_singleplayer_easy}>
+                                {"Singleplayer Easy"}
+                            </button>
+                            <button class={"menuSinglePlayerNormal"} onclick={onclick_singleplayer_normal}>
+                                {"Singleplayer Normal"}
+                            </button>
+                            <button class={"menuSinglePlayerHard"} onclick={onclick_singleplayer_hard}>
+                                {"Singleplayer Hard"}
+                            </button>
+                        </div>
                         <button class={"menuLocalMultiplayer"} onclick={onclick_local_multiplayer}>
                             {"Local Multiplayer"}
                         </button>
@@ -77,6 +112,20 @@ impl Component for MainMenu {
                 .get_element_by_id("info_text1")
                 .expect("info_text1 should exist");
             info_text_turn.set_inner_html("<p><b class=\"cyan\">It is CyanPlayer's Turn</b></p>");
+
+            if let GameState::SinglePlayer(Turn::MagentaPlayer, ai_difficulty) =
+                shared.game_state.get()
+            {
+                // AI player starts first
+                let choice = get_ai_choice(ai_difficulty, Turn::CyanPlayer, &shared.board)
+                    .expect("AI should have an available choice");
+                ctx.link()
+                    .get_parent()
+                    .expect("Wrapper should be parent of MainMenu")
+                    .clone()
+                    .downcast::<Wrapper>()
+                    .send_message(WrapperMsg::Pressed(usize::from(choice) as u8));
+            }
         }
 
         true
@@ -131,7 +180,7 @@ impl Component for Slot {
 
         match shared.game_state.get() {
             GameState::MainMenu => return false,
-            GameState::SinglePlayer
+            GameState::SinglePlayer(_, _)
             | GameState::LocalMultiplayer
             | GameState::NetworkedMultiplayer => (),
             GameState::PostGameResults(_) => return false,
@@ -664,6 +713,18 @@ impl Component for Wrapper {
                         }
                     }
                 } // else: game is still ongoing after logic check
+
+                // check if it is AI's turn
+                if let GameState::SinglePlayer(player_type, ai_difficulty) = shared.game_state.get()
+                {
+                    if shared.turn.get() != player_type {
+                        // get AI's choice
+                        let choice = get_ai_choice(ai_difficulty, Turn::CyanPlayer, &shared.board)
+                            .expect("AI should have an available choice");
+                        ctx.link()
+                            .send_message(WrapperMsg::Pressed(usize::from(choice) as u8));
+                    }
+                }
             } // WrapperMsg::Pressed(idx) =>
         } // match (msg)
 

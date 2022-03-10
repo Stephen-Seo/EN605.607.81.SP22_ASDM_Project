@@ -1,3 +1,4 @@
+use crate::ai::AIDifficulty;
 use crate::yew_components::MainMenuMessage;
 use std::cell::Cell;
 use std::fmt::Display;
@@ -6,7 +7,7 @@ use std::rc::Rc;
 #[derive(Copy, Clone, Debug, PartialEq, Eq)]
 pub enum GameState {
     MainMenu,
-    SinglePlayer,
+    SinglePlayer(Turn, AIDifficulty),
     LocalMultiplayer,
     NetworkedMultiplayer,
     PostGameResults(BoardState),
@@ -21,7 +22,7 @@ impl Default for GameState {
 impl From<MainMenuMessage> for GameState {
     fn from(msg: MainMenuMessage) -> Self {
         match msg {
-            MainMenuMessage::SinglePlayer => GameState::SinglePlayer,
+            MainMenuMessage::SinglePlayer(t, ai) => GameState::SinglePlayer(t, ai),
             MainMenuMessage::LocalMultiplayer => GameState::LocalMultiplayer,
             MainMenuMessage::NetworkedMultiplayer => GameState::NetworkedMultiplayer,
         }
