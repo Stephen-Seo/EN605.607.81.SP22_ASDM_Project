@@ -69,6 +69,13 @@ impl BoardState {
         *self == BoardState::Empty
     }
 
+    pub fn is_win(self) -> bool {
+        match self {
+            BoardState::Empty | BoardState::Cyan | BoardState::Magenta => false,
+            BoardState::CyanWin | BoardState::MagentaWin => true,
+        }
+    }
+
     pub fn into_win(self) -> Self {
         match self {
             BoardState::Empty => BoardState::Empty,
@@ -77,8 +84,8 @@ impl BoardState {
         }
     }
 
-    pub fn from_win(self) -> Self {
-        match self {
+    pub fn from_win(&self) -> Self {
+        match *self {
             BoardState::Empty => BoardState::Empty,
             BoardState::Cyan | BoardState::CyanWin => BoardState::Cyan,
             BoardState::Magenta | BoardState::MagentaWin => BoardState::Magenta,
@@ -189,11 +196,75 @@ pub fn new_empty_board() -> BoardType {
     ]
 }
 
+pub type PlacedType = [Rc<Cell<bool>>; 56];
+
+pub fn new_placed() -> PlacedType {
+    [
+        Rc::new(Cell::new(false)),
+        Rc::new(Cell::new(false)),
+        Rc::new(Cell::new(false)),
+        Rc::new(Cell::new(false)),
+        Rc::new(Cell::new(false)),
+        Rc::new(Cell::new(false)),
+        Rc::new(Cell::new(false)),
+        Rc::new(Cell::new(false)),
+        Rc::new(Cell::new(false)),
+        Rc::new(Cell::new(false)),
+        Rc::new(Cell::new(false)),
+        Rc::new(Cell::new(false)),
+        Rc::new(Cell::new(false)),
+        Rc::new(Cell::new(false)),
+        Rc::new(Cell::new(false)),
+        Rc::new(Cell::new(false)),
+        Rc::new(Cell::new(false)),
+        Rc::new(Cell::new(false)),
+        Rc::new(Cell::new(false)),
+        Rc::new(Cell::new(false)),
+        Rc::new(Cell::new(false)),
+        Rc::new(Cell::new(false)),
+        Rc::new(Cell::new(false)),
+        Rc::new(Cell::new(false)),
+        Rc::new(Cell::new(false)),
+        Rc::new(Cell::new(false)),
+        Rc::new(Cell::new(false)),
+        Rc::new(Cell::new(false)),
+        Rc::new(Cell::new(false)),
+        Rc::new(Cell::new(false)),
+        Rc::new(Cell::new(false)),
+        Rc::new(Cell::new(false)),
+        Rc::new(Cell::new(false)),
+        Rc::new(Cell::new(false)),
+        Rc::new(Cell::new(false)),
+        Rc::new(Cell::new(false)),
+        Rc::new(Cell::new(false)),
+        Rc::new(Cell::new(false)),
+        Rc::new(Cell::new(false)),
+        Rc::new(Cell::new(false)),
+        Rc::new(Cell::new(false)),
+        Rc::new(Cell::new(false)),
+        Rc::new(Cell::new(false)),
+        Rc::new(Cell::new(false)),
+        Rc::new(Cell::new(false)),
+        Rc::new(Cell::new(false)),
+        Rc::new(Cell::new(false)),
+        Rc::new(Cell::new(false)),
+        Rc::new(Cell::new(false)),
+        Rc::new(Cell::new(false)),
+        Rc::new(Cell::new(false)),
+        Rc::new(Cell::new(false)),
+        Rc::new(Cell::new(false)),
+        Rc::new(Cell::new(false)),
+        Rc::new(Cell::new(false)),
+        Rc::new(Cell::new(false)),
+    ]
+}
+
 #[derive(Clone, Debug, PartialEq)]
 pub struct SharedState {
     pub board: BoardType,
     pub game_state: Rc<Cell<GameState>>,
     pub turn: Rc<Cell<Turn>>,
+    pub placed: PlacedType,
 }
 
 impl Default for SharedState {
@@ -203,6 +274,7 @@ impl Default for SharedState {
             board: new_empty_board(),
             game_state: Rc::new(Cell::new(GameState::default())),
             turn: Rc::new(Cell::new(Turn::CyanPlayer)),
+            placed: new_placed(),
         }
     }
 }

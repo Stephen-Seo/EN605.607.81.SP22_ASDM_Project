@@ -157,6 +157,23 @@
           opacity: 0;
         }
       }
+      button.placed {
+        animation-duration: 2200ms;
+        animation-name: placed_blink;
+        animation-iteration-count: 1;
+        animation-direction: normal;
+      }
+      @keyframes placed_blink {
+        from {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
     </style>
   </head>
 </html>

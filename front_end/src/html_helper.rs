@@ -62,3 +62,18 @@ pub fn element_append_class(document: &Document, id: &str, class: &str) -> Resul
 
     Ok(())
 }
+
+pub fn element_remove_class(document: &Document, id: &str, class: &str) -> Result<(), String> {
+    let element = document
+        .get_element_by_id(id)
+        .ok_or_else(|| format!("Failed to get element with id \"{}\"", id))?;
+    let mut element_class: String = element.class_name();
+    let idx_opt = element_class.find(class);
+    if let Some(idx) = idx_opt {
+        let mut remaining = element_class.split_off(idx);
+        element_class += &remaining.split_off(class.len());
+    }
+    element.set_class_name(&element_class);
+
+    Ok(())
+}

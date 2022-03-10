@@ -1,6 +1,8 @@
 use crate::constants::{COLS, INFO_TEXT_MAX_ITEMS, ROWS};
 use crate::game_logic::{check_win_draw, WinType};
-use crate::html_helper::{append_to_info_text, element_append_class, get_window_document};
+use crate::html_helper::{
+    append_to_info_text, element_append_class, element_remove_class, get_window_document,
+};
 use crate::state::{BoardState, GameState, SharedState, Turn};
 
 use std::cell::Cell;
@@ -84,13 +86,14 @@ impl Component for MainMenu {
 pub struct Slot {}
 
 pub enum SlotMessage {
-    Press(u8),
+    Press,
 }
 
 #[derive(Clone, PartialEq, Properties)]
 pub struct SlotProperties {
     idx: u8,
     state: Rc<Cell<BoardState>>,
+    placed: Rc<Cell<bool>>,
 }
 
 impl Component for Slot {
@@ -104,12 +107,17 @@ impl Component for Slot {
     fn view(&self, ctx: &Context<Self>) -> Html {
         let idx = ctx.props().idx;
         let state = ctx.props().state.as_ref().get();
-        let idx_copy = idx;
-        let onclick = ctx.link().callback(move |_| SlotMessage::Press(idx_copy));
+        let onclick = ctx.link().callback(move |_| SlotMessage::Press);
         let col = idx % COLS;
         let row = idx / COLS;
+        let place = if ctx.props().placed.get() && !state.is_win() {
+            "placed"
+        } else {
+            ""
+        };
+        ctx.props().placed.replace(false);
         html! {
-            <button class={format!("slot {} r{} c{}", state, row, col)} id={format!("slot{}", idx)} onclick={onclick}>
+            <button class={format!("slot {} r{} c{} {}", state, row, col, place)} id={format!("slot{}", idx)} onclick={onclick}>
             {idx}
             </button>
         }
@@ -133,9 +141,9 @@ impl Component for Slot {
         }
 
         match msg {
-            SlotMessage::Press(idx) => {
+            SlotMessage::Press => {
                 // notify Wrapper with message
-                let msg = WrapperMsg::Pressed(idx);
+                let msg = WrapperMsg::Pressed(ctx.props().idx);
                 if let Some(p) = ctx.link().get_parent() {
                     p.clone().downcast::<Wrapper>().send_message(msg);
                 }
@@ -168,62 +176,62 @@ impl Component for Wrapper {
         html! {
             <div class="wrapper">
                 <MainMenu />
-                <Slot idx=0 state={shared.board[0].clone()} />
-                <Slot idx=1 state={shared.board[1].clone()} />
-                <Slot idx=2 state={shared.board[2].clone()} />
-                <Slot idx=3 state={shared.board[3].clone()} />
-                <Slot idx=4 state={shared.board[4].clone()} />
-                <Slot idx=5 state={shared.board[5].clone()} />
-                <Slot idx=6 state={shared.board[6].clone()} />
-                <Slot idx=7 state={shared.board[7].clone()} />
-                <Slot idx=8 state={shared.board[8].clone()} />
-                <Slot idx=9 state={shared.board[9].clone()} />
-                <Slot idx=10 state={shared.board[10].clone()} />
-                <Slot idx=11 state={shared.board[11].clone()} />
-                <Slot idx=12 state={shared.board[12].clone()} />
-                <Slot idx=13 state={shared.board[13].clone()} />
-                <Slot idx=14 state={shared.board[14].clone()} />
-                <Slot idx=15 state={shared.board[15].clone()} />
-                <Slot idx=16 state={shared.board[16].clone()} />
-                <Slot idx=17 state={shared.board[17].clone()} />
-                <Slot idx=18 state={shared.board[18].clone()} />
-                <Slot idx=19 state={shared.board[19].clone()} />
-                <Slot idx=20 state={shared.board[20].clone()} />
-                <Slot idx=21 state={shared.board[21].clone()} />
-                <Slot idx=22 state={shared.board[22].clone()} />
-                <Slot idx=23 state={shared.board[23].clone()} />
-                <Slot idx=24 state={shared.board[24].clone()} />
-                <Slot idx=25 state={shared.board[25].clone()} />
-                <Slot idx=26 state={shared.board[26].clone()} />
-                <Slot idx=27 state={shared.board[27].clone()} />
-                <Slot idx=28 state={shared.board[28].clone()} />
-                <Slot idx=29 state={shared.board[29].clone()} />
-                <Slot idx=30 state={shared.board[30].clone()} />
-                <Slot idx=31 state={shared.board[31].clone()} />
-                <Slot idx=32 state={shared.board[32].clone()} />
-                <Slot idx=33 state={shared.board[33].clone()} />
-                <Slot idx=34 state={shared.board[34].clone()} />
-                <Slot idx=35 state={shared.board[35].clone()} />
-                <Slot idx=36 state={shared.board[36].clone()} />
-                <Slot idx=37 state={shared.board[37].clone()} />
-                <Slot idx=38 state={shared.board[38].clone()} />
-                <Slot idx=39 state={shared.board[39].clone()} />
-                <Slot idx=40 state={shared.board[40].clone()} />
-                <Slot idx=41 state={shared.board[41].clone()} />
-                <Slot idx=42 state={shared.board[42].clone()} />
-                <Slot idx=43 state={shared.board[43].clone()} />
-                <Slot idx=44 state={shared.board[44].clone()} />
-                <Slot idx=45 state={shared.board[45].clone()} />
-                <Slot idx=46 state={shared.board[46].clone()} />
-                <Slot idx=47 state={shared.board[47].clone()} />
-                <Slot idx=48 state={shared.board[48].clone()} />
-                <Slot idx=49 state={shared.board[49].clone()} />
-                <Slot idx=50 state={shared.board[50].clone()} />
-                <Slot idx=51 state={shared.board[51].clone()} />
-                <Slot idx=52 state={shared.board[52].clone()} />
-                <Slot idx=53 state={shared.board[53].clone()} />
-                <Slot idx=54 state={shared.board[54].clone()} />
-                <Slot idx=55 state={shared.board[55].clone()} />
+                <Slot idx=0 state={shared.board[0].clone()} placed={shared.placed[0].clone()} />
+                <Slot idx=1 state={shared.board[1].clone()} placed={shared.placed[1].clone()} />
+                <Slot idx=2 state={shared.board[2].clone()} placed={shared.placed[2].clone()} />
+                <Slot idx=3 state={shared.board[3].clone()} placed={shared.placed[3].clone()} />
+                <Slot idx=4 state={shared.board[4].clone()} placed={shared.placed[4].clone()} />
+                <Slot idx=5 state={shared.board[5].clone()} placed={shared.placed[5].clone()} />
+                <Slot idx=6 state={shared.board[6].clone()} placed={shared.placed[6].clone()} />
+                <Slot idx=7 state={shared.board[7].clone()} placed={shared.placed[7].clone()} />
+                <Slot idx=8 state={shared.board[8].clone()} placed={shared.placed[8].clone()} />
+                <Slot idx=9 state={shared.board[9].clone()} placed={shared.placed[9].clone()} />
+                <Slot idx=10 state={shared.board[10].clone()} placed={shared.placed[10].clone()} />
+                <Slot idx=11 state={shared.board[11].clone()} placed={shared.placed[11].clone()} />
+                <Slot idx=12 state={shared.board[12].clone()} placed={shared.placed[12].clone()} />
+                <Slot idx=13 state={shared.board[13].clone()} placed={shared.placed[13].clone()} />
+                <Slot idx=14 state={shared.board[14].clone()} placed={shared.placed[14].clone()} />
+                <Slot idx=15 state={shared.board[15].clone()} placed={shared.placed[15].clone()} />
+                <Slot idx=16 state={shared.board[16].clone()} placed={shared.placed[16].clone()} />
+                <Slot idx=17 state={shared.board[17].clone()} placed={shared.placed[17].clone()} />
+                <Slot idx=18 state={shared.board[18].clone()} placed={shared.placed[18].clone()} />
+                <Slot idx=19 state={shared.board[19].clone()} placed={shared.placed[19].clone()} />
+                <Slot idx=20 state={shared.board[20].clone()} placed={shared.placed[20].clone()} />
+                <Slot idx=21 state={shared.board[21].clone()} placed={shared.placed[21].clone()} />
+                <Slot idx=22 state={shared.board[22].clone()} placed={shared.placed[22].clone()} />
+                <Slot idx=23 state={shared.board[23].clone()} placed={shared.placed[23].clone()} />
+                <Slot idx=24 state={shared.board[24].clone()} placed={shared.placed[24].clone()} />
+                <Slot idx=25 state={shared.board[25].clone()} placed={shared.placed[25].clone()} />
+                <Slot idx=26 state={shared.board[26].clone()} placed={shared.placed[26].clone()} />
+                <Slot idx=27 state={shared.board[27].clone()} placed={shared.placed[27].clone()} />
+                <Slot idx=28 state={shared.board[28].clone()} placed={shared.placed[28].clone()} />
+                <Slot idx=29 state={shared.board[29].clone()} placed={shared.placed[29].clone()} />
+                <Slot idx=30 state={shared.board[30].clone()} placed={shared.placed[30].clone()} />
+                <Slot idx=31 state={shared.board[31].clone()} placed={shared.placed[31].clone()} />
+                <Slot idx=32 state={shared.board[32].clone()} placed={shared.placed[32].clone()} />
+                <Slot idx=33 state={shared.board[33].clone()} placed={shared.placed[33].clone()} />
+                <Slot idx=34 state={shared.board[34].clone()} placed={shared.placed[34].clone()} />
+                <Slot idx=35 state={shared.board[35].clone()} placed={shared.placed[35].clone()} />
+                <Slot idx=36 state={shared.board[36].clone()} placed={shared.placed[36].clone()} />
+                <Slot idx=37 state={shared.board[37].clone()} placed={shared.placed[37].clone()} />
+                <Slot idx=38 state={shared.board[38].clone()} placed={shared.placed[38].clone()} />
+                <Slot idx=39 state={shared.board[39].clone()} placed={shared.placed[39].clone()} />
+                <Slot idx=40 state={shared.board[40].clone()} placed={shared.placed[40].clone()} />
+                <Slot idx=41 state={shared.board[41].clone()} placed={shared.placed[41].clone()} />
+                <Slot idx=42 state={shared.board[42].clone()} placed={shared.placed[42].clone()} />
+                <Slot idx=43 state={shared.board[43].clone()} placed={shared.placed[43].clone()} />
+                <Slot idx=44 state={shared.board[44].clone()} placed={shared.placed[44].clone()} />
+                <Slot idx=45 state={shared.board[45].clone()} placed={shared.placed[45].clone()} />
+                <Slot idx=46 state={shared.board[46].clone()} placed={shared.placed[46].clone()} />
+                <Slot idx=47 state={shared.board[47].clone()} placed={shared.placed[47].clone()} />
+                <Slot idx=48 state={shared.board[48].clone()} placed={shared.placed[48].clone()} />
+                <Slot idx=49 state={shared.board[49].clone()} placed={shared.placed[49].clone()} />
+                <Slot idx=50 state={shared.board[50].clone()} placed={shared.placed[50].clone()} />
+                <Slot idx=51 state={shared.board[51].clone()} placed={shared.placed[51].clone()} />
+                <Slot idx=52 state={shared.board[52].clone()} placed={shared.placed[52].clone()} />
+                <Slot idx=53 state={shared.board[53].clone()} placed={shared.placed[53].clone()} />
+                <Slot idx=54 state={shared.board[54].clone()} placed={shared.placed[54].clone()} />
+                <Slot idx=55 state={shared.board[55].clone()} placed={shared.placed[55].clone()} />
                 <div class="info_text_wrapper">
                     <InfoText id=0 />
                 </div>
@@ -269,11 +277,12 @@ impl Component for Wrapper {
                     if let Some(slot) = document.get_element_by_id(&format!("slot{bottom_idx}")) {
                         // set slot info
                         slot.set_class_name(&format!(
-                            "slot {} r{} c{}",
+                            "slot {} r{} c{} placed",
                             current_board_state,
                             bottom_idx / COLS,
                             bottom_idx % COLS
                         ));
+                        shared.placed[bottom_idx as usize].replace(true);
                     }
 
                     placed = true;
@@ -310,6 +319,39 @@ impl Component for Wrapper {
 
                         match win_type {
                             WinType::Horizontal(idx) => {
+                                let placed_class_erase_result = element_remove_class(
+                                    &document,
+                                    &format!("slot{}", idx),
+                                    "placed",
+                                );
+                                if let Err(e) = placed_class_erase_result {
+                                    log::warn!("ERROR: element_remove_class failed: {}", e);
+                                }
+                                let placed_class_erase_result = element_remove_class(
+                                    &document,
+                                    &format!("slot{}", idx + 1),
+                                    "placed",
+                                );
+                                if let Err(e) = placed_class_erase_result {
+                                    log::warn!("ERROR: element_remove_class failed: {}", e);
+                                }
+                                let placed_class_erase_result = element_remove_class(
+                                    &document,
+                                    &format!("slot{}", idx + 2),
+                                    "placed",
+                                );
+                                if let Err(e) = placed_class_erase_result {
+                                    log::warn!("ERROR: element_remove_class failed: {}", e);
+                                }
+                                let placed_class_erase_result = element_remove_class(
+                                    &document,
+                                    &format!("slot{}", idx + 3),
+                                    "placed",
+                                );
+                                if let Err(e) = placed_class_erase_result {
+                                    log::warn!("ERROR: element_remove_class failed: {}", e);
+                                }
+
                                 let append_result =
                                     element_append_class(&document, &format!("slot{}", idx), "win");
                                 if let Err(e) = append_result {
@@ -349,6 +391,39 @@ impl Component for Wrapper {
                                     .replace(shared.board[idx + 3].get().into_win());
                             }
                             WinType::Vertical(idx) => {
+                                let placed_class_erase_result = element_remove_class(
+                                    &document,
+                                    &format!("slot{}", idx),
+                                    "placed",
+                                );
+                                if let Err(e) = placed_class_erase_result {
+                                    log::warn!("ERROR: element_remove_class failed: {}", e);
+                                }
+                                let placed_class_erase_result = element_remove_class(
+                                    &document,
+                                    &format!("slot{}", idx + (COLS as usize)),
+                                    "placed",
+                                );
+                                if let Err(e) = placed_class_erase_result {
+                                    log::warn!("ERROR: element_remove_class failed: {}", e);
+                                }
+                                let placed_class_erase_result = element_remove_class(
+                                    &document,
+                                    &format!("slot{}", idx + 2 * (COLS as usize)),
+                                    "placed",
+                                );
+                                if let Err(e) = placed_class_erase_result {
+                                    log::warn!("ERROR: element_remove_class failed: {}", e);
+                                }
+                                let placed_class_erase_result = element_remove_class(
+                                    &document,
+                                    &format!("slot{}", idx + 3 * (COLS as usize)),
+                                    "placed",
+                                );
+                                if let Err(e) = placed_class_erase_result {
+                                    log::warn!("ERROR: element_remove_class failed: {}", e);
+                                }
+
                                 let append_result =
                                     element_append_class(&document, &format!("slot{}", idx), "win");
                                 if let Err(e) = append_result {
@@ -390,6 +465,39 @@ impl Component for Wrapper {
                                 );
                             }
                             WinType::DiagonalUp(idx) => {
+                                let placed_class_erase_result = element_remove_class(
+                                    &document,
+                                    &format!("slot{}", idx),
+                                    "placed",
+                                );
+                                if let Err(e) = placed_class_erase_result {
+                                    log::warn!("ERROR: element_remove_class failed: {}", e);
+                                }
+                                let placed_class_erase_result = element_remove_class(
+                                    &document,
+                                    &format!("slot{}", idx + 1 - (COLS as usize)),
+                                    "placed",
+                                );
+                                if let Err(e) = placed_class_erase_result {
+                                    log::warn!("ERROR: element_remove_class failed: {}", e);
+                                }
+                                let placed_class_erase_result = element_remove_class(
+                                    &document,
+                                    &format!("slot{}", idx + 2 - 2 * (COLS as usize)),
+                                    "placed",
+                                );
+                                if let Err(e) = placed_class_erase_result {
+                                    log::warn!("ERROR: element_remove_class failed: {}", e);
+                                }
+                                let placed_class_erase_result = element_remove_class(
+                                    &document,
+                                    &format!("slot{}", idx + 3 - 3 * (COLS as usize)),
+                                    "placed",
+                                );
+                                if let Err(e) = placed_class_erase_result {
+                                    log::warn!("ERROR: element_remove_class failed: {}", e);
+                                }
+
                                 let append_result =
                                     element_append_class(&document, &format!("slot{}", idx), "win");
                                 if let Err(e) = append_result {
@@ -432,6 +540,39 @@ impl Component for Wrapper {
                                 );
                             }
                             WinType::DiagonalDown(idx) => {
+                                let placed_class_erase_result = element_remove_class(
+                                    &document,
+                                    &format!("slot{}", idx),
+                                    "placed",
+                                );
+                                if let Err(e) = placed_class_erase_result {
+                                    log::warn!("ERROR: element_remove_class failed: {}", e);
+                                }
+                                let placed_class_erase_result = element_remove_class(
+                                    &document,
+                                    &format!("slot{}", idx + 1 + (COLS as usize)),
+                                    "placed",
+                                );
+                                if let Err(e) = placed_class_erase_result {
+                                    log::warn!("ERROR: element_remove_class failed: {}", e);
+                                }
+                                let placed_class_erase_result = element_remove_class(
+                                    &document,
+                                    &format!("slot{}", idx + 2 + 2 * (COLS as usize)),
+                                    "placed",
+                                );
+                                if let Err(e) = placed_class_erase_result {
+                                    log::warn!("ERROR: element_remove_class failed: {}", e);
+                                }
+                                let placed_class_erase_result = element_remove_class(
+                                    &document,
+                                    &format!("slot{}", idx + 3 + 3 * (COLS as usize)),
+                                    "placed",
+                                );
+                                if let Err(e) = placed_class_erase_result {
+                                    log::warn!("ERROR: element_remove_class failed: {}", e);
+                                }
+
                                 let append_result =
                                     element_append_class(&document, &format!("slot{}", idx), "win");
                                 if let Err(e) = append_result {
