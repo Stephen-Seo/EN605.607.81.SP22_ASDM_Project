@@ -43,6 +43,8 @@ dependencies = [
  "js-sys",
  "log",
  "oorandom",
+ "wasm-bindgen",
+ "wasm-bindgen-futures",
  "wasm-logger",
  "web-sys",
  "yew",
