@@ -9,7 +9,7 @@ pub enum GameState {
     MainMenu,
     SinglePlayer(Turn, AIDifficulty),
     LocalMultiplayer,
-    NetworkedMultiplayer,
+    NetworkedMultiplayer(Turn),
     PostGameResults(BoardState),
 }
 
@@ -24,7 +24,7 @@ impl From<MainMenuMessage> for GameState {
         match msg {
             MainMenuMessage::SinglePlayer(t, ai) => GameState::SinglePlayer(t, ai),
             MainMenuMessage::LocalMultiplayer => GameState::LocalMultiplayer,
-            MainMenuMessage::NetworkedMultiplayer => GameState::NetworkedMultiplayer,
+            MainMenuMessage::NetworkedMultiplayer(t) => GameState::NetworkedMultiplayer(t),
         }
     }
 }

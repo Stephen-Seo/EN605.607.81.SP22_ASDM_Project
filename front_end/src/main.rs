@@ -1,4 +1,5 @@
 mod ai;
+mod async_js_helper;
 mod constants;
 mod game_logic;
 mod html_helper;

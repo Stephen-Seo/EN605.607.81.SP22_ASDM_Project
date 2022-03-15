@@ -1,4 +1,5 @@
 use crate::ai::{get_ai_choice, AIDifficulty};
+use crate::async_js_helper;
 use crate::constants::{COLS, INFO_TEXT_MAX_ITEMS, ROWS};
 use crate::game_logic::{check_win_draw, WinType};
 use crate::html_helper::{
@@ -17,7 +18,7 @@ pub struct MainMenu {}
 pub enum MainMenuMessage {
     SinglePlayer(Turn, AIDifficulty),
     LocalMultiplayer,
-    NetworkedMultiplayer,
+    NetworkedMultiplayer(Turn),
 }
 
 impl Component for MainMenu {
@@ -111,20 +112,32 @@ impl Component for MainMenu {
             let info_text_turn = document
                 .get_element_by_id("info_text1")
                 .expect("info_text1 should exist");
-            info_text_turn.set_inner_html("<p><b class=\"cyan\">It is CyanPlayer's Turn</b></p>");
 
-            if let GameState::SinglePlayer(Turn::MagentaPlayer, ai_difficulty) =
+            if let GameState::SinglePlayer(turn, _) = shared.game_state.get() {
+                if shared.turn.get() == turn {
+                    info_text_turn.set_inner_html(
+                        "<p><b class=\"cyan\">It is CyanPlayer's (player) Turn</b></p>",
+                    );
+                } else {
+                    info_text_turn.set_inner_html(
+                        "<p><b class=\"cyan\">It is CyanPlayer's (ai) Turn</b></p>",
+                    );
+                }
+            } else {
+                info_text_turn
+                    .set_inner_html("<p><b class=\"cyan\">It is CyanPlayer's Turn</b></p>");
+            }
+
+            if let GameState::SinglePlayer(Turn::MagentaPlayer, _ai_difficulty) =
                 shared.game_state.get()
             {
                 // AI player starts first
-                let choice = get_ai_choice(ai_difficulty, Turn::CyanPlayer, &shared.board)
-                    .expect("AI should have an available choice");
                 ctx.link()
                     .get_parent()
                     .expect("Wrapper should be parent of MainMenu")
                     .clone()
                     .downcast::<Wrapper>()
-                    .send_message(WrapperMsg::Pressed(usize::from(choice) as u8));
+                    .send_message(WrapperMsg::AIChoice);
             }
         }
 
@@ -182,7 +195,7 @@ impl Component for Slot {
             GameState::MainMenu => return false,
             GameState::SinglePlayer(_, _)
             | GameState::LocalMultiplayer
-            | GameState::NetworkedMultiplayer => (),
+            | GameState::NetworkedMultiplayer(_) => (),
             GameState::PostGameResults(_) => return false,
         }
         if shared.game_state.get() == GameState::MainMenu {
@@ -205,8 +218,18 @@ impl Component for Slot {
 
 pub struct Wrapper {}
 
+#[derive(Copy, Clone, Debug, PartialEq, Eq)]
 pub enum WrapperMsg {
     Pressed(u8),
+    AIPressed(u8),
+    AIChoice,
+    AIChoiceImpl,
+}
+
+impl WrapperMsg {
+    fn is_ai_pressed(self) -> bool {
+        matches!(self, WrapperMsg::AIPressed(_))
+    }
 }
 
 impl Component for Wrapper {
@@ -296,14 +319,33 @@ impl Component for Wrapper {
             .link()
             .context::<SharedState>(Callback::noop())
             .expect("state to be set");
-        let (window, document) =
+        let (_window, document) =
             get_window_document().expect("Should be able to get Window and Document");
 
         match msg {
-            WrapperMsg::Pressed(idx) => {
+            WrapperMsg::Pressed(idx) | WrapperMsg::AIPressed(idx) => {
                 let mut bottom_idx = idx;
                 let mut placed = false;
                 let current_player = shared.turn.get();
+
+                // check if player can make a move
+                if !msg.is_ai_pressed() {
+                    match shared.game_state.get() {
+                        GameState::MainMenu => (),
+                        GameState::SinglePlayer(turn, _) => {
+                            if current_player != turn {
+                                return false;
+                            }
+                        }
+                        GameState::LocalMultiplayer => (),
+                        GameState::NetworkedMultiplayer(turn) => {
+                            if current_player != turn {
+                                return false;
+                            }
+                        }
+                        GameState::PostGameResults(_) => (),
+                    }
+                }
 
                 // check if clicked on empty slot
                 if shared.board[idx as usize].get().is_empty() {
@@ -358,11 +400,28 @@ impl Component for Wrapper {
                 // info text right of the grid
                 {
                     let turn = shared.turn.get();
-                    let output_str = format!(
-                        "<b class=\"{}\">It is {}'s turn</b>",
-                        turn.get_color(),
-                        turn
-                    );
+                    let output_str =
+                        if let GameState::SinglePlayer(player_turn, _) = shared.game_state.get() {
+                            if shared.turn.get() == player_turn {
+                                format!(
+                                    "<b class=\"{}\">It is {}'s (player) turn</b>",
+                                    turn.get_color(),
+                                    turn
+                                )
+                            } else {
+                                format!(
+                                    "<b class=\"{}\">It is {}'s (ai) turn</b>",
+                                    turn.get_color(),
+                                    turn
+                                )
+                            }
+                        } else {
+                            format!(
+                                "<b class=\"{}\">It is {}'s turn</b>",
+                                turn.get_color(),
+                                turn
+                            )
+                        };
 
                     let text_append_result =
                         append_to_info_text(&document, "info_text1", &output_str, 1);
@@ -720,18 +779,34 @@ impl Component for Wrapper {
                 } // if: check for win or draw
 
                 // check if it is AI's turn
+                if let GameState::SinglePlayer(player_type, _ai_difficulty) =
+                    shared.game_state.get()
+                {
+                    if shared.turn.get() != player_type {
+                        ctx.link().send_message(WrapperMsg::AIChoice);
+                    }
+                }
+            } // WrapperMsg::Pressed(idx) =>
+            WrapperMsg::AIChoice => {
+                // defer by 1 second
+                ctx.link().send_future(async {
+                    async_js_helper::rust_async_sleep(1000).await.unwrap();
+                    WrapperMsg::AIChoiceImpl
+                });
+            }
+            WrapperMsg::AIChoiceImpl => {
+                // get AI's choice
                 if let GameState::SinglePlayer(player_type, ai_difficulty) = shared.game_state.get()
                 {
                     if shared.turn.get() != player_type {
-                        // get AI's choice
                         let choice =
                             get_ai_choice(ai_difficulty, player_type.get_opposite(), &shared.board)
                                 .expect("AI should have an available choice");
                         ctx.link()
-                            .send_message(WrapperMsg::Pressed(usize::from(choice) as u8));
+                            .send_message(WrapperMsg::AIPressed(usize::from(choice) as u8));
                     }
                 }
-            } // WrapperMsg::Pressed(idx) =>
+            }
         } // match (msg)
 
         true
