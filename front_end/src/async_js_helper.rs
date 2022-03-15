@@ -2,7 +2,7 @@ use js_sys::Promise;
 use wasm_bindgen::prelude::*;
 use wasm_bindgen_futures::JsFuture;
 
-#[wasm_bindgen(module = "/src/deferred_helper.js")]
+#[wasm_bindgen(module = "/src/async_js_helper.js")]
 extern "C" {
     fn async_sleep(ms: u32) -> Promise;
 }
