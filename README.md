@@ -5,6 +5,10 @@ other words, it holds the client-side code for the project. The MVP (Minimum
 Viable Product) started with just the front\_end, and if all the goals are met,
 then the "front\_end" may connect to a "back\_end" for networked gameplay.
 
+The directory `back_end` holds a Rust project for the "back\_end" code. It holds
+the server-side code for the project. It is mainly used to handle "Networked
+Multiplayer" mode for the game.
+
 The directory `spreadsheets` hold LibreOffice Calc documents that are
 spreadsheets organizing the work. There is a document for User Stories, a
 document for the Product Backlogs, and there will be a document for each Sprint.
