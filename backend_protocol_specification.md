@@ -199,3 +199,28 @@ of "opponent\_disconnected". Future requests will return "unknown\_id".
         "status": "opponent_disconnected", // or "unknown_id"
     }
 ```
+
+8. Failure Response
+
+When request "type" is not handled by the back-end, it returns with
+"invalid\_type".
+```
+    {
+        "type": "invalid_type"
+    }
+```
+
+When JSON is missing a required value, it returns with "invalid\_json".
+```
+    {
+        "type": "invalid_json"
+    }
+```
+
+When the back-end hasn't yet implemented handling a specific type, it returns
+"unimplemented".
+```
+    {
+        "type": "unimplemented"
+    }
+```

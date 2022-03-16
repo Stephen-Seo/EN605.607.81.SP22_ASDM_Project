@@ -133,6 +133,7 @@ dependencies = [
 name = "four_line_dropper_backend"
 version = "0.1.0"
 dependencies = [
+ "serde_json",
  "tokio",
  "warp",
 ]
