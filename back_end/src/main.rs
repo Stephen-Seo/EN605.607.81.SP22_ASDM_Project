@@ -1,7 +1,6 @@
 mod json_handlers;
 
-use warp::Filter;
-use warp::Rejection;
+use warp::{Filter, Rejection};
 
 #[tokio::main]
 async fn main() {
