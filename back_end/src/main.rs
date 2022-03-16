@@ -9,16 +9,8 @@ async fn main() {
         .and(warp::body::json())
         .map(|json_value: Value| {
             let result = json_handlers::handle_json(json_value);
-            if let Ok(result_str) = result {
-                result_str
-            } else if let Err(error_str) = result {
-                error_str
-            } else {
-                unreachable!()
-            }
+            result.unwrap_or_else(|e| e)
         });
 
-    warp::serve(route)
-        .run(([0,0,0,0], 1237))
-        .await;
+    warp::serve(route).run(([0, 0, 0, 0], 1237)).await;
 }

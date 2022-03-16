@@ -10,9 +10,7 @@ pub fn handle_json(root: Value) -> Result<String, String> {
             "disconnect" => handle_disconnect(root),
             "request_board_state" => handle_request_board_state(root),
             "game_state" => handle_game_state(root),
-            _ => {
-                Err("{\"type\":\"invalid_type\"}".into())
-            }
+            _ => Err("{\"type\":\"invalid_type\"}".into()),
         }
     } else {
         Err("{\"type\":\"invalid_json\"}".into())
