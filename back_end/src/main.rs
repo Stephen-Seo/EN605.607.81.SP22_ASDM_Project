@@ -6,6 +6,7 @@ const SQLITE_DB_PATH: &str = "./fourLineDropper.db";
 use std::sync::mpsc::{sync_channel, SyncSender};
 
 use db_handler::start_db_handler_thread;
+use tokio::sync::oneshot;
 use warp::{Filter, Rejection};
 
 #[tokio::main]
@@ -13,19 +14,36 @@ async fn main() {
     let (db_tx, db_rx) = sync_channel::<SyncSender<u32>>(32);
     let db_tx_clone = db_tx.clone();
 
-    start_db_handler_thread(db_rx, SQLITE_DB_PATH.into());
+    let (shutdown_tx, shutdown_rx) = oneshot::channel::<()>();
+
+    // Required because shutdown_tx is not cloneable, and its "send" consumes
+    // itself.
+    let (s_helper_tx, s_helper_rx) = sync_channel::<()>(1);
+
+    std::thread::spawn(move || {
+        if let Ok(_unused_value) = s_helper_rx.recv() {
+            shutdown_tx
+                .send(())
+                .expect("Should be able to send shutdown signal");
+        }
+    });
+
+    start_db_handler_thread(db_rx, SQLITE_DB_PATH.into(), s_helper_tx.clone());
 
     let route = warp::body::content_length_limit(1024 * 32)
         .and(warp::body::bytes())
         .and_then(move |bytes: bytes::Bytes| {
             let db_tx_clone = db_tx_clone.clone();
+            let s_helper_tx_clone = s_helper_tx.clone();
             async move {
                 let body_str_result = std::str::from_utf8(bytes.as_ref());
                 if let Ok(body_str) = body_str_result {
                     let json_result = serde_json::from_str(body_str);
                     if let Ok(json_value) = json_result {
-                        Ok(json_handlers::handle_json(json_value, db_tx_clone)
-                            .unwrap_or_else(|e| e))
+                        Ok(
+                            json_handlers::handle_json(json_value, db_tx_clone, s_helper_tx_clone)
+                                .unwrap_or_else(|e| e),
+                        )
                     } else {
                         Ok(String::from("{\"type\": \"invalid_syntax\"}"))
                     }
@@ -35,5 +53,10 @@ async fn main() {
             }
         });
 
-    warp::serve(route).run(([0, 0, 0, 0], 1237)).await;
+    let (_addr, server) =
+        warp::serve(route).bind_with_graceful_shutdown(([0, 0, 0, 0], 1237), async move {
+            shutdown_rx.await.ok();
+        });
+
+    tokio::task::spawn(server).await.unwrap();
 }

@@ -1,15 +1,18 @@
 use std::{
-    sync::mpsc::{sync_channel, Receiver, SyncSender},
+    sync::mpsc::{sync_channel, SyncSender},
     time::Duration,
 };
 
 use serde_json::Value;
 
-pub fn handle_json(root: Value, tx: SyncSender<SyncSender<u32>>) -> Result<String, String> {
+pub fn handle_json(
+    root: Value,
+    tx: SyncSender<SyncSender<u32>>,
+    _shutdown_tx: SyncSender<()>, // maybe used here, not sure if it will be
+) -> Result<String, String> {
     if let Some(Value::String(type_str)) = root.get("type") {
-        let (player_tx, player_rx) = sync_channel::<u32>(8);
         match type_str.as_str() {
-            "pairing_request" => handle_pairing_request(tx, player_tx, player_rx),
+            "pairing_request" => handle_pairing_request(tx),
             "check_pairing" => handle_check_pairing(root),
             "place_token" => handle_place_token(root),
             "disconnect" => handle_disconnect(root),
@@ -21,11 +24,8 @@ pub fn handle_json(root: Value, tx: SyncSender<SyncSender<u32>>) -> Result<Strin
     }
 }
 
-fn handle_pairing_request(
-    tx: SyncSender<SyncSender<u32>>,
-    player_tx: SyncSender<u32>,
-    player_rx: Receiver<u32>,
-) -> Result<String, String> {
+fn handle_pairing_request(tx: SyncSender<SyncSender<u32>>) -> Result<String, String> {
+    let (player_tx, player_rx) = sync_channel::<u32>(1);
     if tx.send(player_tx).is_err() {
         return Err("{\"type\":\"pairing_response\", \"status\":\"internal_error\"}".into());
     }
