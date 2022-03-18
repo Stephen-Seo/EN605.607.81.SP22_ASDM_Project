@@ -12,8 +12,8 @@ PRAGMA foreign_keys = ON;
 // fields should be self explanatory for the players table
 CREATE TABLE players (id INTEGER PRIMARY KEY NOT NULL,
                       date_added TEXT NOT NULL,
-                      game_id INTEGER UNIQUE,
-                      FOREIGN KEY(game_id) REFERENCES games(id));
+                      game_id INTEGER,
+                      FOREIGN KEY(game_id) REFERENCES games(id) ON DELETE CASCADE);
 
 // "cyan_player" and "magenta_player" should correspond to an existing entry in
 // table "players".
@@ -23,7 +23,7 @@ CREATE TABLE players (id INTEGER PRIMARY KEY NOT NULL,
 // "status" is "0" for cyan's turn, "1" for magenta's turn, "2" for cyan won,
 // "3" for magenta won, "4" for draw.
 
-CREATE TABLE games (id INTEGER PRIMARY KEY ASC AUTOINCREMENT NOT NULL,
+CREATE TABLE games (id INTEGER PRIMARY KEY NOT NULL,
                     cyan_player INTEGER UNIQUE NOT NULL,
                     magenta_player INTEGER UNIQUE NOT NULL,
                     date_changed TEXT NOT NULL,
