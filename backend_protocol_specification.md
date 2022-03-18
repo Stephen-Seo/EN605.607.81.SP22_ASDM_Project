@@ -33,16 +33,7 @@ of the request, and the backend will respond with JSON.
     }
 ```
 
-4. Request Whose Turn
-
-```
-    {
-        "id": "id given by backend",
-        "type": "whose_turn",
-    }
-```
-
-5. Disconnect
+4. Disconnect
 
 ```
     {
@@ -51,16 +42,7 @@ of the request, and the backend will respond with JSON.
     }
 ```
 
-6. Request Board State:
-
-```
-    {
-        "id": "id given by backend",
-        "type": "request_board_state",
-    }
-```
-
-7. Request Game State:
+5. Request Game State:
 
 ```
     {
@@ -127,17 +109,7 @@ then the back-end will respond with "too\_many\_players".
     }   
 ```
 
-4. Request Whose Turn Response
-
-```
-    {
-        "type": "whose_turn",
-        "status": "cyan", // or "magenta", "not_paired_yet", "unknown_id",
-                          // "game_ended"
-    }
-```
-
-5. Disconnect Response
+4. Disconnect Response
 
 ```
     {
@@ -146,81 +118,30 @@ then the back-end will respond with "too\_many\_players".
     }
 ```
 
-6. Request Board State Response
-
-```
-    {
-        "type": "board_state",
-        "status": "in_progress", // or "game_ended"
-        "board": [
-            "e",
-            "e",
-            ... // 56 entries in the array where the index of the array
-                // correspond to position on the board (0-55). Each entry is
-                // either: "e", "c", or "m".
-                // "e" -> empty
-                // "c" -> cyan
-                // "m" -> magenta
-        ],
-    }
-```
-
-```
-    {
-        "type": "board_state",
-        "status": "unknown_id", // or "not_paired"
-    }
-```
-
-7. Request Game State Response
+5. Request Game State Response
 
 ```
     {
         "type": "game_state",
-        "status": "not_paired", // or "in_progress", "unknown_id"
+        "status": "not_paired", // or "unknown_id", "cyan_turn", "magenta_turn",
+                                // "cyan_won", "magenta_won", "draw",
+                                // "opponent_disconnected"
+
+        // "board" may not be in the response if "unknown_id" is the status
+        "board": "abcdefg..." // 56-char long string with mapping:
+                              // a - empty
+                              // b - cyan
+                              // c - magenta
+                              // d - cyan placed
+                              // e - magenta placed
+                              // f - cyan winning piece
+                              // g - magenta winning piece
     }
 ```
 
 Note that the backend will stop keeping track of the game once both players have
 successfully requested the Game State once after the game has ended. Thus,
 future requests may return "unknown\_id" as the "status".
-```
-    {
-        "type": "game_state",
-        "status": "cyan_won", // or "magenta_won", or "draw"
-    }
-```
 
 Note that if a player has disconnected, the other player will receive a "status"
 of "opponent\_disconnected". Future requests will return "unknown\_id".
-```
-    {
-        "type": "game_state",
-        "status": "opponent_disconnected", // or "unknown_id"
-    }
-```
-
-8. Failure Response
-
-When request "type" is not handled by the back-end, it returns with
-"invalid\_type".
-```
-    {
-        "type": "invalid_type"
-    }
-```
-
-When JSON is missing a required value, it returns with "invalid\_json".
-```
-    {
-        "type": "invalid_json"
-    }
-```
-
-When the back-end hasn't yet implemented handling a specific type, it returns
-"unimplemented".
-```
-    {
-        "type": "unimplemented"
-    }
-```
