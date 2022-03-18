@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <office:document xmlns:presentation="urn:oasis:names:tc:opendocument:xmlns:presentation:1.0" xmlns:css3t="http://www.w3.org/TR/css3-text/" xmlns:grddl="http://www.w3.org/2003/g/data-view#" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:formx="urn:openoffice:names:experimental:ooxml-odf-interop:xmlns:form:1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:chart="urn:oasis:names:tc:opendocument:xmlns:chart:1.0" xmlns:svg="urn:oasis:names:tc:opendocument:xmlns:svg-compatible:1.0" xmlns:text="urn:oasis:names:tc:opendocument:xmlns:text:1.0" xmlns:oooc="http://openoffice.org/2004/calc" xmlns:style="urn:oasis:names:tc:opendocument:xmlns:style:1.0" xmlns:ooow="http://openoffice.org/2004/writer" xmlns:meta="urn:oasis:names:tc:opendocument:xmlns:meta:1.0" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:rpt="http://openoffice.org/2005/report" xmlns:draw="urn:oasis:names:tc:opendocument:xmlns:drawing:1.0" xmlns:config="urn:oasis:names:tc:opendocument:xmlns:config:1.0" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:fo="urn:oasis:names:tc:opendocument:xmlns:xsl-fo-compatible:1.0" xmlns:ooo="http://openoffice.org/2004/office" xmlns:office="urn:oasis:names:tc:opendocument:xmlns:office:1.0" xmlns:dr3d="urn:oasis:names:tc:opendocument:xmlns:dr3d:1.0" xmlns:table="urn:oasis:names:tc:opendocument:xmlns:table:1.0" xmlns:number="urn:oasis:names:tc:opendocument:xmlns:datastyle:1.0" xmlns:of="urn:oasis:names:tc:opendocument:xmlns:of:1.2" xmlns:calcext="urn:org:documentfoundation:names:experimental:calc:xmlns:calcext:1.0" xmlns:tableooo="http://openoffice.org/2009/table" xmlns:drawooo="http://openoffice.org/2010/draw" xmlns:loext="urn:org:documentfoundation:names:experimental:office:xmlns:loext:1.0" xmlns:dom="http://www.w3.org/2001/xml-events" xmlns:field="urn:openoffice:names:experimental:ooo-ms-interop:xmlns:field:1.0" xmlns:math="http://www.w3.org/1998/Math/MathML" xmlns:form="urn:oasis:names:tc:opendocument:xmlns:form:1.0" xmlns:script="urn:oasis:names:tc:opendocument:xmlns:script:1.0" xmlns:xforms="http://www.w3.org/2002/xforms" office:version="1.3" office:mimetype="application/vnd.oasis.opendocument.spreadsheet">
- <office:meta><meta:creation-date>2022-03-13T22:06:16.707511862</meta:creation-date><dc:date>2022-03-18T16:41:06.318691650</dc:date><meta:editing-duration>PT21M20S</meta:editing-duration><meta:editing-cycles>9</meta:editing-cycles><meta:generator>LibreOffice/7.3.1.3$Linux_X86_64 LibreOffice_project/30$Build-3</meta:generator><meta:document-statistic meta:table-count="1" meta:cell-count="98" meta:object-count="0"/></office:meta>
+ <office:meta><meta:creation-date>2022-03-13T22:06:16.707511862</meta:creation-date><dc:date>2022-03-18T19:34:10.198400690</dc:date><meta:editing-duration>PT22M</meta:editing-duration><meta:editing-cycles>10</meta:editing-cycles><meta:generator>LibreOffice/7.3.1.3$Linux_X86_64 LibreOffice_project/30$Build-3</meta:generator><meta:document-statistic meta:table-count="1" meta:cell-count="98" meta:object-count="0"/></office:meta>
  <office:settings>
   <config:config-item-set config:name="ooo:view-settings">
    <config:config-item config:name="VisibleAreaTop" config:type="int">0</config:config-item>
@@ -13,7 +13,7 @@
      <config:config-item config:name="ViewId" config:type="string">view1</config:config-item>
      <config:config-item-map-named config:name="Tables">
       <config:config-item-map-entry config:name="Sheet1">
-       <config:config-item config:name="CursorPositionX" config:type="int">0</config:config-item>
+       <config:config-item config:name="CursorPositionX" config:type="int">7</config:config-item>
        <config:config-item config:name="CursorPositionY" config:type="int">6</config:config-item>
        <config:config-item config:name="ActiveSplitRange" config:type="short">2</config:config-item>
        <config:config-item config:name="PositionLeft" config:type="int">0</config:config-item>
@@ -84,7 +84,7 @@
    <config:config-item config:name="LoadReadonly" config:type="boolean">false</config:config-item>
    <config:config-item config:name="PrinterName" config:type="string">Generic Printer</config:config-item>
    <config:config-item config:name="PrinterPaperFromSetup" config:type="boolean">false</config:config-item>
-   <config:config-item config:name="PrinterSetup" config:type="base64Binary">pAH+/0dlbmVyaWMgUHJpbnRlcgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAU0dFTlBSVAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWAAMAxQAAAAAAAAAIAFZUAAAkbQAASm9iRGF0YSAxCnByaW50ZXI9R2VuZXJpYyBQcmludGVyCm9yaWVudGF0aW9uPVBvcnRyYWl0CmNvcGllcz0xCmNvbGxhdGU9ZmFsc2UKbWFyZ2luYWRqdXN0bWVudD0wLDAsMCwwCmNvbG9yZGVwdGg9MjQKcHNsZXZlbD0wCnBkZmRldmljZT0xCmNvbG9yZGV2aWNlPTAKUFBEQ29udGV4dERhdGEKRHVwbGV4Ok5vbmUAUGFnZVNpemU6TGV0dGVyAAASAENPTVBBVF9EVVBMRVhfTU9ERQ8ARHVwbGV4TW9kZTo6T2Zm</config:config-item>
+   <config:config-item config:name="PrinterSetup" config:type="base64Binary">pAH+/0dlbmVyaWMgUHJpbnRlcgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAU0dFTlBSVAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWAAMAxQAAAAAAAAAIAFZUAAAkbQAASm9iRGF0YSAxCnByaW50ZXI9R2VuZXJpYyBQcmludGVyCm9yaWVudGF0aW9uPVBvcnRyYWl0CmNvcGllcz0xCmNvbGxhdGU9ZmFsc2UKbWFyZ2luYWRqdXN0bWVudD0wLDAsMCwwCmNvbG9yZGVwdGg9MjQKcHNsZXZlbD0wCnBkZmRldmljZT0xCmNvbG9yZGV2aWNlPTAKUFBEQ29udGV4dERhdGEKUGFnZVNpemU6TGV0dGVyAER1cGxleDpOb25lAAASAENPTVBBVF9EVVBMRVhfTU9ERQ8ARHVwbGV4TW9kZTo6T2Zm</config:config-item>
    <config:config-item config:name="RasterIsVisible" config:type="boolean">false</config:config-item>
    <config:config-item config:name="RasterResolutionX" config:type="int">1270</config:config-item>
    <config:config-item config:name="RasterResolutionY" config:type="int">1270</config:config-item>
@@ -334,7 +334,7 @@
      <text:p><text:sheet-name>???</text:sheet-name><text:s/>(<text:title>???</text:title>)</text:p>
     </style:region-left>
     <style:region-right>
-     <text:p><text:date style:data-style-name="N2" text:date-value="2022-03-18">00/00/0000</text:date>, <text:time style:data-style-name="N2" text:time-value="16:39:46.821126940">00:00:00</text:time></text:p>
+     <text:p><text:date style:data-style-name="N2" text:date-value="2022-03-18">00/00/0000</text:date>, <text:time style:data-style-name="N2" text:time-value="19:33:29.373217367">00:00:00</text:time></text:p>
     </style:region-right>
    </style:header>
    <style:header-left style:display="false"/>
@@ -465,7 +465,7 @@
      <table:table-cell table:style-name="ce3" office:value-type="string" calcext:value-type="string">
       <office:annotation draw:style-name="gr4" draw:text-style-name="P2" svg:width="1.1413in" svg:height="0.7083in" svg:x="3.0126in" svg:y="0.476in" draw:caption-point-x="-0.2402in" draw:caption-point-y="0.5945in">
        <dc:date>2022-03-18T00:00:00</dc:date>
-       <text:p text:style-name="P1">Added on Friday since back-end needs to use a database.</text:p>
+       <text:p text:style-name="P1"><text:span text:style-name="T1">Added on Friday since back-end needs to use a database.</text:span></text:p>
       </office:annotation>
       <text:p>Back-end database specification defined</text:p>
      </table:table-cell>
@@ -498,8 +498,11 @@
       <text:p>4</text:p>
      </table:table-cell>
      <table:table-cell table:style-name="ce27" table:number-columns-repeated="2"/>
-     <table:table-cell table:number-columns-repeated="3" table:style-name="ce27" office:value-type="float" office:value="2" calcext:value-type="float">
+     <table:table-cell table:number-columns-repeated="2" table:style-name="ce27" office:value-type="float" office:value="2" calcext:value-type="float">
       <text:p>2</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce27" office:value-type="float" office:value="1" calcext:value-type="float">
+      <text:p>1</text:p>
      </table:table-cell>
      <table:table-cell table:style-name="ce8" table:number-columns-repeated="2"/>
      <table:table-cell table:number-columns-repeated="1014"/>
@@ -511,8 +514,11 @@
      <table:table-cell office:value-type="string" calcext:value-type="string">
       <text:p>Pending</text:p>
      </table:table-cell>
-     <table:table-cell table:number-columns-repeated="6" office:value-type="float" office:value="5" calcext:value-type="float">
+     <table:table-cell table:number-columns-repeated="5" office:value-type="float" office:value="5" calcext:value-type="float">
       <text:p>5</text:p>
+     </table:table-cell>
+     <table:table-cell office:value-type="float" office:value="4" calcext:value-type="float">
+      <text:p>4</text:p>
      </table:table-cell>
      <table:table-cell table:style-name="ce8" table:number-columns-repeated="2"/>
      <table:table-cell table:number-columns-repeated="1014"/>
@@ -620,8 +626,8 @@
      <table:table-cell table:style-name="ce10" table:formula="of:=SUM([.G$3:.G$15])" office:value-type="float" office:value="19" calcext:value-type="float">
       <text:p>19</text:p>
      </table:table-cell>
-     <table:table-cell table:style-name="ce10" table:formula="of:=SUM([.H$3:.H$15])" office:value-type="float" office:value="20" calcext:value-type="float">
-      <text:p>20</text:p>
+     <table:table-cell table:style-name="ce10" table:formula="of:=SUM([.H$3:.H$15])" office:value-type="float" office:value="18" calcext:value-type="float">
+      <text:p>18</text:p>
      </table:table-cell>
      <table:table-cell table:style-name="ce10" table:number-columns-repeated="2"/>
      <table:table-cell table:number-columns-repeated="1014"/>
@@ -646,8 +652,8 @@
      <table:table-cell table:style-name="ce11" table:formula="of:=[.G$17] - [.G$18]" office:value-type="float" office:value="9" calcext:value-type="float">
       <text:p>9</text:p>
      </table:table-cell>
-     <table:table-cell table:style-name="ce11" table:formula="of:=[.H$17] - [.H$18]" office:value-type="float" office:value="11" calcext:value-type="float">
-      <text:p>11</text:p>
+     <table:table-cell table:style-name="ce11" table:formula="of:=[.H$17] - [.H$18]" office:value-type="float" office:value="13" calcext:value-type="float">
+      <text:p>13</text:p>
      </table:table-cell>
      <table:table-cell table:style-name="ce11" table:number-columns-repeated="2"/>
      <table:table-cell table:number-columns-repeated="1014"/>
