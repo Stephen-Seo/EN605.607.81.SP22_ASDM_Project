@@ -12,7 +12,7 @@ PRAGMA foreign_keys = ON;
 // fields should be self explanatory for the players table
 CREATE TABLE players (id INTEGER PRIMARY KEY NOT NULL,
                       date_added TEXT NOT NULL,
-                      game_id INTEGER,
+                      game_id UNIQUE INTEGER,
                       FOREIGN KEY(game_id) REFERENCES games(id));
 
 // "cyan_player" and "magenta_player" should correspond to an existing entry in
