@@ -24,13 +24,13 @@ CREATE TABLE players (id INTEGER PRIMARY KEY NOT NULL,
 // "3" for magenta won, "4" for draw.
 
 CREATE TABLE games (id INTEGER PRIMARY KEY NOT NULL,
-                    cyan_player INTEGER UNIQUE NOT NULL,
-                    magenta_player INTEGER UNIQUE NOT NULL,
+                    cyan_player INTEGER UNIQUE,
+                    magenta_player INTEGER UNIQUE,
                     date_changed TEXT NOT NULL,
                     board TEXT NOT NULL,
                     status INTEGER NOT NULL,
-                    FOREIGN KEY(cyan_player) REFERENCES players (id),
-                    FOREIGN KEY(magenta_player) REFERENCES players (id));
+                    FOREIGN KEY(cyan_player) REFERENCES players (id) ON DELETE SET NULL,
+                    FOREIGN KEY(magenta_player) REFERENCES players (id) ON DELETE SET NULL);
 ```
 
 "date" entries are used for garbage collection of the database. A predefined
