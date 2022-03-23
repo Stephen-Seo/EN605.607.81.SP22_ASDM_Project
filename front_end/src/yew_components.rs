@@ -1,5 +1,4 @@
 use crate::ai::{get_ai_choice, AIDifficulty};
-use crate::async_js_helper;
 use crate::constants::{COLS, INFO_TEXT_MAX_ITEMS, ROWS};
 use crate::game_logic::{check_win_draw, WinType};
 use crate::html_helper::{
@@ -10,6 +9,10 @@ use crate::state::{BoardState, GameState, SharedState, Turn};
 
 use std::cell::Cell;
 use std::rc::Rc;
+
+use js_sys::Promise;
+
+use wasm_bindgen_futures::JsFuture;
 
 use yew::prelude::*;
 
@@ -790,7 +793,22 @@ impl Component for Wrapper {
             WrapperMsg::AIChoice => {
                 // defer by 1 second
                 ctx.link().send_future(async {
-                    async_js_helper::rust_async_sleep(1000).await.unwrap();
+                    let promise = Promise::new(&mut |resolve: js_sys::Function, _reject| {
+                        let window = web_sys::window();
+                        if window.is_none() {
+                            resolve.call0(&resolve).ok();
+                            return;
+                        }
+                        let window = window.unwrap();
+                        if window
+                            .set_timeout_with_callback_and_timeout_and_arguments_0(&resolve, 1000)
+                            .is_err()
+                        {
+                            resolve.call0(&resolve).ok();
+                        }
+                    });
+                    let js_fut = JsFuture::from(promise);
+                    js_fut.await.ok();
                     WrapperMsg::AIChoiceImpl
                 });
             }
