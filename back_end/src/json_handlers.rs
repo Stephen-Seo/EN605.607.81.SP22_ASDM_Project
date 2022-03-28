@@ -1,3 +1,5 @@
+use crate::db_handler::DBHandlerRequest;
+
 use std::{
     sync::mpsc::{sync_channel, SyncSender},
     time::Duration,
@@ -7,7 +9,7 @@ use serde_json::Value;
 
 pub fn handle_json(
     root: Value,
-    tx: SyncSender<SyncSender<u32>>,
+    tx: SyncSender<DBHandlerRequest>,
     _shutdown_tx: SyncSender<()>, // maybe used here, not sure if it will be
 ) -> Result<String, String> {
     if let Some(Value::String(type_str)) = root.get("type") {
@@ -24,9 +26,9 @@ pub fn handle_json(
     }
 }
 
-fn handle_pairing_request(tx: SyncSender<SyncSender<u32>>) -> Result<String, String> {
+fn handle_pairing_request(tx: SyncSender<DBHandlerRequest>) -> Result<String, String> {
     let (player_tx, player_rx) = sync_channel::<u32>(1);
-    if tx.send(player_tx).is_err() {
+    if tx.send(DBHandlerRequest::GetID(player_tx)).is_err() {
         return Err("{\"type\":\"pairing_response\", \"status\":\"internal_error\"}".into());
     }
     if let Ok(pid) = player_rx.recv_timeout(Duration::from_secs(5)) {

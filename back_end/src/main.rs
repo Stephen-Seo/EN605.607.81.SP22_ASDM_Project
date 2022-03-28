@@ -3,7 +3,9 @@ mod json_handlers;
 
 const SQLITE_DB_PATH: &str = "./fourLineDropper.db";
 
-use std::sync::mpsc::{sync_channel, SyncSender};
+use db_handler::DBHandlerRequest;
+
+use std::sync::mpsc::sync_channel;
 
 use db_handler::start_db_handler_thread;
 use tokio::sync::oneshot;
@@ -11,7 +13,7 @@ use warp::{Filter, Rejection};
 
 #[tokio::main]
 async fn main() {
-    let (db_tx, db_rx) = sync_channel::<SyncSender<u32>>(32);
+    let (db_tx, db_rx) = sync_channel::<DBHandlerRequest>(32);
     let db_tx_clone = db_tx.clone();
 
     let (shutdown_tx, shutdown_rx) = oneshot::channel::<()>();
