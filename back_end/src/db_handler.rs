@@ -41,6 +41,7 @@ fn init_conn(sqlite_path: &str, first_run: DBFirstRun) -> Result<Connection, Str
             CREATE TABLE games (id INTEGER PRIMARY KEY NOT NULL,
                 cyan_player INTEGER UNIQUE NOT NULL,
                 magenta_player INTEGER UNIQUE NOT NULL,
+                date_added TEXT NOT NULL,
                 date_changed TEXT NOT NULL,
                 board TEXT NOT NULL,
                 status INTEGER NOT NULL,
