@@ -1,5 +1,4 @@
 use crate::ai::AIDifficulty;
-use crate::yew_components::MainMenuMessage;
 use std::cell::Cell;
 use std::fmt::Display;
 use std::rc::Rc;
@@ -287,4 +286,13 @@ impl Default for SharedState {
             placed: new_placed(),
         }
     }
+}
+
+// This enum moved from yew_components module so that this module would have no
+// dependencies on the yew_components module
+#[derive(Copy, Clone, Debug, PartialEq, Eq)]
+pub enum MainMenuMessage {
+    SinglePlayer(Turn, AIDifficulty),
+    LocalMultiplayer,
+    NetworkedMultiplayer(Turn),
 }

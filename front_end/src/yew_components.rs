@@ -5,7 +5,7 @@ use crate::html_helper::{
     append_to_info_text, element_append_class, element_remove_class, get_window_document,
 };
 use crate::random_helper::get_seeded_random;
-use crate::state::{BoardState, GameState, SharedState, Turn};
+use crate::state::{BoardState, GameState, MainMenuMessage, SharedState, Turn};
 
 use std::cell::Cell;
 use std::rc::Rc;
@@ -17,12 +17,6 @@ use wasm_bindgen_futures::JsFuture;
 use yew::prelude::*;
 
 pub struct MainMenu {}
-
-pub enum MainMenuMessage {
-    SinglePlayer(Turn, AIDifficulty),
-    LocalMultiplayer,
-    NetworkedMultiplayer(Turn),
-}
 
 impl Component for MainMenu {
     type Message = MainMenuMessage;
