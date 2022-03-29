@@ -53,18 +53,18 @@ impl DBHandler {
                 }
                 let conn = conn_result.unwrap();
                 loop {
-                    let stmt_result = conn.prepare("SELECT id FROM players WHERE id = ?;");
-                    if let Err(e) = stmt_result {
-                        println!("Failed to create sqlite statement: {:?}", e);
+                    let exists_result = self.check_if_player_exists(Some(&conn), player_id);
+                    if let Ok(exists) = exists_result {
+                        if exists {
+                            player_id = thread_rng().gen();
+                        } else {
+                            break;
+                        }
+                    } else {
+                        let error = exists_result.unwrap_err();
+                        println!("Failed to check if player exists in db: {:?}", error);
                         self.shutdown_tx.send(()).ok();
                         return true;
-                    }
-                    let mut stmt = stmt_result.unwrap();
-                    match stmt.query_row([player_id], |_row| Ok(())) {
-                        Ok(_) => {
-                            player_id = thread_rng().gen();
-                        }
-                        Err(_) => break,
                     }
                 }
                 let insert_result = conn.execute(
@@ -243,7 +243,7 @@ impl DBHandler {
 
     fn check_if_player_is_paired(&self, player_id: u32) -> Result<CheckPairingType, String> {
         {
-            let player_exists_result = self.check_if_player_exists(player_id);
+            let player_exists_result = self.check_if_player_exists(None, player_id);
             if player_exists_result.is_err() || !player_exists_result.unwrap() {
                 // player doesn't exist
                 return Ok((false, false, true));
@@ -271,17 +271,24 @@ impl DBHandler {
         }
     }
 
-    fn check_if_player_exists(&self, player_id: u32) -> Result<bool, String> {
-        let conn = self.get_conn(DBFirstRun::NotFirstRun)?;
-
-        let check_player_row =
-            conn.query_row("SELECT id FROM players WHERE id = ?;", [player_id], |row| {
-                row.get::<usize, u32>(0)
-            });
-        if let Ok(_id) = check_player_row {
-            Ok(true)
+    fn check_if_player_exists(
+        &self,
+        conn: Option<&Connection>,
+        player_id: u32,
+    ) -> Result<bool, String> {
+        if let Some(conn) = conn {
+            let check_player_row =
+                conn.query_row("SELECT id FROM players WHERE id = ?;", [player_id], |row| {
+                    row.get::<usize, u32>(0)
+                });
+            if let Ok(_id) = check_player_row {
+                Ok(true)
+            } else {
+                Ok(false)
+            }
         } else {
-            Ok(false)
+            let conn = self.get_conn(DBFirstRun::NotFirstRun)?;
+            self.check_if_player_exists(Some(&conn), player_id)
         }
     }
 }
