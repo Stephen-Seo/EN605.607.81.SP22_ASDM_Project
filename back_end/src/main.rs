@@ -1,5 +1,10 @@
+mod ai;
+mod constants;
 mod db_handler;
+mod game_logic;
 mod json_handlers;
+mod random_helper;
+mod state;
 
 const SQLITE_DB_PATH: &str = "./fourLineDropper.db";
 
