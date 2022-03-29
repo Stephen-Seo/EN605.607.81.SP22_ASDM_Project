@@ -37,7 +37,7 @@ impl DBHandler {
             DBHandlerRequest::GetID(player_tx) => {
                 // got request to create new player, create new player
                 let mut player_id: u32 = thread_rng().gen();
-                let conn_result = init_conn(&self.sqlite_path, DBFirstRun::NotFirstRun);
+                let conn_result = self.get_conn(DBFirstRun::NotFirstRun);
                 if let Err(e) = conn_result {
                     println!("Failed to get sqlite db connection: {:?}", e);
                     self.shutdown_tx.send(()).ok();
@@ -80,52 +80,52 @@ impl DBHandler {
 
         false
     }
-}
 
-fn init_conn(sqlite_path: &str, first_run: DBFirstRun) -> Result<Connection, String> {
-    if let Ok(conn) = Connection::open(sqlite_path) {
-        conn.execute("PRAGMA foreign_keys = ON;", [])
-            .map_err(|e| format!("Should be able to handle \"foreign_keys\": {:?}", e))?;
-        let result = conn.execute(
-            "
-            CREATE TABLE players (id INTEGER PRIMARY KEY NOT NULL,
-                date_added TEXT NOT NULL,
-                game_id INTEGER,
-                FOREIGN KEY(game_id) REFERENCES games(id) ON DELETE CASCADE);
-        ",
-            [],
-        );
-        if result.is_ok() {
-            if first_run == DBFirstRun::FirstRun {
-                println!("Created \"players\" table");
+    fn get_conn(&self, first_run: DBFirstRun) -> Result<Connection, String> {
+        if let Ok(conn) = Connection::open(&self.sqlite_path) {
+            conn.execute("PRAGMA foreign_keys = ON;", [])
+                .map_err(|e| format!("Should be able to handle \"foreign_keys\": {:?}", e))?;
+            let result = conn.execute(
+                "
+                CREATE TABLE players (id INTEGER PRIMARY KEY NOT NULL,
+                    date_added TEXT NOT NULL,
+                    game_id INTEGER,
+                    FOREIGN KEY(game_id) REFERENCES games(id) ON DELETE CASCADE);
+            ",
+                [],
+            );
+            if result.is_ok() {
+                if first_run == DBFirstRun::FirstRun {
+                    println!("Created \"players\" table");
+                }
+            } else if first_run == DBFirstRun::FirstRun {
+                println!("\"players\" table exists");
             }
-        } else if first_run == DBFirstRun::FirstRun {
-            println!("\"players\" table exists");
-        }
 
-        let result = conn.execute(
-            "
-            CREATE TABLE games (id INTEGER PRIMARY KEY NOT NULL,
-                cyan_player INTEGER UNIQUE,
-                magenta_player INTEGER UNIQUE,
-                date_added TEXT NOT NULL,
-                board TEXT NOT NULL,
-                status INTEGER NOT NULL,
-                FOREIGN KEY(cyan_player) REFERENCES players (id),
-                FOREIGN KEY(magenta_player) REFERENCES players (id));
-        ",
-            [],
-        );
-        if result.is_ok() {
-            if first_run == DBFirstRun::FirstRun {
-                println!("Created \"games\" table");
+            let result = conn.execute(
+                "
+                CREATE TABLE games (id INTEGER PRIMARY KEY NOT NULL,
+                    cyan_player INTEGER UNIQUE,
+                    magenta_player INTEGER UNIQUE,
+                    date_added TEXT NOT NULL,
+                    board TEXT NOT NULL,
+                    status INTEGER NOT NULL,
+                    FOREIGN KEY(cyan_player) REFERENCES players (id),
+                    FOREIGN KEY(magenta_player) REFERENCES players (id));
+            ",
+                [],
+            );
+            if result.is_ok() {
+                if first_run == DBFirstRun::FirstRun {
+                    println!("Created \"games\" table");
+                }
+            } else if first_run == DBFirstRun::FirstRun {
+                println!("\"games\" table exists");
             }
-        } else if first_run == DBFirstRun::FirstRun {
-            println!("\"games\" table exists");
+            Ok(conn)
+        } else {
+            Err(String::from("Failed to open connection"))
         }
-        Ok(conn)
-    } else {
-        Err(String::from("Failed to open connection"))
     }
 }
 
@@ -141,7 +141,7 @@ pub fn start_db_handler_thread(
     };
     thread::spawn(move || {
         // temporarily get conn which should initialize on first setup of db
-        if let Ok(_conn) = init_conn(&handler.sqlite_path, DBFirstRun::FirstRun) {
+        if let Ok(_conn) = handler.get_conn(DBFirstRun::FirstRun) {
         } else {
             println!("ERROR: Failed init sqlite db connection");
             handler.shutdown_tx.send(()).ok();
