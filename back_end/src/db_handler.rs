@@ -4,15 +4,82 @@ use std::thread;
 use rand::{thread_rng, Rng};
 use rusqlite::Connection;
 
+pub type GetIDSenderType = (u32, Option<bool>);
+
 #[derive(Clone, Debug)]
 pub enum DBHandlerRequest {
-    GetID(SyncSender<u32>),
+    GetID(SyncSender<GetIDSenderType>),
 }
 
 #[derive(Copy, Clone, Debug, PartialEq, Eq)]
 enum DBFirstRun {
     FirstRun,
     NotFirstRun,
+}
+
+struct DBHandler {
+    rx: Receiver<DBHandlerRequest>,
+    sqlite_path: String,
+    shutdown_tx: SyncSender<()>,
+}
+
+impl DBHandler {
+    /// Returns true if should break out of outer loop
+    fn handle_request(&mut self) -> bool {
+        let rx_recv_result = self.rx.recv();
+        if let Err(e) = rx_recv_result {
+            println!("Failed to get DBHandlerRequest: {:?}", e);
+            self.shutdown_tx.send(()).ok();
+            return false;
+        }
+        let db_request = rx_recv_result.unwrap();
+        match db_request {
+            DBHandlerRequest::GetID(player_tx) => {
+                // got request to create new player, create new player
+                let mut player_id: u32 = thread_rng().gen();
+                let conn_result = init_conn(&self.sqlite_path, DBFirstRun::NotFirstRun);
+                if let Err(e) = conn_result {
+                    println!("Failed to get sqlite db connection: {:?}", e);
+                    self.shutdown_tx.send(()).ok();
+                    return false;
+                }
+                let conn = conn_result.unwrap();
+                loop {
+                    let stmt_result = conn.prepare("SELECT id FROM players WHERE id = ?;");
+                    if let Err(e) = stmt_result {
+                        println!("Failed to create sqlite statement: {:?}", e);
+                        self.shutdown_tx.send(()).ok();
+                        return true;
+                    }
+                    let mut stmt = stmt_result.unwrap();
+                    match stmt.query_row([player_id], |_row| Ok(())) {
+                        Ok(_) => {
+                            player_id = thread_rng().gen();
+                        }
+                        Err(_) => break,
+                    }
+                }
+                let insert_result = conn.execute(
+                    "INSERT INTO players (id, date_added) VALUES (?, datetime());",
+                    [player_id],
+                );
+                if let Err(e) = insert_result {
+                    println!("Failed to insert into sqlite db: {:?}", e);
+                    self.shutdown_tx.send(()).ok();
+                    return true;
+                }
+                let send_result = player_tx.send((player_id, None));
+                if let Err(e) = send_result {
+                    println!("Failed to send back player id: {:?}", e);
+                    self.shutdown_tx.send(()).ok();
+                    return true;
+                }
+                send_result.unwrap();
+            } // DBHandlerRequest::GetID(player_tx)
+        } // match db_request
+
+        false
+    }
 }
 
 fn init_conn(sqlite_path: &str, first_run: DBFirstRun) -> Result<Connection, String> {
@@ -67,70 +134,25 @@ pub fn start_db_handler_thread(
     sqlite_path: String,
     shutdown_tx: SyncSender<()>,
 ) {
+    let mut handler = DBHandler {
+        rx,
+        sqlite_path,
+        shutdown_tx,
+    };
     thread::spawn(move || {
         // temporarily get conn which should initialize on first setup of db
-        if let Ok(_conn) = init_conn(&sqlite_path, DBFirstRun::FirstRun) {
+        if let Ok(_conn) = init_conn(&handler.sqlite_path, DBFirstRun::FirstRun) {
         } else {
             println!("ERROR: Failed init sqlite db connection");
-            shutdown_tx.send(()).ok();
+            handler.shutdown_tx.send(()).ok();
             return;
         }
 
         'outer: loop {
-            let rx_recv_result = rx.recv();
-            if let Err(e) = rx_recv_result {
-                println!("Failed to get DBHandlerRequest: {:?}", e);
-                shutdown_tx.send(()).ok();
-                break;
+            if handler.handle_request() {
+                handler.shutdown_tx.send(()).ok();
+                break 'outer;
             }
-            let db_request = rx_recv_result.unwrap();
-            match db_request {
-                DBHandlerRequest::GetID(player_tx) => {
-                    // got request to create new player, create new player
-                    let mut player_id: u32 = thread_rng().gen();
-                    let conn_result = init_conn(&sqlite_path, DBFirstRun::NotFirstRun);
-                    if let Err(e) = conn_result {
-                        println!("Failed to get sqlite db connection: {:?}", e);
-                        shutdown_tx.send(()).ok();
-                        break;
-                    }
-                    let conn = conn_result.unwrap();
-                    loop {
-                        let stmt_result = conn.prepare("SELECT id FROM players WHERE id = ?;");
-                        if let Err(e) = stmt_result {
-                            println!("Failed to create sqlite statement: {:?}", e);
-                            shutdown_tx.send(()).ok();
-                            break 'outer;
-                        }
-                        let mut stmt = stmt_result.unwrap();
-                        match stmt.query_row([player_id], |_row| Ok(())) {
-                            Ok(_) => {
-                                player_id = thread_rng().gen();
-                            }
-                            Err(_) => break,
-                        }
-                    }
-                    let insert_result = conn.execute(
-                        "INSERT INTO players (id, date_added) VALUES (?, datetime());",
-                        [player_id],
-                    );
-                    if let Err(e) = insert_result {
-                        println!("Failed to insert into sqlite db: {:?}", e);
-                        shutdown_tx.send(()).ok();
-                        break 'outer;
-                    }
-                    let send_result = player_tx.send(player_id);
-                    if let Err(e) = send_result {
-                        println!("Failed to send back player id: {:?}", e);
-                        shutdown_tx.send(()).ok();
-                        break 'outer;
-                    }
-                    send_result.unwrap();
-                }
-            }
-
-            // Pair up players
-            // TODO
-        } // loop end
+        }
     });
 }

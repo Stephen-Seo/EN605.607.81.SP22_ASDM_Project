@@ -1,4 +1,4 @@
-use crate::db_handler::DBHandlerRequest;
+use crate::db_handler::{DBHandlerRequest, GetIDSenderType};
 
 use std::{
     sync::mpsc::{sync_channel, SyncSender},
@@ -27,11 +27,11 @@ pub fn handle_json(
 }
 
 fn handle_pairing_request(tx: SyncSender<DBHandlerRequest>) -> Result<String, String> {
-    let (player_tx, player_rx) = sync_channel::<u32>(1);
+    let (player_tx, player_rx) = sync_channel::<GetIDSenderType>(1);
     if tx.send(DBHandlerRequest::GetID(player_tx)).is_err() {
         return Err("{\"type\":\"pairing_response\", \"status\":\"internal_error\"}".into());
     }
-    if let Ok(pid) = player_rx.recv_timeout(Duration::from_secs(5)) {
+    if let Ok((pid, is_cyan_opt)) = player_rx.recv_timeout(Duration::from_secs(5)) {
         Ok(format!(
             "{{\"type\":\"pairing_response\", \"id\": \"{}\", \"status\": \"waiting\"}}",
             pid
