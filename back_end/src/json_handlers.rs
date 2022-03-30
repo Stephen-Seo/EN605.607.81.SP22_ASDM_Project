@@ -20,7 +20,7 @@ pub fn handle_json(
             "check_pairing" => handle_check_pairing(root, tx),
             "place_token" => handle_place_token(root),
             "disconnect" => handle_disconnect(root),
-            "game_state" => handle_game_state(root),
+            "game_state" => handle_game_state(root, tx),
             _ => Err("{\"type\":\"invalid_type\"}".into()),
         }
     } else {
@@ -52,39 +52,40 @@ fn handle_pairing_request(tx: SyncSender<DBHandlerRequest>) -> Result<String, St
 }
 
 fn handle_check_pairing(root: Value, tx: SyncSender<DBHandlerRequest>) -> Result<String, String> {
-    if let Some(Value::Number(id)) = root.get("id") {
-        let (request_tx, request_rx) = sync_channel::<CheckPairingType>(1);
-        let player_id = id
-            .as_u64()
-            .ok_or_else(|| String::from("{\"type\":\"invalid_syntax\"}"))?;
-        let player_id: u32 = player_id
-            .try_into()
-            .map_err(|_| String::from("{\"type\":\"invalid_syntax\"}"))?;
-        if tx
-            .send(DBHandlerRequest::CheckPairing {
-                id: player_id,
-                response_sender: request_tx,
-            })
-            .is_err()
-        {
-            return Err("{\"type\":\"pairing_response\", \"status\":\"internal_error\"}".into());
-        }
-        if let Ok((exists, is_paired, is_cyan)) = request_rx.recv_timeout(DB_REQUEST_TIMEOUT) {
-            if !exists {
-                Err("{\"type\":\"pairing_response\", \"status\":\"unknown_id\"}".into())
-            } else if is_paired {
-                Ok(format!(
-                    "{{\"type\":\"pairing_response\", \"status\":\"paired\", \"color\":\"{}\"}}",
-                    if is_cyan { "cyan" } else { "magenta" }
-                ))
-            } else {
-                Ok("{\"type\"\"pairing_response\", \"status\":\"waiting\"}".into())
-            }
+    let id_option = root.get("id");
+    if id_option.is_none() {
+        return Err("{\"type\":\"invalid_syntax\"}".into());
+    }
+    let player_id = id_option
+        .unwrap()
+        .as_u64()
+        .ok_or_else(|| String::from("{\"type\":\"invalid_syntax\"}"))?;
+    let player_id: u32 = player_id
+        .try_into()
+        .map_err(|_| String::from("{\"type\":\"invalid_syntax\"}"))?;
+    let (request_tx, request_rx) = sync_channel::<CheckPairingType>(1);
+    if tx
+        .send(DBHandlerRequest::CheckPairing {
+            id: player_id,
+            response_sender: request_tx,
+        })
+        .is_err()
+    {
+        return Err("{\"type\":\"pairing_response\", \"status\":\"internal_error\"}".into());
+    }
+    if let Ok((exists, is_paired, is_cyan)) = request_rx.recv_timeout(DB_REQUEST_TIMEOUT) {
+        if !exists {
+            Err("{\"type\":\"pairing_response\", \"status\":\"unknown_id\"}".into())
+        } else if is_paired {
+            Ok(format!(
+                "{{\"type\":\"pairing_response\", \"status\":\"paired\", \"color\":\"{}\"}}",
+                if is_cyan { "cyan" } else { "magenta" }
+            ))
         } else {
-            Err("{\"type\":\"pairing_response\", \"status\":\"internal_error_timeout\"}".into())
+            Ok("{\"type\"\"pairing_response\", \"status\":\"waiting\"}".into())
         }
     } else {
-        Err("{\"type\":\"invalid_syntax\"}".into())
+        Err("{\"type\":\"pairing_response\", \"status\":\"internal_error_timeout\"}".into())
     }
 }
 
@@ -96,6 +97,44 @@ fn handle_disconnect(root: Value) -> Result<String, String> {
     Err("{\"type\":\"unimplemented\"}".into())
 }
 
-fn handle_game_state(root: Value) -> Result<String, String> {
-    Err("{\"type\":\"unimplemented\"}".into())
+fn handle_game_state(root: Value, tx: SyncSender<DBHandlerRequest>) -> Result<String, String> {
+    let id_option = root.get("id");
+    if id_option.is_none() {
+        return Err("{\"type\":\"invalid_syntax\"}".into());
+    }
+    let player_id = id_option
+        .unwrap()
+        .as_u64()
+        .ok_or_else(|| String::from("{\"type\":\"invalid_syntax\"}"))?;
+    let player_id: u32 = player_id
+        .try_into()
+        .map_err(|_| String::from("{\"type\":\"invalid_syntax\"}"))?;
+
+    let (resp_tx, resp_rx) = sync_channel(1);
+
+    if tx
+        .send(DBHandlerRequest::GetGameState {
+            id: player_id,
+            response_sender: resp_tx,
+        })
+        .is_err()
+    {
+        return Err("{\"type\":\"game_state\", \"status\":\"internal_error\"}".into());
+    }
+
+    if let Ok((db_game_state, board_string_opt)) = resp_rx.recv_timeout(DB_REQUEST_TIMEOUT) {
+        if let Some(board_string) = board_string_opt {
+            Ok(format!(
+                "{{\"type\":\"game_state\", \"status\":\"{}\", \"board\":\"{}\"}}",
+                db_game_state, board_string
+            ))
+        } else {
+            Ok(format!(
+                "{{\"type\":\"game_state\", \"status\":\"{}\"}}",
+                db_game_state
+            ))
+        }
+    } else {
+        Err("{\"type\":\"game_state\", \"status\":\"internal_error_timeout\"}".into())
+    }
 }

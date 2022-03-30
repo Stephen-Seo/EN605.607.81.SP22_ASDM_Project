@@ -125,7 +125,7 @@ then the back-end will respond with "too\_many\_players".
         "type": "game_state",
         "status": "not_paired", // or "unknown_id", "cyan_turn", "magenta_turn",
                                 // "cyan_won", "magenta_won", "draw",
-                                // "opponent_disconnected"
+                                // "opponent_disconnected", "internal_error"
 
         // "board" may not be in the response if "unknown_id" is the status
         "board": "abcdefg..." // 56-char long string with mapping:
