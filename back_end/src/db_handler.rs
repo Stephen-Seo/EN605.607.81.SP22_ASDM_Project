@@ -1,5 +1,8 @@
 use crate::constants::{COLS, ROWS};
+use crate::game_logic::{check_win_draw, WinType};
+use crate::state::{new_empty_board, BoardState, BoardType};
 
+use std::collections::hash_set::HashSet;
 use std::sync::mpsc::{Receiver, SyncSender};
 use std::{fmt, thread};
 
@@ -13,6 +16,10 @@ pub type GetIDSenderType = (u32, Option<bool>);
 pub type CheckPairingType = (bool, bool, bool);
 
 pub type BoardStateType = (DBGameState, Option<String>);
+
+pub type PlaceResultType = Result<(DBPlaceStatus, Option<String>), DBPlaceError>;
+
+// TODO use Error types instead of Strings for Result Errs
 
 #[derive(Copy, Clone, Debug, PartialEq, Eq)]
 pub enum DBGameState {
@@ -56,6 +63,44 @@ impl From<i64> for DBGameState {
     }
 }
 
+#[derive(Copy, Clone, Debug, PartialEq, Eq)]
+pub enum DBPlaceStatus {
+    Accepted,
+    GameEnded,
+}
+
+impl fmt::Display for DBPlaceStatus {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match *self {
+            DBPlaceStatus::Accepted => write!(f, "accepted"),
+            DBPlaceStatus::GameEnded => write!(f, "game_ended"),
+        }
+    }
+}
+
+#[derive(Copy, Clone, Debug, PartialEq, Eq)]
+pub enum DBPlaceError {
+    NotPairedYet,
+    NotYourTurn,
+    Illegal,
+    OpponentDisconnected,
+    UnknownID,
+    InternalError,
+}
+
+impl fmt::Display for DBPlaceError {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match *self {
+            DBPlaceError::NotPairedYet => write!(f, "not_paired_yet"),
+            DBPlaceError::NotYourTurn => write!(f, "not_your_turn"),
+            DBPlaceError::Illegal => write!(f, "illegal"),
+            DBPlaceError::OpponentDisconnected => write!(f, "opponent_disconnected"),
+            DBPlaceError::UnknownID => write!(f, "unknown_id"),
+            DBPlaceError::InternalError => write!(f, "internal_error"),
+        }
+    }
+}
+
 #[derive(Clone, Debug)]
 pub enum DBHandlerRequest {
     GetID(SyncSender<GetIDSenderType>),
@@ -70,6 +115,11 @@ pub enum DBHandlerRequest {
     DisconnectID {
         id: u32,
         response_sender: SyncSender<bool>,
+    },
+    PlaceToken {
+        id: u32,
+        pos: usize,
+        response_sender: SyncSender<PlaceResultType>,
     },
 }
 
@@ -194,6 +244,16 @@ impl DBHandler {
                 response_sender
                     .send(self.disconnect_player(None, id).is_ok())
                     .ok();
+            }
+            DBHandlerRequest::PlaceToken {
+                id,
+                pos,
+                response_sender,
+            } => {
+                let place_result = self.place_token(None, id, pos);
+                // don't stop server on send fail, may have timed out and
+                // dropped the receiver
+                response_sender.send(place_result).ok();
             }
         } // match db_request
 
@@ -373,11 +433,35 @@ impl DBHandler {
                 .check_if_player_exists(Some(&self.get_conn(DBFirstRun::NotFirstRun)?), player_id);
         }
         let conn = conn.unwrap();
-        let check_player_row =
+        let check_player_row: Result<u32, _> =
             conn.query_row("SELECT id FROM players WHERE id = ?;", [player_id], |row| {
-                row.get::<usize, u32>(0)
+                row.get(0)
             });
         if let Ok(_id) = check_player_row {
+            Ok(true)
+        } else {
+            Ok(false)
+        }
+    }
+
+    fn check_if_player_in_game(
+        &self,
+        conn: Option<&Connection>,
+        player_id: u32,
+    ) -> Result<bool, String> {
+        if conn.is_none() {
+            return self.check_if_player_in_game(
+                Some(&self.get_conn(DBFirstRun::NotFirstRun)?),
+                player_id,
+            );
+        }
+        let conn = conn.unwrap();
+
+        let check_player_game_row: Result<u32, _> = conn.query_row(
+            "SELECT games.id FROM games JOIN players WHERE players.id = ? AND players.game_id NOTNULL AND players.game_id = games.id;",
+            [player_id],
+            |row| row.get(0));
+        if check_player_game_row.is_ok() {
             Ok(true)
         } else {
             Ok(false)
@@ -395,36 +479,35 @@ impl DBHandler {
         let conn = conn.unwrap();
 
         // TODO maybe handle "opponent_disconnected" case
-        let row_result: Result<(String, i64, Option<u32>, Option<u32>), RusqliteError> =
-            conn.query_row(
-                "SELECT games.board, games.status, games.cyan_player, games.magenta_player FROM games JOIN players WHERE players.id = ? AND games.id = players.game_id;",
-                [player_id],
-                |row| {
-                    let board_result = row.get(0);
-                    let status_result = row.get(1);
-                    let cyan_player = row.get(2);
-                    let magenta_player = row.get(3);
-                    if board_result.is_ok() && status_result.is_ok() && cyan_player.is_ok() && magenta_player.is_ok() {
-                        if let (Ok(board), Ok(status), Ok(cyan_id), Ok(magenta_id)) = (board_result, status_result, cyan_player, magenta_player) {
-                            Ok((board, status, cyan_id, magenta_id))
-                        } else {
-                            unreachable!("Both row items should be Ok");
-                        }
-                    } else if board_result.is_err() {
-                        board_result
-                            .map(|_| (String::from("this value should never be returned"), 0, None, None))
-                    } else if status_result.is_err() {
-                        status_result
-                            .map(|_| (String::from("this value should never be returned"), 0, None, None))
-                    } else if cyan_player.is_err() {
-                       cyan_player
-                            .map(|_| (String::from("this value should never be returned"), 0, None, None))
+        let row_result: Result<(String, i64, Option<u32>, Option<u32>), RusqliteError> = conn.query_row(
+            "SELECT games.board, games.status, games.cyan_player, games.magenta_player FROM games JOIN players WHERE players.id = ? AND games.id = players.game_id;",
+            [player_id],
+            |row| {
+                let board_result = row.get(0);
+                let status_result = row.get(1);
+                let cyan_player = row.get(2);
+                let magenta_player = row.get(3);
+                if board_result.is_ok() && status_result.is_ok() && cyan_player.is_ok() && magenta_player.is_ok() {
+                    if let (Ok(board), Ok(status), Ok(cyan_id), Ok(magenta_id)) = (board_result, status_result, cyan_player, magenta_player) {
+                        Ok((board, status, cyan_id, magenta_id))
                     } else {
-                      magenta_player
-                            .map(|_| (String::from("this value should never be returned"), 0, None, None))
+                        unreachable!("Both row items should be Ok");
                     }
+                } else if board_result.is_err() {
+                    board_result
+                        .map(|_| (String::from("this value should never be returned"), 0, None, None))
+                } else if status_result.is_err() {
+                    status_result
+                        .map(|_| (String::from("this value should never be returned"), 0, None, None))
+                } else if cyan_player.is_err() {
+                   cyan_player
+                        .map(|_| (String::from("this value should never be returned"), 0, None, None))
+                } else {
+                  magenta_player
+                        .map(|_| (String::from("this value should never be returned"), 0, None, None))
                 }
-            );
+            }
+        );
         if let Ok((board, status, cyan_opt, magenta_opt)) = row_result {
             if board.len() != (ROWS * COLS) as usize {
                 // board is invalid size
@@ -494,6 +577,160 @@ impl DBHandler {
 
         Ok(())
     }
+
+    fn place_token(
+        &self,
+        conn: Option<&Connection>,
+        player_id: u32,
+        pos: usize,
+    ) -> PlaceResultType {
+        if conn.is_none() {
+            return self.place_token(
+                Some(
+                    &self
+                        .get_conn(DBFirstRun::NotFirstRun)
+                        .map_err(|_| DBPlaceError::InternalError)?,
+                ),
+                player_id,
+                pos,
+            );
+        }
+        let conn = conn.unwrap();
+
+        // check if player exists
+        let player_exist_check_result = self.check_if_player_exists(Some(conn), player_id);
+        if let Ok(exists) = player_exist_check_result {
+            if !exists {
+                return Err(DBPlaceError::UnknownID);
+            }
+        } else {
+            return Err(DBPlaceError::InternalError);
+        }
+
+        // check if player belongs to a game
+        let player_game_result = self.check_if_player_in_game(Some(conn), player_id);
+        if let Ok(is_in_game) = player_game_result {
+            if !is_in_game {
+                return Err(DBPlaceError::NotPairedYet);
+            }
+        } else {
+            return Err(DBPlaceError::InternalError);
+        }
+
+        // check if player is cyan or magenta
+        let query_result_result: Result<Result<(bool, u32, String), DBPlaceError>, _> =
+                conn.query_row(
+                    "SELECT cyan_player, magenta_player, status, board FROM games JOIN players WHERE players.id = ? AND players.game_id = games.id;",
+                    [player_id],
+                    |row| {
+            let cyan_id_result: Result<Option<u32>, _> = row.get(0);
+            let magenta_id_result: Result<Option<u32>, _> = row.get(1);
+            let status_result: Result<u32, _> = row.get(2);
+            let board_result: Result<String, _> = row.get(3);
+            if status_result.is_err() {
+                return status_result.map(|_| Ok((false, 0, "".into())));
+            }
+            let status: u32 = status_result.unwrap();
+            if board_result.is_err() {
+                return board_result.map(|_| Ok((false, 0, "".into())));
+            }
+            let board = board_result.unwrap();
+            if cyan_id_result.is_ok() && magenta_id_result.is_ok() {
+                if let (Ok(cyan_id_opt), Ok(magenta_id_opt)) = (cyan_id_result, magenta_id_result) {
+                    if let (Some(cyan_id), Some(magenta_id)) = (cyan_id_opt, magenta_id_opt) {
+                        Ok(Ok((cyan_id == player_id, status, board)))
+                    } else {
+                        Ok(Err(DBPlaceError::OpponentDisconnected))
+                    }
+                } else {
+                    unreachable!("both row items should be Ok")
+                }
+            } else if cyan_id_result.is_err() {
+                cyan_id_result.map(|_| Err(DBPlaceError::InternalError))
+            } else {
+                magenta_id_result.map(|_| Err(DBPlaceError::InternalError))
+            }
+        });
+
+        let query_result = query_result_result.map_err(|_| DBPlaceError::InternalError)?;
+
+        // if opponent has disconnected, disconnect the remaining player as well
+        if let Err(DBPlaceError::OpponentDisconnected) = query_result {
+            if self.disconnect_player(Some(conn), player_id).is_err()
+                || self.clear_empty_games(Some(conn)).is_err()
+            {
+                return Err(DBPlaceError::InternalError);
+            }
+        }
+
+        let (is_cyan, status, board_string) = query_result?;
+
+        match status {
+            0 => {
+                // cyan's turn
+                if !is_cyan {
+                    return Err(DBPlaceError::NotYourTurn);
+                }
+            }
+            1 => {
+                // magenta's turn
+                if is_cyan {
+                    return Err(DBPlaceError::NotYourTurn);
+                }
+            }
+            2 | 3 | 4 => {
+                // game over, cyan won, or magenta won, or draw
+                return Ok((DBPlaceStatus::GameEnded, Some(board_string)));
+            }
+            _ => (),
+        }
+
+        // get board state
+        let board = board_from_string(board_string);
+
+        // find placement position or return "illegal move" if unable to
+        let mut final_pos = pos;
+        loop {
+            if board[final_pos].get() == BoardState::Empty {
+                if final_pos + COLS as usize >= board.len()
+                    || board[final_pos + COLS as usize].get() != BoardState::Empty
+                {
+                    break;
+                } else if board[final_pos + COLS as usize].get() == BoardState::Empty {
+                    final_pos += COLS as usize;
+                }
+            } else {
+                return Err(DBPlaceError::Illegal);
+            }
+        }
+
+        // place into board
+        if is_cyan {
+            board[final_pos].replace(BoardState::Cyan);
+        } else {
+            board[final_pos].replace(BoardState::Magenta);
+        }
+
+        // board back to string
+        let (board_string, ended) = string_from_board(board, final_pos);
+
+        // update DB
+        let update_result = conn.execute("UPDATE games SET status = ?, board = ? FROM players WHERE players.game_id = games.id AND players.id = ?;" , params![if status == 0 { 1u8 } else { 0u8 }, board_string, player_id]);
+        if let Err(_e) = update_result {
+            return Err(DBPlaceError::InternalError);
+        } else if let Ok(count) = update_result {
+            if count != 1 {
+                return Err(DBPlaceError::InternalError);
+            }
+        }
+
+        if ended {
+            self.disconnect_player(Some(conn), player_id).ok();
+            Ok((DBPlaceStatus::GameEnded, Some(board_string)))
+        } else {
+            Ok((DBPlaceStatus::Accepted, Some(board_string)))
+        }
+    }
 }
 
 pub fn start_db_handler_thread(
@@ -530,4 +767,84 @@ fn new_board() -> String {
         board.push('a');
     }
     board
+}
+
+fn board_from_string(board_string: String) -> BoardType {
+    let board = new_empty_board();
+
+    for (idx, c) in board_string.chars().enumerate() {
+        match c {
+            'a' => board[idx].replace(BoardState::Empty),
+            'b' | 'd' | 'f' => board[idx].replace(BoardState::Cyan),
+            'c' | 'e' | 'g' => board[idx].replace(BoardState::Magenta),
+            _ => BoardState::Empty,
+        };
+    }
+
+    board
+}
+
+/// Returns the board as a String, and true if the game has ended
+fn string_from_board(board: BoardType, placed: usize) -> (String, bool) {
+    let mut board_string = String::with_capacity(56);
+
+    // check for winning pieces
+    let mut win_set: HashSet<usize> = HashSet::new();
+    let win_opt = check_win_draw(&board);
+    if let Some((board_state, win_type)) = win_opt {
+        match win_type {
+            WinType::Horizontal(pos) => {
+                for i in pos..(pos + 4) {
+                    win_set.insert(i);
+                }
+            }
+            WinType::Vertical(pos) => {
+                for i in 0..4 {
+                    win_set.insert(pos + i * COLS as usize);
+                }
+            }
+            WinType::DiagonalUp(pos) => {
+                for i in 0..4 {
+                    win_set.insert(pos + i - i * COLS as usize);
+                }
+            }
+            WinType::DiagonalDown(pos) => {
+                for i in 0..4 {
+                    win_set.insert(pos + i + i * COLS as usize);
+                }
+            }
+            WinType::None => (),
+        }
+    }
+
+    // set values to String
+    let mut is_full = true;
+    for (idx, board_state) in board.iter().enumerate().take((COLS * ROWS) as usize) {
+        board_string.push(match board_state.get() {
+            BoardState::Empty => {
+                is_full = false;
+                'a'
+            }
+            BoardState::Cyan | BoardState::CyanWin => {
+                if win_set.contains(&idx) {
+                    'd'
+                } else if idx == placed {
+                    'f'
+                } else {
+                    'b'
+                }
+            }
+            BoardState::Magenta | BoardState::MagentaWin => {
+                if win_set.contains(&idx) {
+                    'e'
+                } else if idx == placed {
+                    'g'
+                } else {
+                    'c'
+                }
+            }
+        });
+    }
+
+    (board_string, is_full || !win_set.is_empty())
 }

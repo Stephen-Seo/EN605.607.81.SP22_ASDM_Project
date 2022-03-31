@@ -132,10 +132,10 @@ then the back-end will respond with "too\_many\_players".
                               // a - empty
                               // b - cyan
                               // c - magenta
-                              // d - cyan placed
-                              // e - magenta placed
-                              // f - cyan winning piece
-                              // g - magenta winning piece
+                              // d - cyan winning piece
+                              // e - magenta winning piece
+                              // f - cyan placed
+                              // g - magenta placed
     }
 ```
 

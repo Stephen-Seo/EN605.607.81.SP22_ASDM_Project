@@ -18,7 +18,7 @@ pub fn handle_json(
         match type_str.as_str() {
             "pairing_request" => handle_pairing_request(tx),
             "check_pairing" => handle_check_pairing(root, tx),
-            "place_token" => handle_place_token(root),
+            "place_token" => handle_place_token(root, tx),
             "disconnect" => handle_disconnect(root, tx),
             "game_state" => handle_game_state(root, tx),
             _ => Err("{\"type\":\"invalid_type\"}".into()),
@@ -89,8 +89,69 @@ fn handle_check_pairing(root: Value, tx: SyncSender<DBHandlerRequest>) -> Result
     }
 }
 
-fn handle_place_token(root: Value) -> Result<String, String> {
-    Err("{\"type\":\"unimplemented\"}".into())
+fn handle_place_token(root: Value, tx: SyncSender<DBHandlerRequest>) -> Result<String, String> {
+    let id_option = root.get("id");
+    if id_option.is_none() {
+        return Err("{\"type\":\"invalid_syntax\"}".into());
+    }
+    let player_id = id_option
+        .unwrap()
+        .as_u64()
+        .ok_or_else(|| String::from("{\"type\":\"invalid_syntax\"}"))?;
+    let player_id: u32 = player_id
+        .try_into()
+        .map_err(|_| String::from("{\"type\":\"invalid_syntax\"}"))?;
+
+    let position_option = root.get("position");
+    if position_option.is_none() {
+        return Err("{\"type\":\"invalid_syntax\"}".into());
+    }
+    let position = position_option
+        .unwrap()
+        .as_u64()
+        .ok_or_else(|| String::from("{\"type\":\"invalid_syntax\"}"))?;
+    let position: usize = position
+        .try_into()
+        .map_err(|_| String::from("{\"type\":\"invalid_syntax\"}"))?;
+
+    let (resp_tx, resp_rx) = sync_channel(1);
+
+    if tx
+        .send(DBHandlerRequest::PlaceToken {
+            id: player_id,
+            pos: position,
+            response_sender: resp_tx,
+        })
+        .is_err()
+    {
+        return Err(String::from(
+            "{\"type\":\"place_token\", \"status\":\"internal_error\"}",
+        ));
+    }
+
+    let place_result = resp_rx.recv_timeout(DB_REQUEST_TIMEOUT);
+    if let Ok(Ok((place_status, board_opt))) = place_result {
+        if let Some(board_string) = board_opt {
+            Ok(format!(
+                "{{\"type\":\"place_token\", \"status\":\"{}\", \"board\":\"{}\"}}",
+                place_status, board_string
+            ))
+        } else {
+            Ok(format!(
+                "{{\"type\":\"place_token\", \"status\":\"{}\"}}",
+                place_status
+            ))
+        }
+    } else if let Ok(Err(place_error)) = place_result {
+        Err(format!(
+            "{{\"type\":\"place_token\", \"status\":\"{}\"}}",
+            place_error
+        ))
+    } else {
+        Err(String::from(
+            "{\"type\":\"place_token\", \"status\":\"internal_error\"}",
+        ))
+    }
 }
 
 fn handle_disconnect(root: Value, tx: SyncSender<DBHandlerRequest>) -> Result<String, String> {
