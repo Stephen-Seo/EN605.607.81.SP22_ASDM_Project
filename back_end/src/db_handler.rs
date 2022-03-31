@@ -67,6 +67,10 @@ pub enum DBHandlerRequest {
         id: u32,
         response_sender: SyncSender<BoardStateType>,
     },
+    DisconnectID {
+        id: u32,
+        response_sender: SyncSender<bool>,
+    },
 }
 
 #[derive(Copy, Clone, Debug, PartialEq, Eq)]
@@ -181,6 +185,16 @@ impl DBHandler {
                 // dropped the receiver
                 response_sender.send(get_board_result.unwrap()).ok();
             }
+            DBHandlerRequest::DisconnectID {
+                id,
+                response_sender,
+            } => {
+                // don't stop server on send fail, may have timed out and
+                // dropped the receiver
+                response_sender
+                    .send(self.disconnect_player(None, id).is_ok())
+                    .ok();
+            }
         } // match db_request
 
         false
@@ -215,8 +229,8 @@ impl DBHandler {
                     date_added TEXT NOT NULL,
                     board TEXT NOT NULL,
                     status INTEGER NOT NULL,
-                    FOREIGN KEY(cyan_player) REFERENCES players (id),
-                    FOREIGN KEY(magenta_player) REFERENCES players (id));
+                    FOREIGN KEY(cyan_player) REFERENCES players (id) ON DELETE SET NULL,
+                    FOREIGN KEY(magenta_player) REFERENCES players (id) ON DELETE SET NULL);
             ",
                 [],
             );
@@ -370,9 +384,6 @@ impl DBHandler {
         }
     }
 
-    // clippy lint allow required due to conn.query_row() needing to handle
-    // returning a tuple in a Result
-    #[allow(clippy::unnecessary_unwrap)]
     fn get_board_state(
         &self,
         conn: Option<&Connection>,
@@ -384,28 +395,56 @@ impl DBHandler {
         let conn = conn.unwrap();
 
         // TODO maybe handle "opponent_disconnected" case
-        let row_result: Result<(String, i64), RusqliteError> =
+        let row_result: Result<(String, i64, Option<u32>, Option<u32>), RusqliteError> =
             conn.query_row(
-                "SELECT games.board, games.status FROM games JOIN players WHERE players.id = ? AND games.id = players.game_id;",
+                "SELECT games.board, games.status, games.cyan_player, games.magenta_player FROM games JOIN players WHERE players.id = ? AND games.id = players.game_id;",
                 [player_id],
                 |row| {
                     let board_result = row.get(0);
                     let status_result = row.get(1);
-                    if board_result.is_ok() && status_result.is_ok() {
-                        Ok((board_result.unwrap(), status_result.unwrap()))
+                    let cyan_player = row.get(2);
+                    let magenta_player = row.get(3);
+                    if board_result.is_ok() && status_result.is_ok() && cyan_player.is_ok() && magenta_player.is_ok() {
+                        if let (Ok(board), Ok(status), Ok(cyan_id), Ok(magenta_id)) = (board_result, status_result, cyan_player, magenta_player) {
+                            Ok((board, status, cyan_id, magenta_id))
+                        } else {
+                            unreachable!("Both row items should be Ok");
+                        }
                     } else if board_result.is_err() {
                         board_result
-                            .map(|_| (String::from("this value should never be returned"), 0))
-                    } else {
+                            .map(|_| (String::from("this value should never be returned"), 0, None, None))
+                    } else if status_result.is_err() {
                         status_result
-                            .map(|_| (String::from("this value should never be returned"), 0))
+                            .map(|_| (String::from("this value should never be returned"), 0, None, None))
+                    } else if cyan_player.is_err() {
+                       cyan_player
+                            .map(|_| (String::from("this value should never be returned"), 0, None, None))
+                    } else {
+                      magenta_player
+                            .map(|_| (String::from("this value should never be returned"), 0, None, None))
                     }
                 }
             );
-        if let Ok((board, status)) = row_result {
+        if let Ok((board, status, cyan_opt, magenta_opt)) = row_result {
             if board.len() != (ROWS * COLS) as usize {
+                // board is invalid size
                 Ok((DBGameState::InternalError, None))
+            } else if cyan_opt.is_none() || magenta_opt.is_none() {
+                // One player disconnected
+                let player_remove_result = self.disconnect_player(Some(conn), player_id);
+                if player_remove_result.is_err() {
+                    // Failed to disconnect remaining player
+                    Ok((DBGameState::InternalError, None))
+                } else {
+                    // Remove the game(s) with disconnected players
+                    if self.clear_empty_games(Some(conn)).is_err() {
+                        Ok((DBGameState::InternalError, None))
+                    } else {
+                        Ok((DBGameState::OpponentDisconnected, Some(board)))
+                    }
+                }
             } else {
+                // Game in progress, or other state depending on "status"
                 Ok((DBGameState::from(status), Some(board)))
             }
         } else if let Err(RusqliteError::QueryReturnedNoRows) = row_result {
@@ -423,6 +462,37 @@ impl DBHandler {
             // TODO use internal error enum instead of string
             Err(String::from("internal_error"))
         }
+    }
+
+    fn disconnect_player(&self, conn: Option<&Connection>, player_id: u32) -> Result<(), String> {
+        if conn.is_none() {
+            return self
+                .disconnect_player(Some(&self.get_conn(DBFirstRun::NotFirstRun)?), player_id);
+        }
+        let conn = conn.unwrap();
+
+        let stmt_result = conn.execute("DELETE FROM players WHERE id = ?;", [player_id]);
+        if let Ok(1) = stmt_result {
+            Ok(())
+        } else {
+            Err(String::from("id not found"))
+        }
+    }
+
+    fn clear_empty_games(&self, conn: Option<&Connection>) -> Result<(), String> {
+        if conn.is_none() {
+            return self.clear_empty_games(Some(&self.get_conn(DBFirstRun::NotFirstRun)?));
+        }
+        let conn = conn.unwrap();
+
+        // Only fails if no rows were removed, and that is not an issue
+        conn.execute(
+            "DELETE FROM games WHERE cyan_player ISNULL AND magenta_player ISNULL;",
+            [],
+        )
+        .ok();
+
+        Ok(())
     }
 }
 

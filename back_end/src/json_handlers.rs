@@ -19,7 +19,7 @@ pub fn handle_json(
             "pairing_request" => handle_pairing_request(tx),
             "check_pairing" => handle_check_pairing(root, tx),
             "place_token" => handle_place_token(root),
-            "disconnect" => handle_disconnect(root),
+            "disconnect" => handle_disconnect(root, tx),
             "game_state" => handle_game_state(root, tx),
             _ => Err("{\"type\":\"invalid_type\"}".into()),
         }
@@ -93,8 +93,46 @@ fn handle_place_token(root: Value) -> Result<String, String> {
     Err("{\"type\":\"unimplemented\"}".into())
 }
 
-fn handle_disconnect(root: Value) -> Result<String, String> {
-    Err("{\"type\":\"unimplemented\"}".into())
+fn handle_disconnect(root: Value, tx: SyncSender<DBHandlerRequest>) -> Result<String, String> {
+    let id_option = root.get("id");
+    if id_option.is_none() {
+        return Err("{\"type\":\"invalid_syntax\"}".into());
+    }
+    let player_id = id_option
+        .unwrap()
+        .as_u64()
+        .ok_or_else(|| String::from("{\"type\":\"invalid_syntax\"}"))?;
+    let player_id: u32 = player_id
+        .try_into()
+        .map_err(|_| String::from("{\"type\":\"invalid_syntax\"}"))?;
+
+    let (resp_tx, resp_rx) = sync_channel(1);
+
+    if tx
+        .send(DBHandlerRequest::DisconnectID {
+            id: player_id,
+            response_sender: resp_tx,
+        })
+        .is_err()
+    {
+        return Err(String::from(
+            "{\"type\":\"disconnect\", \"status\":\"internal_error\"}",
+        ));
+    }
+
+    if let Ok(was_removed) = resp_rx.recv_timeout(DB_REQUEST_TIMEOUT) {
+        if was_removed {
+            Ok(String::from("{\"type\":\"disconnect\", \"status\":\"ok\"}"))
+        } else {
+            Ok(String::from(
+                "{\"type\":\"disconnect\", \"status\":\"unknown_id\"}",
+            ))
+        }
+    } else {
+        Err(String::from(
+            "{\"type\":\"disconnect\", \"status\":\"internal_error\"}",
+        ))
+    }
 }
 
 fn handle_game_state(root: Value, tx: SyncSender<DBHandlerRequest>) -> Result<String, String> {
