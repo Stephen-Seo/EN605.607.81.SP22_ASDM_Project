@@ -1,4 +1,8 @@
 use crate::ai::AIDifficulty;
+use crate::game_logic::{WinType, check_win_draw};
+use crate::constants::{ROWS, COLS};
+
+use std::collections::hash_set::HashSet;
 use std::cell::Cell;
 use std::fmt::Display;
 use std::rc::Rc;
@@ -295,4 +299,92 @@ pub enum MainMenuMessage {
     SinglePlayer(Turn, AIDifficulty),
     LocalMultiplayer,
     NetworkedMultiplayer(Turn),
+}
+
+pub fn new_string_board() -> String {
+    let mut board = String::with_capacity(56);
+    for _i in 0..56 {
+        board.push('a');
+    }
+    board
+}
+
+pub fn board_from_string(board_string: String) -> BoardType {
+    let board = new_empty_board();
+
+    for (idx, c) in board_string.chars().enumerate() {
+        match c {
+            'a' => board[idx].replace(BoardState::Empty),
+            'b' | 'd' | 'f' => board[idx].replace(BoardState::Cyan),
+            'c' | 'e' | 'g' => board[idx].replace(BoardState::Magenta),
+            _ => BoardState::Empty,
+        };
+    }
+
+    board
+}
+
+/// Returns the board as a String, and true if the game has ended
+pub fn string_from_board(board: BoardType, placed: usize) -> (String, bool) {
+    let mut board_string = String::with_capacity(56);
+
+    // check for winning pieces
+    let mut win_set: HashSet<usize> = HashSet::new();
+    let win_opt = check_win_draw(&board);
+    if let Some((board_state, win_type)) = win_opt {
+        match win_type {
+            WinType::Horizontal(pos) => {
+                for i in pos..(pos + 4) {
+                    win_set.insert(i);
+                }
+            }
+            WinType::Vertical(pos) => {
+                for i in 0..4 {
+                    win_set.insert(pos + i * COLS as usize);
+                }
+            }
+            WinType::DiagonalUp(pos) => {
+                for i in 0..4 {
+                    win_set.insert(pos + i - i * COLS as usize);
+                }
+            }
+            WinType::DiagonalDown(pos) => {
+                for i in 0..4 {
+                    win_set.insert(pos + i + i * COLS as usize);
+                }
+            }
+            WinType::None => (),
+        }
+    }
+
+    // set values to String
+    let mut is_full = true;
+    for (idx, board_state) in board.iter().enumerate().take((COLS * ROWS) as usize) {
+        board_string.push(match board_state.get() {
+            BoardState::Empty => {
+                is_full = false;
+                'a'
+            }
+            BoardState::Cyan | BoardState::CyanWin => {
+                if win_set.contains(&idx) {
+                    'd'
+                } else if idx == placed {
+                    'f'
+                } else {
+                    'b'
+                }
+            }
+            BoardState::Magenta | BoardState::MagentaWin => {
+                if win_set.contains(&idx) {
+                    'e'
+                } else if idx == placed {
+                    'g'
+                } else {
+                    'c'
+                }
+            }
+        });
+    }
+
+    (board_string, is_full || !win_set.is_empty())
 }

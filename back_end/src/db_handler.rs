@@ -1,8 +1,6 @@
 use crate::constants::{COLS, ROWS};
-use crate::game_logic::{check_win_draw, WinType};
-use crate::state::{new_empty_board, BoardState, BoardType};
+use crate::state::{BoardState, new_string_board, board_from_string, string_from_board};
 
-use std::collections::hash_set::HashSet;
 use std::sync::mpsc::{Receiver, SyncSender};
 use std::{fmt, thread};
 
@@ -355,7 +353,7 @@ impl DBHandler {
         // TODO randomize players (or first-come-first-serve ok to do?)
         conn.execute(
             "INSERT INTO games (id, cyan_player, magenta_player, date_added, board, status) VALUES (?, ?, ?, datetime(), ?, 0);",
-            params![game_id, players[0], players[1], new_board()]
+            params![game_id, players[0], players[1], new_string_board()]
         )
         .map_err(|e| format!("{:?}", e))?;
         conn.execute(
@@ -637,7 +635,7 @@ impl DBHandler {
             let board = board_result.unwrap();
             if cyan_id_result.is_ok() && magenta_id_result.is_ok() {
                 if let (Ok(cyan_id_opt), Ok(magenta_id_opt)) = (cyan_id_result, magenta_id_result) {
-                    if let (Some(cyan_id), Some(magenta_id)) = (cyan_id_opt, magenta_id_opt) {
+                    if let (Some(cyan_id), Some(_magenta_id)) = (cyan_id_opt, magenta_id_opt) {
                         Ok(Ok((cyan_id == player_id, status, board)))
                     } else {
                         Ok(Err(DBPlaceError::OpponentDisconnected))
@@ -761,90 +759,4 @@ pub fn start_db_handler_thread(
     });
 }
 
-fn new_board() -> String {
-    let mut board = String::with_capacity(56);
-    for _i in 0..56 {
-        board.push('a');
-    }
-    board
-}
 
-fn board_from_string(board_string: String) -> BoardType {
-    let board = new_empty_board();
-
-    for (idx, c) in board_string.chars().enumerate() {
-        match c {
-            'a' => board[idx].replace(BoardState::Empty),
-            'b' | 'd' | 'f' => board[idx].replace(BoardState::Cyan),
-            'c' | 'e' | 'g' => board[idx].replace(BoardState::Magenta),
-            _ => BoardState::Empty,
-        };
-    }
-
-    board
-}
-
-/// Returns the board as a String, and true if the game has ended
-fn string_from_board(board: BoardType, placed: usize) -> (String, bool) {
-    let mut board_string = String::with_capacity(56);
-
-    // check for winning pieces
-    let mut win_set: HashSet<usize> = HashSet::new();
-    let win_opt = check_win_draw(&board);
-    if let Some((board_state, win_type)) = win_opt {
-        match win_type {
-            WinType::Horizontal(pos) => {
-                for i in pos..(pos + 4) {
-                    win_set.insert(i);
-                }
-            }
-            WinType::Vertical(pos) => {
-                for i in 0..4 {
-                    win_set.insert(pos + i * COLS as usize);
-                }
-            }
-            WinType::DiagonalUp(pos) => {
-                for i in 0..4 {
-                    win_set.insert(pos + i - i * COLS as usize);
-                }
-            }
-            WinType::DiagonalDown(pos) => {
-                for i in 0..4 {
-                    win_set.insert(pos + i + i * COLS as usize);
-                }
-            }
-            WinType::None => (),
-        }
-    }
-
-    // set values to String
-    let mut is_full = true;
-    for (idx, board_state) in board.iter().enumerate().take((COLS * ROWS) as usize) {
-        board_string.push(match board_state.get() {
-            BoardState::Empty => {
-                is_full = false;
-                'a'
-            }
-            BoardState::Cyan | BoardState::CyanWin => {
-                if win_set.contains(&idx) {
-                    'd'
-                } else if idx == placed {
-                    'f'
-                } else {
-                    'b'
-                }
-            }
-            BoardState::Magenta | BoardState::MagentaWin => {
-                if win_set.contains(&idx) {
-                    'e'
-                } else if idx == placed {
-                    'g'
-                } else {
-                    'c'
-                }
-            }
-        });
-    }
-
-    (board_string, is_full || !win_set.is_empty())
-}
