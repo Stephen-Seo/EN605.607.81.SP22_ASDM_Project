@@ -18,7 +18,7 @@ use warp::{Filter, Rejection};
 
 #[tokio::main]
 async fn main() {
-    let (db_tx, db_rx) = sync_channel::<DBHandlerRequest>(32);
+    let (db_tx, db_rx) = sync_channel::<DBHandlerRequest>(128);
     let db_tx_clone = db_tx.clone();
 
     let (shutdown_tx, shutdown_rx) = oneshot::channel::<()>();

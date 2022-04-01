@@ -2,7 +2,6 @@ use crate::ai::{get_ai_choice, AIDifficulty};
 use crate::constants::{
     COLS, GAME_CLEANUP_TIMEOUT, PLAYER_CLEANUP_TIMEOUT, PLAYER_COUNT_LIMIT, ROWS, TURN_SECONDS,
 };
-use crate::game_logic::check_win_draw;
 use crate::state::{board_from_string, new_string_board, string_from_board, BoardState, Turn};
 
 use std::sync::mpsc::{Receiver, RecvTimeoutError, SyncSender};
