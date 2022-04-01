@@ -17,8 +17,6 @@ pub type BoardStateType = (DBGameState, Option<String>);
 
 pub type PlaceResultType = Result<(DBPlaceStatus, Option<String>), DBPlaceError>;
 
-// TODO use Error types instead of Strings for Result Errs
-
 #[derive(Copy, Clone, Debug, PartialEq, Eq)]
 pub enum DBGameState {
     CyanTurn,
@@ -150,63 +148,49 @@ impl DBHandler {
         match db_request {
             DBHandlerRequest::GetID(player_tx) => {
                 // got request to create new player, create new player
-                let mut player_id: u32 = thread_rng().gen();
                 let conn_result = self.get_conn(DBFirstRun::NotFirstRun);
                 if let Err(e) = conn_result {
-                    println!("Failed to get sqlite db connection: {:?}", e);
-                    self.shutdown_tx.send(()).ok();
-                    return false;
-                }
-                let conn = conn_result.unwrap();
-                loop {
-                    let exists_result = self.check_if_player_exists(Some(&conn), player_id);
-                    if let Ok(exists) = exists_result {
-                        if exists {
-                            player_id = thread_rng().gen();
-                        } else {
-                            break;
-                        }
-                    } else {
-                        let error = exists_result.unwrap_err();
-                        println!("Failed to check if player exists in db: {:?}", error);
-                        self.shutdown_tx.send(()).ok();
-                        return true;
-                    }
-                }
-                let insert_result = conn.execute(
-                    "INSERT INTO players (id, date_added) VALUES (?, datetime());",
-                    [player_id],
-                );
-                if let Err(e) = insert_result {
-                    println!("Failed to insert into sqlite db: {:?}", e);
-                    self.shutdown_tx.send(()).ok();
+                    println!("{}", e);
                     return true;
                 }
+                let conn = conn_result.unwrap();
+
+                let create_player_result = self.create_new_player(Some(&conn));
+                if let Err(e) = create_player_result {
+                    println!("{}", e);
+                    return true;
+                }
+                let player_id = create_player_result.unwrap();
 
                 let pair_up_result = self.pair_up_players(Some(&conn));
                 if let Err(e) = pair_up_result {
-                    println!("Failed to pair up players: {}", e);
+                    println!("{}", e);
                     return true;
                 }
 
                 // Check if current player has been paired
-                let mut is_cyan_player_opt: Option<bool> = None;
-                let check_player_row = conn.query_row("SELECT games.cyan_player FROM players JOIN games WHERE games.id = players.game_id AND players.id = ?;", [player_id], |row| row.get::<usize, u32>(0));
-                if let Ok(cyan_player) = check_player_row {
-                    if cyan_player == player_id {
-                        // is paired, is cyan_player
-                        is_cyan_player_opt = Some(true);
+                let paired_check_result = self.check_if_player_is_paired(Some(&conn), player_id);
+                if let Err(e) = paired_check_result {
+                    println!("{}", e);
+                    return true;
+                } else if let Ok((exists, paired, is_cyan)) = paired_check_result {
+                    if exists {
+                        if paired {
+                            // don't stop server on send fail, may have timed
+                            // out and dropped the receiver
+                            player_tx.send((player_id, Some(is_cyan))).ok();
+                        } else {
+                            // don't stop server on send fail, may have timed
+                            // out and dropped the receiver
+                            player_tx.send((player_id, None)).ok();
+                        }
                     } else {
-                        // is paired, not cyan_player
-                        is_cyan_player_opt = Some(false);
+                        println!("Internal error, created player doesn't exist");
+                        return true;
                     }
-                } else if check_player_row.is_err() {
-                    // not paired, can do nothing here
+                } else {
+                    unreachable!();
                 }
-
-                // don't stop server on send fail, may have timed out and
-                // dropped the receiver
-                player_tx.send((player_id, is_cyan_player_opt)).ok();
             }
             DBHandlerRequest::CheckPairing {
                 id,
@@ -227,7 +211,8 @@ impl DBHandler {
                 response_sender,
             } => {
                 let get_board_result = self.get_board_state(None, id);
-                if get_board_result.is_err() {
+                if let Err(e) = get_board_result {
+                    println!("{}", e);
                     // don't stop server on send fail, may have timed out and
                     // dropped the receiver
                     response_sender.send((DBGameState::UnknownID, None)).ok();
@@ -307,6 +292,41 @@ impl DBHandler {
         } else {
             Err(String::from("Failed to open connection"))
         }
+    }
+
+    fn create_new_player(&self, conn: Option<&Connection>) -> Result<u32, String> {
+        if conn.is_none() {
+            return self.create_new_player(Some(&self.get_conn(DBFirstRun::NotFirstRun)?));
+        }
+        let conn = conn.unwrap();
+
+        let mut player_id: u32 = thread_rng().gen();
+        loop {
+            let exists_result = self.check_if_player_exists(Some(conn), player_id);
+            if let Ok(exists) = exists_result {
+                if exists {
+                    player_id = thread_rng().gen();
+                } else {
+                    break;
+                }
+            } else {
+                let error = exists_result.unwrap_err();
+                return Err(format!(
+                    "Failed to check if player exists in db: {:?}",
+                    error
+                ));
+            }
+        }
+
+        let insert_result = conn.execute(
+            "INSERT INTO players (id, date_added) VALUES (?, datetime());",
+            [player_id],
+        );
+        if let Err(e) = insert_result {
+            return Err(format!("Failed to insert player into db: {:?}", e));
+        }
+
+        Ok(player_id)
     }
 
     fn pair_up_players(&self, conn: Option<&Connection>) -> Result<(), String> {
