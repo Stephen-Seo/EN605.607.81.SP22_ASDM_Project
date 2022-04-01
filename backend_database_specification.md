@@ -11,7 +11,7 @@ PRAGMA foreign_keys = ON;
 
 // fields should be self explanatory for the players table
 CREATE TABLE players (id INTEGER PRIMARY KEY NOT NULL,
-                      date_added TEXT NOT NULL,
+                      date_added TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
                       game_id INTEGER,
                       FOREIGN KEY(game_id) REFERENCES games(id) ON DELETE CASCADE);
 
@@ -26,9 +26,10 @@ CREATE TABLE players (id INTEGER PRIMARY KEY NOT NULL,
 CREATE TABLE games (id INTEGER PRIMARY KEY NOT NULL,
                     cyan_player INTEGER UNIQUE,
                     magenta_player INTEGER UNIQUE,
-                    date_added TEXT NOT NULL,
+                    date_added TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
                     board TEXT NOT NULL,
                     status INTEGER NOT NULL,
+                    turn_time_start TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
                     FOREIGN KEY(cyan_player) REFERENCES players (id) ON DELETE SET NULL,
                     FOREIGN KEY(magenta_player) REFERENCES players (id) ON DELETE SET NULL);
 ```

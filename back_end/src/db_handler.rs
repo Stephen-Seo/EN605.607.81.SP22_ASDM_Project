@@ -1,7 +1,12 @@
-use crate::constants::{COLS, ROWS};
-use crate::state::{board_from_string, new_string_board, string_from_board, BoardState};
+use crate::ai::{get_ai_choice, AIDifficulty};
+use crate::constants::{
+    COLS, GAME_CLEANUP_TIMEOUT, PLAYER_CLEANUP_TIMEOUT, PLAYER_COUNT_LIMIT, ROWS, TURN_SECONDS,
+};
+use crate::game_logic::check_win_draw;
+use crate::state::{board_from_string, new_string_board, string_from_board, BoardState, Turn};
 
-use std::sync::mpsc::{Receiver, SyncSender};
+use std::sync::mpsc::{Receiver, RecvTimeoutError, SyncSender};
+use std::time::Duration;
 use std::{fmt, thread};
 
 use rand::{thread_rng, Rng};
@@ -138,8 +143,10 @@ struct DBHandler {
 impl DBHandler {
     /// Returns true if should break out of outer loop
     fn handle_request(&mut self) -> bool {
-        let rx_recv_result = self.rx.recv();
-        if let Err(e) = rx_recv_result {
+        let rx_recv_result = self.rx.recv_timeout(Duration::from_secs(1));
+        if let Err(RecvTimeoutError::Timeout) = rx_recv_result {
+            return false;
+        } else if let Err(e) = rx_recv_result {
             println!("Failed to get DBHandlerRequest: {:?}", e);
             self.shutdown_tx.send(()).ok();
             return false;
@@ -158,7 +165,8 @@ impl DBHandler {
                 let create_player_result = self.create_new_player(Some(&conn));
                 if let Err(e) = create_player_result {
                     println!("{}", e);
-                    return true;
+                    // don't stop server because player limit may have been reached
+                    return false;
                 }
                 let player_id = create_player_result.unwrap();
 
@@ -254,7 +262,7 @@ impl DBHandler {
             let result = conn.execute(
                 "
                 CREATE TABLE players (id INTEGER PRIMARY KEY NOT NULL,
-                    date_added TEXT NOT NULL,
+                    date_added TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
                     game_id INTEGER,
                     FOREIGN KEY(game_id) REFERENCES games(id) ON DELETE CASCADE);
             ",
@@ -273,9 +281,10 @@ impl DBHandler {
                 CREATE TABLE games (id INTEGER PRIMARY KEY NOT NULL,
                     cyan_player INTEGER UNIQUE,
                     magenta_player INTEGER UNIQUE,
-                    date_added TEXT NOT NULL,
+                    date_added TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
                     board TEXT NOT NULL,
                     status INTEGER NOT NULL,
+                    turn_time_start TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
                     FOREIGN KEY(cyan_player) REFERENCES players (id) ON DELETE SET NULL,
                     FOREIGN KEY(magenta_player) REFERENCES players (id) ON DELETE SET NULL);
             ",
@@ -300,6 +309,18 @@ impl DBHandler {
         }
         let conn = conn.unwrap();
 
+        let row_result: Result<usize, _> =
+            conn.query_row("SELECT count(id) FROM players;", [], |row| row.get(0));
+        if let Ok(count) = row_result {
+            if count > PLAYER_COUNT_LIMIT {
+                return Err(String::from(
+                    "Player limit reached, cannot create new players",
+                ));
+            }
+        } else {
+            return Err(String::from("Failed to get player count in db"));
+        }
+
         let mut player_id: u32 = thread_rng().gen();
         loop {
             let exists_result = self.check_if_player_exists(Some(conn), player_id);
@@ -318,10 +339,7 @@ impl DBHandler {
             }
         }
 
-        let insert_result = conn.execute(
-            "INSERT INTO players (id, date_added) VALUES (?, datetime());",
-            [player_id],
-        );
+        let insert_result = conn.execute("INSERT INTO players (id) VALUES (?);", [player_id]);
         if let Err(e) = insert_result {
             return Err(format!("Failed to insert player into db: {:?}", e));
         }
@@ -376,7 +394,7 @@ impl DBHandler {
 
         // TODO randomize players (or first-come-first-serve ok to do?)
         conn.execute(
-            "INSERT INTO games (id, cyan_player, magenta_player, date_added, board, status) VALUES (?, ?, ?, datetime(), ?, 0);",
+            "INSERT INTO games (id, cyan_player, magenta_player, board, status) VALUES (?, ?, ?, ?, 0);",
             params![game_id, players[0], players[1], new_string_board()]
         )
         .map_err(|e| format!("{:?}", e))?;
@@ -759,7 +777,7 @@ impl DBHandler {
         // update DB
         let update_result = if ended_state_opt.is_none() {
             conn.execute(
-                "UPDATE games SET status = ?, board = ? FROM players WHERE players.game_id = games.id AND players.id = ?;",
+                "UPDATE games SET status = ?, board = ?, turn_time_start = datetime() FROM players WHERE players.game_id = games.id AND players.id = ?;",
                 params![if status == 0 { 1u8 }
                             else { 0u8 },
                         board_string,
@@ -799,6 +817,165 @@ impl DBHandler {
             Ok((DBPlaceStatus::Accepted, Some(board_string)))
         }
     }
+
+    fn check_turn_times(&self) -> Result<(), String> {
+        let conn = self.get_conn(DBFirstRun::NotFirstRun)?;
+
+        let mut prepared_stmt = conn
+            .prepare(
+                "SELECT id, status, board FROM games WHERE unixepoch() - unixepoch(turn_time_start) > ? AND cyan_player NOTNULL and magenta_player NOTNULL AND status < 2;",
+            )
+            .map_err(|_| String::from("Failed to prepare db query based on turn time"))?;
+
+        let rows = prepared_stmt
+            .query_map([TURN_SECONDS], |row| {
+                let id_result = row.get(0);
+                let status_result = row.get(1);
+                let board_result = row.get(2);
+                if id_result.is_ok() && status_result.is_ok() && board_result.is_ok() {
+                    if let (Ok(id), Ok(status), Ok(board)) =
+                        (id_result, status_result, board_result)
+                    {
+                        Ok((id, status, board))
+                    } else {
+                        unreachable!();
+                    }
+                } else if id_result.is_err() {
+                    id_result.map(|_| (0, 0, String::new()))
+                } else if status_result.is_err() {
+                    status_result.map(|_| (0, 0, String::new()))
+                } else {
+                    board_result.map(|_| (0, 0, String::new()))
+                }
+            })
+            .map_err(|_| String::from("Failed to query db based on turn time"))?;
+
+        for row_result in rows {
+            if let Ok((id, status, board)) = row_result {
+                self.have_ai_take_players_turn(Some(&conn), id, status, board)?;
+            } else {
+                unreachable!("This part should never execute");
+            }
+        }
+
+        Ok(())
+    }
+
+    fn have_ai_take_players_turn(
+        &self,
+        conn: Option<&Connection>,
+        game_id: u32,
+        status: u32,
+        board_string: String,
+    ) -> Result<(), String> {
+        if status > 1 {
+            return Err(String::from(
+                "have_ai_take_players_turn: got invalid status",
+            ));
+        }
+
+        if conn.is_none() {
+            return self.have_ai_take_players_turn(
+                Some(&self.get_conn(DBFirstRun::NotFirstRun)?),
+                game_id,
+                status,
+                board_string,
+            );
+        }
+        let conn = conn.unwrap();
+
+        let is_cyan = status == 0;
+        let board = board_from_string(board_string);
+        let mut ai_choice_pos: usize = get_ai_choice(
+            AIDifficulty::Hard,
+            if is_cyan {
+                Turn::CyanPlayer
+            } else {
+                Turn::MagentaPlayer
+            },
+            &board,
+        )
+        .map_err(|_| String::from("Failed to get ai choice on turn timeout"))?
+        .into();
+
+        if board[ai_choice_pos].get() != BoardState::Empty {
+            return Err(String::from("ai returned illegal move on turn timeout"));
+        }
+
+        // get final position of token
+        loop {
+            if board.len() <= ai_choice_pos + COLS as usize {
+                break;
+            } else if board[ai_choice_pos + COLS as usize].get() == BoardState::Empty {
+                ai_choice_pos += COLS as usize;
+            } else {
+                break;
+            }
+        }
+
+        // place token
+        board[ai_choice_pos].replace(if is_cyan {
+            BoardState::Cyan
+        } else {
+            BoardState::Magenta
+        });
+
+        // get board string from board while checking if game has ended
+        let (board_string, end_state_opt) = string_from_board(board, ai_choice_pos);
+
+        let state;
+        if let Some(board_state) = end_state_opt {
+            if board_state == BoardState::Empty {
+                state = 4;
+            } else if board_state.from_win() == BoardState::Cyan {
+                state = 2;
+            } else if board_state.from_win() == BoardState::Magenta {
+                state = 3;
+            } else {
+                unreachable!();
+            }
+        } else {
+            state = if is_cyan { 1 } else { 0 };
+        }
+
+        conn.execute(
+            "UPDATE games SET board = ?, status = ?, turn_time_start = datetime() WHERE id = ?;",
+            params![board_string, state, game_id],
+        )
+        .map_err(|_| String::from("Failed to update game with ai choice on turn timeout"))?;
+
+        Ok(())
+    }
+
+    fn cleanup_stale_games(&self, conn: Option<&Connection>) -> Result<(), String> {
+        if conn.is_none() {
+            return self.cleanup_stale_games(Some(&self.get_conn(DBFirstRun::NotFirstRun)?));
+        }
+        let conn = conn.unwrap();
+
+        conn.execute(
+            "DELETE FROM games WHERE unixepoch() - unixepoch(date_added) > ?;",
+            [GAME_CLEANUP_TIMEOUT],
+        )
+        .ok();
+
+        Ok(())
+    }
+
+    fn cleanup_stale_players(&self, conn: Option<&Connection>) -> Result<(), String> {
+        if conn.is_none() {
+            return self.cleanup_stale_games(Some(&self.get_conn(DBFirstRun::NotFirstRun)?));
+        }
+        let conn = conn.unwrap();
+
+        conn.execute(
+            "DELETE FROM players WHERE unixepoch() - unixepoch(date_added) > ? AND game_id ISNULL;",
+            [PLAYER_CLEANUP_TIMEOUT],
+        )
+        .ok();
+
+        Ok(())
+    }
 }
 
 pub fn start_db_handler_thread(
@@ -824,6 +1001,17 @@ pub fn start_db_handler_thread(
             if handler.handle_request() {
                 handler.shutdown_tx.send(()).ok();
                 break 'outer;
+            }
+
+            if let Err(e) = handler.check_turn_times() {
+                println!("{}", e);
+            }
+
+            if let Err(e) = handler.cleanup_stale_games(None) {
+                println!("{}", e);
+            }
+            if let Err(e) = handler.cleanup_stale_players(None) {
+                println!("{}", e);
             }
         }
     });
