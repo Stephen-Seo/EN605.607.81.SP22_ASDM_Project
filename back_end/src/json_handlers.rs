@@ -36,13 +36,13 @@ fn handle_pairing_request(tx: SyncSender<DBHandlerRequest>) -> Result<String, St
     if let Ok((pid, is_cyan_opt)) = player_rx.recv_timeout(DB_REQUEST_TIMEOUT) {
         if let Some(is_cyan) = is_cyan_opt {
             Ok(format!(
-                "{{\"type\":\"pairing_response\", \"id\": \"{}\", \"status\": \"paired\", \"color\": \"{}\"}}",
+                "{{\"type\":\"pairing_response\", \"id\": {}, \"status\": \"paired\", \"color\": \"{}\"}}",
                 pid,
                 if is_cyan { "cyan" } else { "magenta" }
             ))
         } else {
             Ok(format!(
-                "{{\"type\":\"pairing_response\", \"id\": \"{}\", \"status\": \"waiting\"}}",
+                "{{\"type\":\"pairing_response\", \"id\": {}, \"status\": \"waiting\"}}",
                 pid
             ))
         }

@@ -104,8 +104,10 @@ then the back-end will respond with "too\_many\_players".
     {
         "type": "place_token",
         "status": "not_paired_yet", // or "accepted", "illegal",
-                                    // "not_your_turn", "game_ended",
-                                    // "unknown_id"
+                                    // "not_your_turn", "game_ended_draw",
+                                    // "game_ended_cyan_won",
+                                    // "game_ended_magenta_won", "unknown_id"
+        "board": "abcdefg..."       // see protocol 5 response for details
     }   
 ```
 

@@ -1,9 +1,9 @@
 use crate::ai::AIDifficulty;
-use crate::game_logic::{WinType, check_win_draw};
-use crate::constants::{ROWS, COLS};
+use crate::constants::{COLS, ROWS};
+use crate::game_logic::{check_win_draw, WinType};
 
-use std::collections::hash_set::HashSet;
 use std::cell::Cell;
+use std::collections::hash_set::HashSet;
 use std::fmt::Display;
 use std::rc::Rc;
 
@@ -324,14 +324,15 @@ pub fn board_from_string(board_string: String) -> BoardType {
     board
 }
 
-/// Returns the board as a String, and true if the game has ended
-pub fn string_from_board(board: BoardType, placed: usize) -> (String, bool) {
+/// Returns the board as a String, and None if game has not ended, Empty if game
+/// ended in a draw, or a player if that player has won
+pub fn string_from_board(board: BoardType, placed: usize) -> (String, Option<BoardState>) {
     let mut board_string = String::with_capacity(56);
 
     // check for winning pieces
     let mut win_set: HashSet<usize> = HashSet::new();
     let win_opt = check_win_draw(&board);
-    if let Some((board_state, win_type)) = win_opt {
+    if let Some((_board_state, win_type)) = win_opt {
         match win_type {
             WinType::Horizontal(pos) => {
                 for i in pos..(pos + 4) {
@@ -386,5 +387,18 @@ pub fn string_from_board(board: BoardType, placed: usize) -> (String, bool) {
         });
     }
 
-    (board_string, is_full || !win_set.is_empty())
+    if is_full && win_set.is_empty() {
+        (board_string, Some(BoardState::Empty))
+    } else if !win_set.is_empty() {
+        (
+            board_string.clone(),
+            if board_string.chars().collect::<Vec<char>>()[*win_set.iter().next().unwrap()] == 'd' {
+                Some(BoardState::CyanWin)
+            } else {
+                Some(BoardState::MagentaWin)
+            },
+        )
+    } else {
+        (board_string, None)
+    }
 }

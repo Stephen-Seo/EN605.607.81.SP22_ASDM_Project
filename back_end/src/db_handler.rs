@@ -1,5 +1,5 @@
 use crate::constants::{COLS, ROWS};
-use crate::state::{BoardState, new_string_board, board_from_string, string_from_board};
+use crate::state::{board_from_string, new_string_board, string_from_board, BoardState};
 
 use std::sync::mpsc::{Receiver, SyncSender};
 use std::{fmt, thread};
@@ -64,14 +64,18 @@ impl From<i64> for DBGameState {
 #[derive(Copy, Clone, Debug, PartialEq, Eq)]
 pub enum DBPlaceStatus {
     Accepted,
-    GameEnded,
+    GameEndedDraw,
+    GameEndedCyanWon,
+    GameEndedMagentaWon,
 }
 
 impl fmt::Display for DBPlaceStatus {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match *self {
             DBPlaceStatus::Accepted => write!(f, "accepted"),
-            DBPlaceStatus::GameEnded => write!(f, "game_ended"),
+            DBPlaceStatus::GameEndedDraw => write!(f, "game_ended_draw"),
+            DBPlaceStatus::GameEndedCyanWon => write!(f, "game_ended_cyan_won"),
+            DBPlaceStatus::GameEndedMagentaWon => write!(f, "game_ended_magenta_won"),
         }
     }
 }
@@ -512,17 +516,14 @@ impl DBHandler {
                 Ok((DBGameState::InternalError, None))
             } else if cyan_opt.is_none() || magenta_opt.is_none() {
                 // One player disconnected
-                let player_remove_result = self.disconnect_player(Some(conn), player_id);
-                if player_remove_result.is_err() {
-                    // Failed to disconnect remaining player
+                self.disconnect_player(Some(conn), player_id).ok();
+                // Remove the game(s) with disconnected players
+                if self.clear_empty_games(Some(conn)).is_err() {
                     Ok((DBGameState::InternalError, None))
+                } else if status == 2 || status == 3 {
+                    Ok((DBGameState::from(status), Some(board)))
                 } else {
-                    // Remove the game(s) with disconnected players
-                    if self.clear_empty_games(Some(conn)).is_err() {
-                        Ok((DBGameState::InternalError, None))
-                    } else {
-                        Ok((DBGameState::OpponentDisconnected, Some(board)))
-                    }
+                    Ok((DBGameState::OpponentDisconnected, Some(board)))
                 }
             } else {
                 // Game in progress, or other state depending on "status"
@@ -637,6 +638,10 @@ impl DBHandler {
                 if let (Ok(cyan_id_opt), Ok(magenta_id_opt)) = (cyan_id_result, magenta_id_result) {
                     if let (Some(cyan_id), Some(_magenta_id)) = (cyan_id_opt, magenta_id_opt) {
                         Ok(Ok((cyan_id == player_id, status, board)))
+                    } else if (2..=4).contains(&status) {
+                        // game has ended, don't return error
+                        // first result will be safely ignored
+                        Ok(Ok((false, status, board)))
                     } else {
                         Ok(Err(DBPlaceError::OpponentDisconnected))
                     }
@@ -654,9 +659,8 @@ impl DBHandler {
 
         // if opponent has disconnected, disconnect the remaining player as well
         if let Err(DBPlaceError::OpponentDisconnected) = query_result {
-            if self.disconnect_player(Some(conn), player_id).is_err()
-                || self.clear_empty_games(Some(conn)).is_err()
-            {
+            self.disconnect_player(Some(conn), player_id).ok();
+            if self.clear_empty_games(Some(conn)).is_err() {
                 return Err(DBPlaceError::InternalError);
             }
         }
@@ -676,9 +680,29 @@ impl DBHandler {
                     return Err(DBPlaceError::NotYourTurn);
                 }
             }
-            2 | 3 | 4 => {
-                // game over, cyan won, or magenta won, or draw
-                return Ok((DBPlaceStatus::GameEnded, Some(board_string)));
+            2 => {
+                // game over, cyan won
+                self.disconnect_player(Some(conn), player_id).ok();
+                if self.clear_empty_games(Some(conn)).is_err() {
+                    return Err(DBPlaceError::InternalError);
+                }
+                return Ok((DBPlaceStatus::GameEndedCyanWon, Some(board_string)));
+            }
+            3 => {
+                // game over, magenta won
+                self.disconnect_player(Some(conn), player_id).ok();
+                if self.clear_empty_games(Some(conn)).is_err() {
+                    return Err(DBPlaceError::InternalError);
+                }
+                return Ok((DBPlaceStatus::GameEndedMagentaWon, Some(board_string)));
+            }
+            4 => {
+                // game over, draw
+                self.disconnect_player(Some(conn), player_id).ok();
+                if self.clear_empty_games(Some(conn)).is_err() {
+                    return Err(DBPlaceError::InternalError);
+                }
+                return Ok((DBPlaceStatus::GameEndedDraw, Some(board_string)));
             }
             _ => (),
         }
@@ -710,10 +734,28 @@ impl DBHandler {
         }
 
         // board back to string
-        let (board_string, ended) = string_from_board(board, final_pos);
+        let (board_string, ended_state_opt) = string_from_board(board, final_pos);
 
         // update DB
-        let update_result = conn.execute("UPDATE games SET status = ?, board = ? FROM players WHERE players.game_id = games.id AND players.id = ?;" , params![if status == 0 { 1u8 } else { 0u8 }, board_string, player_id]);
+        let update_result = if ended_state_opt.is_none() {
+            conn.execute(
+                "UPDATE games SET status = ?, board = ? FROM players WHERE players.game_id = games.id AND players.id = ?;",
+                params![if status == 0 { 1u8 }
+                            else { 0u8 },
+                        board_string,
+                        player_id]
+            )
+        } else {
+            conn.execute(
+                "UPDATE games SET status = ?, board = ? FROM players WHERE players.game_id = games.id AND players.id = ?;",
+                params![if ended_state_opt.unwrap() == BoardState::Empty { 4u8 }
+                            else if ended_state_opt.unwrap() == BoardState::CyanWin { 2u8 }
+                            else { 3u8 },
+                        board_string,
+                        player_id]
+            )
+        };
+
         if let Err(_e) = update_result {
             return Err(DBPlaceError::InternalError);
         } else if let Ok(count) = update_result {
@@ -722,9 +764,17 @@ impl DBHandler {
             }
         }
 
-        if ended {
+        if let Some(ended_state) = ended_state_opt {
             self.disconnect_player(Some(conn), player_id).ok();
-            Ok((DBPlaceStatus::GameEnded, Some(board_string)))
+            Ok((
+                match ended_state {
+                    BoardState::Empty => DBPlaceStatus::GameEndedDraw,
+                    BoardState::Cyan | BoardState::Magenta => unreachable!(),
+                    BoardState::CyanWin => DBPlaceStatus::GameEndedCyanWon,
+                    BoardState::MagentaWin => DBPlaceStatus::GameEndedMagentaWon,
+                },
+                Some(board_string),
+            ))
         } else {
             Ok((DBPlaceStatus::Accepted, Some(board_string)))
         }
@@ -758,5 +808,3 @@ pub fn start_db_handler_thread(
         }
     });
 }
-
-
