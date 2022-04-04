@@ -1,4 +1,5 @@
-use web_sys::{window, Document, Window};
+use wasm_bindgen::JsValue;
+use web_sys::{window, Document, Request, RequestInit, Window};
 
 pub fn get_window_document() -> Result<(Window, Document), String> {
     let window = window().ok_or_else(|| String::from("Failed to get window"))?;
@@ -76,4 +77,15 @@ pub fn element_remove_class(document: &Document, id: &str, class: &str) -> Resul
     element.set_class_name(&element_class);
 
     Ok(())
+}
+
+pub fn create_json_request(target_url: &str, json_body: &str) -> Result<Request, String> {
+    let mut req_init: RequestInit = RequestInit::new();
+    req_init.body(Some(&JsValue::from_str(json_body)));
+    req_init.headers(
+        &JsValue::from_serde("'headers': { 'Content-Type': 'application/json' }")
+            .map_err(|e| format!("{}", e))?,
+    );
+
+    Ok(Request::new_with_str_and_init(target_url, &req_init).map_err(|e| format!("{:?}", e))?)
 }

@@ -1,8 +1,12 @@
 use crate::ai::{get_ai_choice, AIDifficulty};
-use crate::constants::{COLS, INFO_TEXT_MAX_ITEMS, ROWS};
+use crate::constants::{
+    AI_CHOICE_DURATION_MILLIS, BACKEND_TICK_DURATION_MILLIS, BACKEND_URL, COLS,
+    INFO_TEXT_MAX_ITEMS, ROWS,
+};
 use crate::game_logic::{check_win_draw, WinType};
 use crate::html_helper::{
-    append_to_info_text, element_append_class, element_remove_class, get_window_document,
+    append_to_info_text, create_json_request, element_append_class, element_remove_class,
+    get_window_document,
 };
 use crate::random_helper::get_seeded_random;
 use crate::state::{BoardState, GameState, MainMenuMessage, SharedState, Turn};
@@ -10,8 +14,11 @@ use crate::state::{BoardState, GameState, MainMenuMessage, SharedState, Turn};
 use std::cell::Cell;
 use std::rc::Rc;
 
-use js_sys::Promise;
+use js_sys::{JsString, Promise};
 
+use serde_json::Value as SerdeJSONValue;
+
+use wasm_bindgen::{JsCast, JsValue};
 use wasm_bindgen_futures::JsFuture;
 
 use yew::prelude::*;
@@ -60,6 +67,10 @@ impl Component for MainMenu {
                 let onclick_local_multiplayer =
                     ctx.link().callback(|_| MainMenuMessage::LocalMultiplayer);
 
+                let onclick_networked_multiplayer = ctx
+                    .link()
+                    .callback(|_| MainMenuMessage::NetworkedMultiplayer);
+
                 html! {
                     <div class={"menu"} id={"mainmenu"}>
                         <b class={"menuText"}>{"Please pick a game mode."}</b>
@@ -77,7 +88,7 @@ impl Component for MainMenu {
                         <button class={"menuLocalMultiplayer"} onclick={onclick_local_multiplayer}>
                             {"Local Multiplayer"}
                         </button>
-                        <button class={"menuMultiplayer"}>
+                        <button class={"menuMultiplayer"} onclick={onclick_networked_multiplayer}>
                             {"Networked Multiplayer"}
                         </button>
                     </div>
@@ -110,31 +121,42 @@ impl Component for MainMenu {
                 .get_element_by_id("info_text1")
                 .expect("info_text1 should exist");
 
-            if let GameState::SinglePlayer(turn, _) = shared.game_state.get() {
-                if shared.turn.get() == turn {
-                    info_text_turn.set_inner_html(
-                        "<p><b class=\"cyan\">It is CyanPlayer's (player) Turn</b></p>",
-                    );
-                } else {
-                    info_text_turn.set_inner_html(
-                        "<p><b class=\"cyan\">It is CyanPlayer's (ai) Turn</b></p>",
-                    );
+            match shared.game_state.get() {
+                GameState::SinglePlayer(turn, _) => {
+                    if shared.turn.get() == turn {
+                        info_text_turn.set_inner_html(
+                            "<p><b class=\"cyan\">It is CyanPlayer's (player) Turn</b></p>",
+                        );
+                    } else {
+                        info_text_turn.set_inner_html(
+                            "<p><b class=\"cyan\">It is CyanPlayer's (ai) Turn</b></p>",
+                        );
+                        // AI player starts first
+                        ctx.link()
+                            .get_parent()
+                            .expect("Wrapper should be parent of MainMenu")
+                            .clone()
+                            .downcast::<Wrapper>()
+                            .send_message(WrapperMsg::AIChoice);
+                    }
                 }
-            } else {
-                info_text_turn
-                    .set_inner_html("<p><b class=\"cyan\">It is CyanPlayer's Turn</b></p>");
-            }
-
-            if let GameState::SinglePlayer(Turn::MagentaPlayer, _ai_difficulty) =
-                shared.game_state.get()
-            {
-                // AI player starts first
-                ctx.link()
-                    .get_parent()
-                    .expect("Wrapper should be parent of MainMenu")
-                    .clone()
-                    .downcast::<Wrapper>()
-                    .send_message(WrapperMsg::AIChoice);
+                GameState::NetworkedMultiplayer {
+                    paired: _,
+                    current_side: _,
+                    current_turn: _,
+                } => {
+                    // start the Wrapper Tick loop
+                    ctx.link()
+                        .get_parent()
+                        .expect("Wrapper should be a parent of MainMenu")
+                        .clone()
+                        .downcast::<Wrapper>()
+                        .send_message(WrapperMsg::BackendTick);
+                }
+                _ => {
+                    info_text_turn
+                        .set_inner_html("<p><b class=\"cyan\">It is CyanPlayer's Turn</b></p>");
+                }
             }
         }
 
@@ -190,9 +212,21 @@ impl Component for Slot {
 
         match shared.game_state.get() {
             GameState::MainMenu => return false,
-            GameState::SinglePlayer(_, _)
-            | GameState::LocalMultiplayer
-            | GameState::NetworkedMultiplayer(_) => (),
+            GameState::SinglePlayer(_, _) | GameState::LocalMultiplayer => (),
+            GameState::NetworkedMultiplayer {
+                paired,
+                current_side,
+                current_turn,
+            } => {
+                // notify Wrapper with picked slot
+                if let Some(p) = ctx.link().get_parent() {
+                    p.clone()
+                        .downcast::<Wrapper>()
+                        .send_message(WrapperMsg::BackendRequest {
+                            place: ctx.props().idx,
+                        });
+                }
+            }
             GameState::PostGameResults(_) => return false,
         }
         if shared.game_state.get() == GameState::MainMenu {
@@ -213,14 +247,166 @@ impl Component for Slot {
     }
 }
 
-pub struct Wrapper {}
+pub struct Wrapper {
+    player_id: Option<u32>,
+    place_request: Option<u8>,
+    do_backend_tick: bool,
+}
 
-#[derive(Copy, Clone, Debug, PartialEq, Eq)]
+impl Wrapper {
+    fn defer_message(
+        &self,
+        ctx: &Context<Self>,
+        msg: <Wrapper as Component>::Message,
+        millis: i32,
+    ) {
+        ctx.link().send_future(async move {
+            let promise = Promise::new(&mut |resolve: js_sys::Function, _reject| {
+                let window = web_sys::window();
+                if window.is_none() {
+                    resolve.call0(&resolve).ok();
+                    return;
+                }
+                let window = window.unwrap();
+                if window
+                    .set_timeout_with_callback_and_timeout_and_arguments_0(&resolve, millis)
+                    .is_err()
+                {
+                    resolve.call0(&resolve).ok();
+                }
+            });
+            let js_fut = JsFuture::from(promise);
+            js_fut.await.ok();
+            msg
+        });
+    }
+
+    fn get_networked_player_id(&mut self, ctx: &Context<Self>) {
+        // make a request to get the player_id
+        ctx.link().send_future(async {
+            // get window
+            let window = web_sys::window().expect("Should be able to get Window");
+            // get request
+            let request = create_json_request(BACKEND_URL, "'type': 'pairing_request'")
+                .expect("Should be able to create the JSON request for player_id");
+            // send request
+            let promise = window.fetch_with_request(&request);
+            // get request result
+            let response_result = JsFuture::from(promise)
+                .await
+                .map_err(|e| format!("{:?}", e));
+            if let Err(e) = response_result {
+                return WrapperMsg::BackendResponse(BREnum::Error(format!("ERROR: {:?}", e)));
+            }
+            // get response from request result
+            let response = response_result.unwrap();
+            let json_value_result: Result<SerdeJSONValue, _> = response.into_serde();
+            if let Err(e) = json_value_result {
+                return WrapperMsg::BackendResponse(BREnum::Error(format!("ERROR: {:?}", e)));
+            }
+            // get serde json Value from result
+            let json_value = json_value_result.unwrap();
+
+            // get and check "type" in JSON
+            let type_opt = json_value.get("type");
+            if type_opt.is_none() {
+                return WrapperMsg::BackendResponse(BREnum::Error(
+                    "ERROR: No \"type\" entry in JSON".into(),
+                ));
+            }
+            let json_type = type_opt.unwrap();
+            if let Some(type_string) = json_type.as_str() {
+                if type_string != "pairing_response" {
+                    return WrapperMsg::BackendResponse(BREnum::Error(
+                        "ERROR: Invalid \"type\" from response JSON".into(),
+                    ));
+                }
+            } else {
+                return WrapperMsg::BackendResponse(BREnum::Error(
+                    "ERROR: Missing \"type\" from response JSON".into(),
+                ));
+            }
+
+            // get and check "id" in JSON
+            let player_id: u32;
+            if let Some(wrapped_player_id) = json_value.get("id") {
+                if let Some(player_id_u64) = wrapped_player_id.as_u64() {
+                    let player_id_conv_result: Result<u32, _> = player_id_u64.try_into();
+                    if player_id_conv_result.is_err() {
+                        return WrapperMsg::BackendResponse(BREnum::Error(
+                            "ERROR: \"id\" is too large".into(),
+                        ));
+                    }
+                    player_id = player_id_conv_result.unwrap();
+                } else {
+                    return WrapperMsg::BackendResponse(BREnum::Error(
+                        "ERROR: \"id\" is not a u64".into(),
+                    ));
+                }
+            } else {
+                return WrapperMsg::BackendResponse(BREnum::Error(
+                    "ERROR: Missing \"id\" from response JSON".into(),
+                ));
+            }
+
+            // get and check status
+            #[derive(Copy, Clone, Debug, PartialEq, Eq)]
+            enum Status {
+                Waiting,
+                Paired,
+            }
+            let mut status: Status;
+            if let Some(status_value) = json_value.get("status") {
+                if let Some(status_str) = status_value.as_str() {
+                    if status_str == "waiting" {
+                        status = Status::Waiting;
+                    } else if status_str == "paired" {
+                        status = Status::Paired;
+                    } else {
+                        return WrapperMsg::BackendResponse(BREnum::Error(
+                            "ERROR: Got invalid \"status\" response in JSON".into(),
+                        ));
+                    }
+                } else {
+                    return WrapperMsg::BackendResponse(BREnum::Error(
+                        "ERROR: \"status\" response in JSON is not a str".into(),
+                    ));
+                }
+            } else {
+                return WrapperMsg::BackendResponse(BREnum::Error(
+                    "ERROR: \"status\" response is missing in JSON".into(),
+                ));
+            }
+
+            // TODO set "disconnect" callback here so that the client sends
+            // disconnect message when the page is closed
+
+            if status == Status::Paired {
+                // Get which side current player is on if paired
+                // TODO
+                return WrapperMsg::BackendResponse(BREnum::Error("ERROR: unimplemented".into()));
+            } else {
+                WrapperMsg::BackendResponse(BREnum::GotID(player_id, None))
+            }
+        });
+    }
+}
+
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub enum BREnum {
+    Error(String),
+    GotID(u32, Option<Turn>),
+}
+
+#[derive(Clone, Debug, PartialEq, Eq)]
 pub enum WrapperMsg {
     Pressed(u8),
     AIPressed(u8),
     AIChoice,
     AIChoiceImpl,
+    BackendTick,
+    BackendRequest { place: u8 },
+    BackendResponse(BREnum),
 }
 
 impl WrapperMsg {
@@ -234,7 +420,11 @@ impl Component for Wrapper {
     type Properties = ();
 
     fn create(_ctx: &Context<Self>) -> Self {
-        Self {}
+        Self {
+            player_id: None,
+            place_request: None,
+            do_backend_tick: true,
+        }
     }
 
     fn view(&self, ctx: &Context<Self>) -> Html {
@@ -335,10 +525,12 @@ impl Component for Wrapper {
                             }
                         }
                         GameState::LocalMultiplayer => (),
-                        GameState::NetworkedMultiplayer(turn) => {
-                            if current_player != turn {
-                                return false;
-                            }
+                        GameState::NetworkedMultiplayer {
+                            paired,
+                            current_side,
+                            current_turn,
+                        } => {
+                            // TODO
                         }
                         GameState::PostGameResults(_) => (),
                     }
@@ -786,25 +978,7 @@ impl Component for Wrapper {
             } // WrapperMsg::Pressed(idx) =>
             WrapperMsg::AIChoice => {
                 // defer by 1 second
-                ctx.link().send_future(async {
-                    let promise = Promise::new(&mut |resolve: js_sys::Function, _reject| {
-                        let window = web_sys::window();
-                        if window.is_none() {
-                            resolve.call0(&resolve).ok();
-                            return;
-                        }
-                        let window = window.unwrap();
-                        if window
-                            .set_timeout_with_callback_and_timeout_and_arguments_0(&resolve, 1000)
-                            .is_err()
-                        {
-                            resolve.call0(&resolve).ok();
-                        }
-                    });
-                    let js_fut = JsFuture::from(promise);
-                    js_fut.await.ok();
-                    WrapperMsg::AIChoiceImpl
-                });
+                self.defer_message(ctx, WrapperMsg::AIChoiceImpl, AI_CHOICE_DURATION_MILLIS);
             }
             WrapperMsg::AIChoiceImpl => {
                 // get AI's choice
@@ -819,6 +993,20 @@ impl Component for Wrapper {
                     }
                 }
             }
+            WrapperMsg::BackendTick => {
+                if self.player_id.is_none() {
+                    self.get_networked_player_id(ctx);
+                }
+
+                // repeat BackendTick handling while "connected" to backend
+                if self.do_backend_tick {
+                    self.defer_message(ctx, WrapperMsg::BackendTick, BACKEND_TICK_DURATION_MILLIS);
+                }
+            }
+            WrapperMsg::BackendRequest { place } => {
+                self.place_request = Some(place);
+            }
+            WrapperMsg::BackendResponse(string) => {}
         } // match (msg)
 
         true

@@ -12,8 +12,25 @@ pub enum GameState {
     MainMenu,
     SinglePlayer(Turn, AIDifficulty),
     LocalMultiplayer,
-    NetworkedMultiplayer(Turn),
+    NetworkedMultiplayer {
+        paired: bool,
+        current_side: Option<Turn>,
+        current_turn: Turn,
+    },
     PostGameResults(BoardState),
+}
+
+impl GameState {
+    pub fn is_networked_multiplayer(self) -> bool {
+        matches!(
+            self,
+            GameState::NetworkedMultiplayer {
+                paired,
+                current_side,
+                current_turn
+            }
+        )
+    }
 }
 
 impl Default for GameState {
@@ -27,7 +44,11 @@ impl From<MainMenuMessage> for GameState {
         match msg {
             MainMenuMessage::SinglePlayer(t, ai) => GameState::SinglePlayer(t, ai),
             MainMenuMessage::LocalMultiplayer => GameState::LocalMultiplayer,
-            MainMenuMessage::NetworkedMultiplayer(t) => GameState::NetworkedMultiplayer(t),
+            MainMenuMessage::NetworkedMultiplayer => GameState::NetworkedMultiplayer {
+                paired: false,
+                current_side: None,
+                current_turn: Turn::CyanPlayer,
+            },
         }
     }
 }
@@ -298,7 +319,7 @@ impl Default for SharedState {
 pub enum MainMenuMessage {
     SinglePlayer(Turn, AIDifficulty),
     LocalMultiplayer,
-    NetworkedMultiplayer(Turn),
+    NetworkedMultiplayer,
 }
 
 pub fn new_string_board() -> String {
@@ -400,5 +421,29 @@ pub fn string_from_board(board: BoardType, placed: usize) -> (String, Option<Boa
         )
     } else {
         (board_string, None)
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_is_networked_multiplayer_enum() {
+        let state = GameState::MainMenu;
+        assert!(!state.is_networked_multiplayer());
+        let state = GameState::LocalMultiplayer;
+        assert!(!state.is_networked_multiplayer());
+        let state = GameState::NetworkedMultiplayer {
+            paired: false,
+            current_side: None,
+            current_turn: Turn::CyanPlayer,
+        };
+        assert!(state.is_networked_multiplayer());
+        let state = GameState::NetworkedMultiplayer {
+            paired: true,
+            current_side: Some(Turn::CyanPlayer),
+            current_turn: Turn::MagentaPlayer,
+        };
     }
 }
