@@ -14,11 +14,12 @@ use crate::state::{BoardState, GameState, MainMenuMessage, SharedState, Turn};
 use std::cell::Cell;
 use std::rc::Rc;
 
-use js_sys::{JsString, Promise};
+use js_sys::{Function, Promise};
+use wasm_bindgen::JsCast;
+use web_sys::Response;
 
 use serde_json::Value as SerdeJSONValue;
 
-use wasm_bindgen::{JsCast, JsValue};
 use wasm_bindgen_futures::JsFuture;
 
 use yew::prelude::*;
@@ -287,25 +288,53 @@ impl Wrapper {
             // get window
             let window = web_sys::window().expect("Should be able to get Window");
             // get request
-            let request = create_json_request(BACKEND_URL, "'type': 'pairing_request'")
+            let request = create_json_request(BACKEND_URL, "{\"type\": \"pairing_request\"}")
                 .expect("Should be able to create the JSON request for player_id");
             // send request
             let promise = window.fetch_with_request(&request);
             // get request result
-            let response_result = JsFuture::from(promise)
+            let jsvalue_result = JsFuture::from(promise)
                 .await
                 .map_err(|e| format!("{:?}", e));
-            if let Err(e) = response_result {
-                return WrapperMsg::BackendResponse(BREnum::Error(format!("ERROR: {:?}", e)));
+            if let Err(e) = jsvalue_result {
+                return WrapperMsg::BackendResponse(BREnum::Error(format!(
+                    "ERROR jsvalue_result: {:?}",
+                    e
+                )));
             }
+            log::warn!("{:?}", jsvalue_result.as_ref().unwrap());
             // get response from request result
-            let response = response_result.unwrap();
-            let json_value_result: Result<SerdeJSONValue, _> = response.into_serde();
-            if let Err(e) = json_value_result {
-                return WrapperMsg::BackendResponse(BREnum::Error(format!("ERROR: {:?}", e)));
+            let response_result: Result<Response, _> = jsvalue_result.unwrap().dyn_into();
+            if let Err(e) = response_result {
+                return WrapperMsg::BackendResponse(BREnum::Error(format!(
+                    "ERROR response_result: {:?}",
+                    e
+                )));
+            }
+            let json_jsvalue_promise_result = response_result.unwrap().json();
+            if let Err(e) = json_jsvalue_promise_result {
+                return WrapperMsg::BackendResponse(BREnum::Error(format!(
+                    "ERROR json_jsvalue_promise_result: {:?}",
+                    e
+                )));
+            }
+            let json_jsvalue_result = JsFuture::from(json_jsvalue_promise_result.unwrap()).await;
+            if let Err(e) = json_jsvalue_result {
+                return WrapperMsg::BackendResponse(BREnum::Error(format!(
+                    "ERROR json_jsvalue_result: {:?}",
+                    e
+                )));
+            }
+            let json_result = json_jsvalue_result.unwrap().into_serde();
+            if let Err(e) = json_result {
+                return WrapperMsg::BackendResponse(BREnum::Error(format!(
+                    "ERROR json_result: {:?}",
+                    e
+                )));
             }
             // get serde json Value from result
-            let json_value = json_value_result.unwrap();
+            let json_value: SerdeJSONValue = json_result.unwrap();
+            log::warn!("{:?}", json_value);
 
             // get and check "type" in JSON
             let type_opt = json_value.get("type");
@@ -378,8 +407,24 @@ impl Wrapper {
                 ));
             }
 
-            // TODO set "disconnect" callback here so that the client sends
+            // set "disconnect" callback here so that the client sends
             // disconnect message when the page is closed
+            let function = Function::new_no_args(&format!(
+                "
+                window.onunload = function(event) {{
+                    let request_conf = {{}};
+                    request_conf.method = 'POST';
+                    request_conf.headers = \"'Content-Type': 'application/json'\";
+                    request_conf.body = \"{{ \"type\": \"disconnect\", \"id\": {} }}\";
+
+                    const request = new Request('{}', request_conf);
+
+                    fetch(request);
+                }};
+            ",
+                player_id, BACKEND_URL
+            ));
+            function.call0(&function).ok();
 
             if status == Status::Paired {
                 // Get which side current player is on if paired
@@ -1006,7 +1051,14 @@ impl Component for Wrapper {
             WrapperMsg::BackendRequest { place } => {
                 self.place_request = Some(place);
             }
-            WrapperMsg::BackendResponse(string) => {}
+            WrapperMsg::BackendResponse(br_enum) => match br_enum {
+                BREnum::Error(string) => {
+                    log::warn!("{}", string);
+                }
+                BREnum::GotID(id, turn_opt) => {
+                    self.player_id = Some(id);
+                }
+            },
         } // match (msg)
 
         true

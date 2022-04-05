@@ -43,6 +43,8 @@ dependencies = [
  "js-sys",
  "log",
  "oorandom",
+ "serde",
+ "serde_derive",
  "serde_json",
  "wasm-bindgen",
  "wasm-bindgen-futures",

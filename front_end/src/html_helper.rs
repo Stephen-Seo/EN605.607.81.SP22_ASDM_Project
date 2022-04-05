@@ -82,10 +82,27 @@ pub fn element_remove_class(document: &Document, id: &str, class: &str) -> Resul
 pub fn create_json_request(target_url: &str, json_body: &str) -> Result<Request, String> {
     let mut req_init: RequestInit = RequestInit::new();
     req_init.body(Some(&JsValue::from_str(json_body)));
-    req_init.headers(
-        &JsValue::from_serde("'headers': { 'Content-Type': 'application/json' }")
-            .map_err(|e| format!("{}", e))?,
-    );
+    req_init.method("POST");
+    // TODO omit the NoCors when hosted on website
+    req_init.mode(web_sys::RequestMode::NoCors);
+    //    req_init.headers(
+    //        &JsValue::from_str("{'Content-Type': 'application/json'}"),
+    //        &JsValue::from_serde("{'Content-Type': 'application/json'}")
+    //            .map_err(|e| format!("{}", e))?,
+    //        &JsValue::from_serde("'headers': { 'Content-Type': 'application/json' }")
+    //            .map_err(|e| format!("{}", e))?,
+    //    );
 
-    Ok(Request::new_with_str_and_init(target_url, &req_init).map_err(|e| format!("{:?}", e))?)
+    let request: Request =
+        Request::new_with_str_and_init(target_url, &req_init).map_err(|e| format!("{:?}", e))?;
+    request
+        .headers()
+        .set("Content-Type", "application/json")
+        .map_err(|e| format!("{:?}", e))?;
+    request
+        .headers()
+        .set("Accept", "application/json")
+        .map_err(|e| format!("{:?}", e))?;
+
+    Ok(request)
 }

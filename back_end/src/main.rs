@@ -43,19 +43,19 @@ async fn main() {
             let db_tx_clone = db_tx_clone.clone();
             let s_helper_tx_clone = s_helper_tx.clone();
             async move {
-                let body_str_result = std::str::from_utf8(bytes.as_ref());
+                let body_str_result = dbg!(std::str::from_utf8(bytes.as_ref()));
                 if let Ok(body_str) = body_str_result {
                     let json_result = serde_json::from_str(body_str);
                     if let Ok(json_value) = json_result {
-                        Ok(
-                            json_handlers::handle_json(json_value, db_tx_clone, s_helper_tx_clone)
+                        Ok(warp::reply::json(
+                            &json_handlers::handle_json(json_value, db_tx_clone, s_helper_tx_clone)
                                 .unwrap_or_else(|e| e),
-                        )
+                        ))
                     } else {
-                        Ok(String::from("{\"type\": \"invalid_syntax\"}"))
+                        Ok(warp::reply::json(&String::from("{\"type\": \"invalid_syntax\"}")))
                     }
                 } else {
-                    Ok::<String, Rejection>(String::from("{\"type\": \"invalid_syntax\"}"))
+                    Ok::<warp::reply::Json, Rejection>(warp::reply::json(&String::from("{\"type\": \"invalid_syntax\"}")))
                 }
             }
         });
