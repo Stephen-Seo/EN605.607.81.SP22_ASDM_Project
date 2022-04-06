@@ -1,5 +1,8 @@
 # Four-Line Dropper: A project developed via Agile methodologies
 
+Note that this project was made for a course for the JHU Engineering for
+Professionals program.
+
 The directory `front_end` holds a Rust project for the "front\_end" code. Or in
 other words, it holds the client-side code for the project. The MVP (Minimum
 Viable Product) started with just the front\_end, and if all the goals are met,
