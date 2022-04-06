@@ -15,4 +15,8 @@ pub const PLAYER_CLEANUP_TIMEOUT: u64 = 300;
 pub const BACKEND_TICK_DURATION_MILLIS: i32 = 500;
 
 // TODO: Change this to "https://asdm.seodisparate.com/api" when backend is installed
+#[cfg(debug_assertions)]
 pub const BACKEND_URL: &str = "http://testlocalhost/api";
+
+#[cfg(not(debug_assertions))]
+pub const BACKEND_URL: &str = "https://asdm.seodisparate.com/api";
