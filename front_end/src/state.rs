@@ -84,6 +84,19 @@ impl GameState {
         }
     }
 
+    pub fn get_network_current_side(&self) -> Option<Turn> {
+        if let GameState::NetworkedMultiplayer {
+            paired: _,
+            current_side,
+            current_turn: _,
+        } = *self
+        {
+            current_side
+        } else {
+            None
+        }
+    }
+
     pub fn set_networked_current_turn(&mut self, turn: Turn) {
         if let GameState::NetworkedMultiplayer {
             paired: _,

@@ -702,12 +702,6 @@ impl Component for Wrapper {
                             current_side,
                             current_turn,
                         } => {
-                            log::warn!(
-                                "paired is {}, current_side is {:?}, current_turn is {:?}",
-                                paired,
-                                current_side,
-                                current_turn
-                            );
                             if paired {
                                 if let Some(current_side) = current_side {
                                     if current_side == current_turn {
@@ -715,7 +709,6 @@ impl Component for Wrapper {
                                     }
                                 }
                             }
-                            log::warn!("Set place request to {:?}", self.place_request);
                             return true;
                         }
                         GameState::PostGameResults(_) => (),
@@ -1212,210 +1205,135 @@ impl Component for Wrapper {
             WrapperMsg::BackendRequest { place } => {
                 self.place_request = Some(place);
             }
-            WrapperMsg::BackendResponse(br_enum) => match br_enum {
-                BREnum::Error(string) => {
-                    // TODO maybe suppress this for release builds
-                    log::warn!("{}", string);
-                }
-                BREnum::GotID(id, turn_opt) => {
-                    self.player_id = Some(id);
-                    let mut game_state = shared.game_state.get();
-                    game_state.set_networked_paired();
-                    game_state.set_networked_current_side(turn_opt);
-                    shared.game_state.set(game_state);
-                    if let Some(turn_type) = turn_opt {
-                        append_to_info_text(
-                            &document,
-                            "info_text0",
-                            &format!(
-                                "<b class=\"{}\">Paired with player, you are the {}</b>",
-                                turn_type.get_color(),
-                                turn_type
-                            ),
-                            INFO_TEXT_MAX_ITEMS,
-                        )
-                        .ok();
-                        append_to_info_text(
-                            &document,
-                            "info_text1",
-                            "<b class=\"cyan\">It is CyanPlayer's Turn</b>",
-                            1,
-                        )
-                        .ok();
+            WrapperMsg::BackendResponse(br_enum) => {
+                match br_enum {
+                    BREnum::Error(string) => {
+                        // TODO maybe suppress this for release builds
+                        log::warn!("{}", string);
                     }
-                }
-                BREnum::GotPairing(turn_opt) => {
-                    let mut game_state = shared.game_state.get();
-                    game_state.set_networked_current_side(turn_opt);
-                    shared.game_state.set(game_state);
-                    if let Some(turn_type) = turn_opt {
-                        append_to_info_text(
-                            &document,
-                            "info_text0",
-                            &format!(
-                                "<b class=\"{}\">Paired with player, you are the {}</b>",
-                                turn_type.get_color(),
-                                turn_type
-                            ),
-                            INFO_TEXT_MAX_ITEMS,
-                        )
-                        .ok();
-                        append_to_info_text(
-                            &document,
-                            "info_text1",
-                            "<b class=\"cyan\">It is CyanPlayer's Turn</b>",
-                            1,
-                        )
-                        .ok();
-                    }
-                }
-                BREnum::GotStatus(networked_game_state, board_opt) => {
-                    if let Some(board_string) = board_opt {
-                        self.update_board_from_string(&shared, &document, board_string);
-                    }
-
-                    let mut current_game_state = shared.game_state.get();
-                    match networked_game_state {
-                        NetworkedGameState::CyanTurn => {
-                            if current_game_state.get_current_turn() != Turn::CyanPlayer {
-                                current_game_state.set_networked_current_turn(Turn::CyanPlayer);
-                                shared.game_state.set(current_game_state);
-                                append_to_info_text(
-                                    &document,
-                                    "info_text1",
-                                    "<b class=\"cyan\">It is CyanPlayer's Turn</b>",
-                                    1,
-                                )
-                                .ok();
-                            }
-                        }
-                        NetworkedGameState::MagentaTurn => {
-                            if current_game_state.get_current_turn() != Turn::MagentaPlayer {
-                                current_game_state.set_networked_current_turn(Turn::MagentaPlayer);
-                                shared.game_state.set(current_game_state);
-                                append_to_info_text(
-                                    &document,
-                                    "info_text1",
-                                    "<b class=\"magenta\">It is MagentaPlayer's Turn</b>",
-                                    1,
-                                )
-                                .ok();
-                            }
-                        }
-                        NetworkedGameState::CyanWon => {
-                            append_to_info_text(
-                                &document,
-                                "info_text1",
-                                "<b class=\"cyan\">CyanPlayer won the game</b>",
-                                1,
-                            )
-                            .ok();
-                            shared
-                                .game_state
-                                .set(GameState::PostGameResults(BoardState::CyanWin));
-                            self.do_backend_tick = false;
-                        }
-                        NetworkedGameState::MagentaWon => {
-                            append_to_info_text(
-                                &document,
-                                "info_text1",
-                                "<b class=\"magenta\">MagentaPlayer won the game</b>",
-                                1,
-                            )
-                            .ok();
-                            shared
-                                .game_state
-                                .set(GameState::PostGameResults(BoardState::MagentaWin));
-                            self.do_backend_tick = false;
-                        }
-                        NetworkedGameState::Draw => {
-                            append_to_info_text(
-                                &document,
-                                "info_text1",
-                                "<b>The game ended in a draw</b>",
-                                1,
-                            )
-                            .ok();
-                            shared
-                                .game_state
-                                .set(GameState::PostGameResults(BoardState::Empty));
-                            self.do_backend_tick = false;
-                        }
-                        NetworkedGameState::Disconnected => {
-                            append_to_info_text(
-                                &document,
-                                "info_text1",
-                                "<b>The opponent disconnected</b>",
-                                1,
-                            )
-                            .ok();
-                            shared
-                                .game_state
-                                .set(GameState::PostGameResults(BoardState::Empty));
-                            self.do_backend_tick = false;
-                        }
-                        NetworkedGameState::InternalError => {
-                            append_to_info_text(
-                                &document,
-                                "info_text1",
-                                "<b>There was an internal error</b>",
-                                1,
-                            )
-                            .ok();
-                            shared
-                                .game_state
-                                .set(GameState::PostGameResults(BoardState::Empty));
-                            self.do_backend_tick = false;
-                        }
-                        NetworkedGameState::NotPaired => (),
-                        NetworkedGameState::UnknownID => {
-                            append_to_info_text(
-                                &document,
-                                "info_text1",
-                                "<b>The game has ended (disconnected?)</b>",
-                                1,
-                            )
-                            .ok();
-                            shared
-                                .game_state
-                                .set(GameState::PostGameResults(BoardState::Empty));
-                            self.do_backend_tick = false;
-                        }
-                    }
-                }
-                BREnum::GotPlaced(placed_status, board_string) => {
-                    self.update_board_from_string(&shared, &document, board_string);
-
-                    match placed_status {
-                        PlacedEnum::Accepted => {
-                            // noop, handled by update_board_from_string
-                        }
-                        PlacedEnum::Illegal => {
+                    BREnum::GotID(id, turn_opt) => {
+                        self.player_id = Some(id);
+                        let mut game_state = shared.game_state.get();
+                        game_state.set_networked_paired();
+                        game_state.set_networked_current_side(turn_opt);
+                        shared.game_state.set(game_state);
+                        if let Some(turn_type) = turn_opt {
                             append_to_info_text(
                                 &document,
                                 "info_text0",
-                                "<b>Cannot place a token there</b>",
+                                &format!(
+                                    "<b class=\"{}\">Paired with player, you are the {}</b>",
+                                    turn_type.get_color(),
+                                    turn_type
+                                ),
                                 INFO_TEXT_MAX_ITEMS,
                             )
                             .ok();
+                            append_to_info_text(
+                                &document,
+                                "info_text1",
+                                &format!(
+                                    "<b class=\"cyan\">It is CyanPlayer's ({}) Turn</b>",
+                                    if turn_type == Turn::CyanPlayer {
+                                        "your"
+                                    } else {
+                                        "opponent's"
+                                    }
+                                ),
+                                1,
+                            )
+                            .ok();
                         }
-                        PlacedEnum::NotYourTurn => {
+                    }
+                    BREnum::GotPairing(turn_opt) => {
+                        let mut game_state = shared.game_state.get();
+                        game_state.set_networked_current_side(turn_opt);
+                        shared.game_state.set(game_state);
+                        if let Some(turn_type) = turn_opt {
                             append_to_info_text(
                                 &document,
                                 "info_text0",
-                                "<b>Cannot place a token, not your turn</b>",
+                                &format!(
+                                    "<b class=\"{}\">Paired with player, you are the {}</b>",
+                                    turn_type.get_color(),
+                                    turn_type
+                                ),
                                 INFO_TEXT_MAX_ITEMS,
                             )
                             .ok();
+                            append_to_info_text(
+                                &document,
+                                "info_text1",
+                                &format!(
+                                    "<b class=\"cyan\">It is CyanPlayer's ({}) Turn</b>",
+                                    if turn_type == Turn::CyanPlayer {
+                                        "your"
+                                    } else {
+                                        "opponent's"
+                                    }
+                                ),
+                                1,
+                            )
+                            .ok();
                         }
-                        PlacedEnum::Other(networked_game_state) => match networked_game_state {
-                            NetworkedGameState::CyanTurn => (),
-                            NetworkedGameState::MagentaTurn => (),
+                    }
+                    BREnum::GotStatus(networked_game_state, board_opt) => {
+                        if let Some(board_string) = board_opt {
+                            self.update_board_from_string(&shared, &document, board_string);
+                        }
+
+                        let mut current_game_state = shared.game_state.get();
+                        match networked_game_state {
+                            NetworkedGameState::CyanTurn => {
+                                if current_game_state.get_current_turn() != Turn::CyanPlayer {
+                                    current_game_state.set_networked_current_turn(Turn::CyanPlayer);
+                                    shared.game_state.set(current_game_state);
+                                    append_to_info_text(
+                                        &document,
+                                        "info_text1",
+                                        &format!(
+                                            "<b class=\"cyan\">It is CyanPlayer's ({}) Turn</b>",
+                                            if current_game_state
+                                                .get_network_current_side()
+                                                .unwrap_or(Turn::CyanPlayer)
+                                                == Turn::CyanPlayer
+                                            {
+                                                "your"
+                                            } else {
+                                                "opponent's"
+                                            }
+                                        ),
+                                        1,
+                                    )
+                                    .ok();
+                                }
+                            }
+                            NetworkedGameState::MagentaTurn => {
+                                if current_game_state.get_current_turn() != Turn::MagentaPlayer {
+                                    current_game_state
+                                        .set_networked_current_turn(Turn::MagentaPlayer);
+                                    shared.game_state.set(current_game_state);
+                                    append_to_info_text(
+                                &document,
+                                "info_text1",
+                                &format!(
+                                    "<b class=\"magenta\">It is MagentaPlayer's ({}) Turn</b>",
+                                    if current_game_state.get_network_current_side().unwrap_or(Turn::CyanPlayer) == Turn::MagentaPlayer
+                                    {
+                                        "your"
+                                    } else {
+                                        "opponent's"
+                                    }),
+                                1,
+                            )
+                            .ok();
+                                }
+                            }
                             NetworkedGameState::CyanWon => {
                                 append_to_info_text(
                                     &document,
                                     "info_text1",
-                                    "<b class=\"cyan\">CyanPlayer has won the game</b>",
+                                    "<b class=\"cyan\">CyanPlayer won the game</b>",
                                     1,
                                 )
                                 .ok();
@@ -1428,7 +1346,7 @@ impl Component for Wrapper {
                                 append_to_info_text(
                                     &document,
                                     "info_text1",
-                                    "<b class=\"magenta\">MagentaPlayer has won the game</b>",
+                                    "<b class=\"magenta\">MagentaPlayer won the game</b>",
                                     1,
                                 )
                                 .ok();
@@ -1490,10 +1408,120 @@ impl Component for Wrapper {
                                     .set(GameState::PostGameResults(BoardState::Empty));
                                 self.do_backend_tick = false;
                             }
-                        },
+                        }
+                    }
+                    BREnum::GotPlaced(placed_status, board_string) => {
+                        self.update_board_from_string(&shared, &document, board_string);
+
+                        match placed_status {
+                            PlacedEnum::Accepted => {
+                                // noop, handled by update_board_from_string
+                            }
+                            PlacedEnum::Illegal => {
+                                append_to_info_text(
+                                    &document,
+                                    "info_text0",
+                                    "<b>Cannot place a token there</b>",
+                                    INFO_TEXT_MAX_ITEMS,
+                                )
+                                .ok();
+                            }
+                            PlacedEnum::NotYourTurn => {
+                                append_to_info_text(
+                                    &document,
+                                    "info_text0",
+                                    "<b>Cannot place a token, not your turn</b>",
+                                    INFO_TEXT_MAX_ITEMS,
+                                )
+                                .ok();
+                            }
+                            PlacedEnum::Other(networked_game_state) => match networked_game_state {
+                                NetworkedGameState::CyanTurn => (),
+                                NetworkedGameState::MagentaTurn => (),
+                                NetworkedGameState::CyanWon => {
+                                    append_to_info_text(
+                                        &document,
+                                        "info_text1",
+                                        "<b class=\"cyan\">CyanPlayer has won the game</b>",
+                                        1,
+                                    )
+                                    .ok();
+                                    shared
+                                        .game_state
+                                        .set(GameState::PostGameResults(BoardState::CyanWin));
+                                    self.do_backend_tick = false;
+                                }
+                                NetworkedGameState::MagentaWon => {
+                                    append_to_info_text(
+                                        &document,
+                                        "info_text1",
+                                        "<b class=\"magenta\">MagentaPlayer has won the game</b>",
+                                        1,
+                                    )
+                                    .ok();
+                                    shared
+                                        .game_state
+                                        .set(GameState::PostGameResults(BoardState::MagentaWin));
+                                    self.do_backend_tick = false;
+                                }
+                                NetworkedGameState::Draw => {
+                                    append_to_info_text(
+                                        &document,
+                                        "info_text1",
+                                        "<b>The game ended in a draw</b>",
+                                        1,
+                                    )
+                                    .ok();
+                                    shared
+                                        .game_state
+                                        .set(GameState::PostGameResults(BoardState::Empty));
+                                    self.do_backend_tick = false;
+                                }
+                                NetworkedGameState::Disconnected => {
+                                    append_to_info_text(
+                                        &document,
+                                        "info_text1",
+                                        "<b>The opponent disconnected</b>",
+                                        1,
+                                    )
+                                    .ok();
+                                    shared
+                                        .game_state
+                                        .set(GameState::PostGameResults(BoardState::Empty));
+                                    self.do_backend_tick = false;
+                                }
+                                NetworkedGameState::InternalError => {
+                                    append_to_info_text(
+                                        &document,
+                                        "info_text1",
+                                        "<b>There was an internal error</b>",
+                                        1,
+                                    )
+                                    .ok();
+                                    shared
+                                        .game_state
+                                        .set(GameState::PostGameResults(BoardState::Empty));
+                                    self.do_backend_tick = false;
+                                }
+                                NetworkedGameState::NotPaired => (),
+                                NetworkedGameState::UnknownID => {
+                                    append_to_info_text(
+                                        &document,
+                                        "info_text1",
+                                        "<b>The game has ended (disconnected?)</b>",
+                                        1,
+                                    )
+                                    .ok();
+                                    shared
+                                        .game_state
+                                        .set(GameState::PostGameResults(BoardState::Empty));
+                                    self.do_backend_tick = false;
+                                }
+                            },
+                        }
                     }
                 }
-            },
+            }
         } // match (msg)
 
         true
