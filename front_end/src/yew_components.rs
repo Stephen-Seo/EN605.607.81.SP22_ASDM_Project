@@ -1180,6 +1180,10 @@ impl Component for Wrapper {
                 }
             }
             WrapperMsg::BackendTick => {
+                if !self.do_backend_tick {
+                    return false;
+                }
+
                 if self.player_id.is_none() {
                     self.get_networked_player_id(ctx);
                 } else if shared
