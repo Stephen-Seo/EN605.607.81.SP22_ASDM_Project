@@ -14,3 +14,6 @@
 The webserver hosting this `front_end` is [here](https://asdm.seodisparate.com).
 
 Note that this website may not host the latest version of this `front_end`.
+
+See [choose-a-license](https://choosealicense.com/licenses/gpl-3.0) for details
+about the software license used.
