@@ -33,6 +33,67 @@ impl GameState {
             }
         )
     }
+
+    pub fn set_networked_paired(&mut self) {
+        if let GameState::NetworkedMultiplayer {
+            ref mut paired,
+            current_side: _,
+            current_turn: _,
+        } = self
+        {
+            *paired = true;
+        }
+    }
+
+    pub fn get_networked_current_side(&self) -> Option<Turn> {
+        if let GameState::NetworkedMultiplayer {
+            paired,
+            current_side,
+            current_turn,
+        } = *self
+        {
+            current_side
+        } else {
+            None
+        }
+    }
+
+    pub fn set_networked_current_side(&mut self, side: Option<Turn>) {
+        if let GameState::NetworkedMultiplayer {
+            paired,
+            ref mut current_side,
+            current_turn,
+        } = self
+        {
+            *current_side = side;
+        }
+    }
+
+    pub fn get_current_turn(&self) -> Turn {
+        if let GameState::SinglePlayer(turn, _) = *self {
+            turn
+        } else if let GameState::NetworkedMultiplayer {
+            paired: _,
+            current_side: _,
+            current_turn,
+        } = *self
+        {
+            current_turn
+        } else {
+            Turn::CyanPlayer
+        }
+    }
+
+    pub fn set_networked_current_turn(&mut self, turn: Turn) {
+        if let GameState::NetworkedMultiplayer {
+            paired: _,
+            current_side: _,
+            ref mut current_turn,
+        } = self
+        {
+            *current_turn = turn;
+        }
+    }
 }
 
 impl Default for GameState {
@@ -338,8 +399,10 @@ pub fn board_from_string(board_string: String) -> BoardType {
     for (idx, c) in board_string.chars().enumerate() {
         match c {
             'a' => board[idx].replace(BoardState::Empty),
-            'b' | 'd' | 'f' => board[idx].replace(BoardState::Cyan),
-            'c' | 'e' | 'g' => board[idx].replace(BoardState::Magenta),
+            'b' | 'f' => board[idx].replace(BoardState::Cyan),
+            'd' => board[idx].replace(BoardState::CyanWin),
+            'c' | 'g' => board[idx].replace(BoardState::Magenta),
+            'e' => board[idx].replace(BoardState::MagentaWin),
             _ => BoardState::Empty,
         };
     }
@@ -432,6 +495,48 @@ pub struct PairingRequestResponse {
     pub id: u32,
     pub status: String,
     pub color: Option<String>,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct PairingStatusResponse {
+    pub r#type: String,
+    pub status: String,
+    pub color: Option<String>,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct GameStateResponse {
+    pub r#type: String,
+    pub status: String,
+    pub board: Option<String>,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct PlaceTokenResponse {
+    pub r#type: String,
+    pub status: String,
+    pub board: String,
+}
+
+#[derive(Copy, Clone, Debug, PartialEq, Eq)]
+pub enum NetworkedGameState {
+    CyanTurn,
+    MagentaTurn,
+    CyanWon,
+    MagentaWon,
+    Draw,
+    Disconnected,
+    InternalError,
+    NotPaired,
+    UnknownID,
+}
+
+#[derive(Copy, Clone, Debug, PartialEq, Eq)]
+pub enum PlacedEnum {
+    Accepted,
+    Illegal,
+    NotYourTurn,
+    Other(NetworkedGameState),
 }
 
 #[cfg(test)]

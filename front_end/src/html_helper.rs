@@ -84,6 +84,15 @@ pub fn element_remove_class(document: &Document, id: &str, class: &str) -> Resul
     Ok(())
 }
 
+pub fn element_has_class(document: &Document, id: &str, class: &str) -> Result<bool, String> {
+    let element = document
+        .get_element_by_id(id)
+        .ok_or_else(|| format!("Failed to get element with id \"{}\"", id))?;
+    let element_class: String = element.class_name();
+
+    Ok(element_class.contains(class))
+}
+
 pub fn create_json_request(target_url: &str, json_body: &str) -> Result<Request, String> {
     let mut req_init: RequestInit = RequestInit::new();
     req_init.body(Some(&JsValue::from_str(json_body)));
@@ -117,9 +126,15 @@ pub async fn send_to_backend(entries: HashMap<String, String>) -> Result<String,
     for (key, value) in entries {
         send_json_string.push('"');
         send_json_string.push_str(&key);
-        send_json_string.push_str("\":\"");
-        send_json_string.push_str(&value);
-        send_json_string.push_str("\",");
+        send_json_string.push_str("\":");
+        if key == "id" || key == "position" {
+            send_json_string.push_str(&value);
+        } else {
+            send_json_string.push('"');
+            send_json_string.push_str(&value);
+            send_json_string.push('"');
+        }
+        send_json_string.push(',');
     }
     send_json_string.truncate(send_json_string.len() - 1);
     send_json_string.push('}');

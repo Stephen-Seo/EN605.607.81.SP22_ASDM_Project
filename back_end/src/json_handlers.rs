@@ -71,21 +71,21 @@ fn handle_check_pairing(root: Value, tx: SyncSender<DBHandlerRequest>) -> Result
         })
         .is_err()
     {
-        return Err("{\"type\":\"pairing_response\", \"status\":\"internal_error\"}".into());
+        return Err("{\"type\":\"pairing_status\", \"status\":\"internal_error\"}".into());
     }
     if let Ok((exists, is_paired, is_cyan)) = request_rx.recv_timeout(DB_REQUEST_TIMEOUT) {
         if !exists {
-            Err("{\"type\":\"pairing_response\", \"status\":\"unknown_id\"}".into())
+            Err("{\"type\":\"pairing_status\", \"status\":\"unknown_id\"}".into())
         } else if is_paired {
             Ok(format!(
-                "{{\"type\":\"pairing_response\", \"status\":\"paired\", \"color\":\"{}\"}}",
+                "{{\"type\":\"pairing_status\", \"status\":\"paired\", \"color\":\"{}\"}}",
                 if is_cyan { "cyan" } else { "magenta" }
             ))
         } else {
-            Ok("{\"type\"\"pairing_response\", \"status\":\"waiting\"}".into())
+            Ok("{\"type\":\"pairing_status\", \"status\":\"waiting\"}".into())
         }
     } else {
-        Err("{\"type\":\"pairing_response\", \"status\":\"internal_error_timeout\"}".into())
+        Err("{\"type\":\"pairing_status\", \"status\":\"internal_error_timeout\"}".into())
     }
 }
 

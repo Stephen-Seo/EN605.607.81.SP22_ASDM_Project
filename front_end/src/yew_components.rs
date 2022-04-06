@@ -5,12 +5,14 @@ use crate::constants::{
 };
 use crate::game_logic::{check_win_draw, WinType};
 use crate::html_helper::{
-    append_to_info_text, create_json_request, element_append_class, element_remove_class,
-    get_window_document, send_to_backend,
+    append_to_info_text, create_json_request, element_append_class, element_has_class,
+    element_remove_class, get_window_document, send_to_backend,
 };
 use crate::random_helper::get_seeded_random;
 use crate::state::{
-    BoardState, GameState, MainMenuMessage, PairingRequestResponse, SharedState, Turn,
+    board_from_string, BoardState, BoardType, GameState, GameStateResponse, MainMenuMessage,
+    NetworkedGameState, PairingRequestResponse, PairingStatusResponse, PlaceTokenResponse,
+    PlacedEnum, SharedState, Turn,
 };
 
 use std::cell::Cell;
@@ -19,7 +21,7 @@ use std::rc::Rc;
 
 use js_sys::{Function, Promise};
 use wasm_bindgen::JsCast;
-use web_sys::Response;
+use web_sys::{Document, Response};
 
 use serde_json::Value as SerdeJSONValue;
 
@@ -121,20 +123,24 @@ impl Component for MainMenu {
             mainmenu.set_class_name("hidden_menu");
             mainmenu.set_inner_html("");
 
-            let info_text_turn = document
-                .get_element_by_id("info_text1")
-                .expect("info_text1 should exist");
-
             match shared.game_state.get() {
                 GameState::SinglePlayer(turn, _) => {
                     if shared.turn.get() == turn {
-                        info_text_turn.set_inner_html(
-                            "<p><b class=\"cyan\">It is CyanPlayer's (player) Turn</b></p>",
-                        );
+                        append_to_info_text(
+                            &document,
+                            "info_text1",
+                            "<b class=\"cyan\">It is CyanPlayer's (player) Turn</b>",
+                            1,
+                        )
+                        .ok();
                     } else {
-                        info_text_turn.set_inner_html(
-                            "<p><b class=\"cyan\">It is CyanPlayer's (ai) Turn</b></p>",
-                        );
+                        append_to_info_text(
+                            &document,
+                            "info_text1",
+                            "<b class=\"cyan\">It is CyanPlayer's (ai) Turn</b>",
+                            1,
+                        )
+                        .ok();
                         // AI player starts first
                         ctx.link()
                             .get_parent()
@@ -149,6 +155,13 @@ impl Component for MainMenu {
                     current_side: _,
                     current_turn: _,
                 } => {
+                    append_to_info_text(
+                        &document,
+                        "info_text1",
+                        "<b>Waiting to pair with another player...</b>",
+                        1,
+                    )
+                    .ok();
                     // start the Wrapper Tick loop
                     ctx.link()
                         .get_parent()
@@ -158,8 +171,13 @@ impl Component for MainMenu {
                         .send_message(WrapperMsg::BackendTick);
                 }
                 _ => {
-                    info_text_turn
-                        .set_inner_html("<p><b class=\"cyan\">It is CyanPlayer's Turn</b></p>");
+                    append_to_info_text(
+                        &document,
+                        "info_text1",
+                        "<b class=\"cyan\">It is CyanPlayer's Turn</b>",
+                        1,
+                    )
+                    .ok();
                 }
             }
         }
@@ -222,13 +240,18 @@ impl Component for Slot {
                 current_side,
                 current_turn,
             } => {
-                // notify Wrapper with picked slot
-                if let Some(p) = ctx.link().get_parent() {
-                    p.clone()
-                        .downcast::<Wrapper>()
-                        .send_message(WrapperMsg::BackendRequest {
-                            place: ctx.props().idx,
-                        });
+                if paired && current_side.is_some() {
+                    if current_side.as_ref().unwrap() == &current_turn {
+                        // notify Wrapper with picked slot
+                        if let Some(p) = ctx.link().get_parent() {
+                            p.clone().downcast::<Wrapper>().send_message(
+                                WrapperMsg::BackendRequest {
+                                    place: ctx.props().idx,
+                                },
+                            );
+                            return false;
+                        }
+                    }
                 }
             }
             GameState::PostGameResults(_) => return false,
@@ -336,12 +359,215 @@ impl Wrapper {
             }
         });
     }
+
+    fn get_networked_player_type(&mut self, ctx: &Context<Self>) {
+        // make a request to get the pairing status
+        if self.player_id.is_none() {
+            log::warn!("Cannot request pairing status if ID is unknown");
+            return;
+        }
+        let player_id: u32 = self.player_id.unwrap();
+        ctx.link().send_future(async move {
+            let mut json_entries = HashMap::new();
+            json_entries.insert("type".into(), "check_pairing".into());
+            json_entries.insert("id".into(), format!("{}", player_id));
+
+            let send_to_backend_result = send_to_backend(json_entries).await;
+            if let Err(e) = send_to_backend_result {
+                return WrapperMsg::BackendResponse(BREnum::Error(format!("{:?}", e)));
+            }
+
+            let request_result: Result<PairingStatusResponse, _> =
+                serde_json::from_str(&send_to_backend_result.unwrap());
+            if let Err(e) = request_result {
+                return WrapperMsg::BackendResponse(BREnum::Error(format!("{:?}", e)));
+            }
+            let response = request_result.unwrap();
+
+            if response.r#type != "pairing_status" {
+                return WrapperMsg::BackendResponse(BREnum::Error(
+                    "Invalid response type when check_pairing".into(),
+                ));
+            }
+
+            if response.status == "paired" && response.color.is_some() {
+                WrapperMsg::BackendResponse(BREnum::GotPairing(response.color.map(|string| {
+                    if string == "cyan" {
+                        Turn::CyanPlayer
+                    } else {
+                        Turn::MagentaPlayer
+                    }
+                })))
+            } else {
+                WrapperMsg::BackendResponse(BREnum::Error("Not paired".into()))
+            }
+        });
+    }
+
+    fn get_game_status(&mut self, ctx: &Context<Self>) {
+        if self.player_id.is_none() {
+            log::warn!("Cannot request pairing status if ID is unknown");
+            return;
+        }
+        let player_id: u32 = self.player_id.unwrap();
+        ctx.link().send_future(async move {
+            let mut json_entries = HashMap::new();
+            json_entries.insert("id".into(), format!("{}", player_id));
+            json_entries.insert("type".into(), "game_state".into());
+
+            let send_to_backend_result = send_to_backend(json_entries).await;
+            if let Err(e) = send_to_backend_result {
+                return WrapperMsg::BackendResponse(BREnum::Error(format!("{:?}", e)));
+            }
+
+            let response_result: Result<GameStateResponse, _> =
+                serde_json::from_str(&send_to_backend_result.unwrap());
+            if let Err(e) = response_result {
+                return WrapperMsg::BackendResponse(BREnum::Error(format!("{:?}", e)));
+            }
+            let response = response_result.unwrap();
+
+            if response.r#type != "game_state" {
+                return WrapperMsg::BackendResponse(BREnum::Error(
+                    "Invalid state when checking game_state".into(),
+                ));
+            }
+
+            let networked_game_state = match response.status.as_str() {
+                "not_paired" => NetworkedGameState::NotPaired,
+                "unknown_id" => NetworkedGameState::UnknownID,
+                "cyan_turn" => NetworkedGameState::CyanTurn,
+                "magenta_turn" => NetworkedGameState::MagentaTurn,
+                "cyan_won" => NetworkedGameState::CyanWon,
+                "magenta_won" => NetworkedGameState::MagentaWon,
+                "draw" => NetworkedGameState::Draw,
+                "opponent_disconnected" => NetworkedGameState::Disconnected,
+                _ => NetworkedGameState::InternalError,
+            };
+
+            WrapperMsg::BackendResponse(BREnum::GotStatus(networked_game_state, response.board))
+        });
+    }
+
+    fn send_place_request(&mut self, ctx: &Context<Self>, placement: u8) {
+        if self.player_id.is_none() {
+            log::warn!("Cannot request pairing status if ID is unknown");
+            return;
+        }
+        let player_id: u32 = self.player_id.unwrap();
+        ctx.link().send_future(async move {
+            let mut json_entries = HashMap::new();
+            json_entries.insert("id".into(), format!("{}", player_id));
+            json_entries.insert("position".into(), format!("{}", placement));
+            json_entries.insert("type".into(), "place_token".into());
+
+            let send_to_backend_result = send_to_backend(json_entries).await;
+            if let Err(e) = send_to_backend_result {
+                return WrapperMsg::BackendResponse(BREnum::Error(format!("{:?}", e)));
+            }
+
+            let response_result: Result<PlaceTokenResponse, _> =
+                serde_json::from_str(&send_to_backend_result.unwrap());
+            if let Err(e) = response_result {
+                return WrapperMsg::BackendResponse(BREnum::Error(format!("{:?}", e)));
+            }
+            let response = response_result.unwrap();
+
+            if response.r#type != "place_token" {
+                return WrapperMsg::BackendResponse(BREnum::Error(
+                    "Invalid state when place_token".into(),
+                ));
+            }
+
+            let placed_enum = match response.status.as_str() {
+                "accepted" => PlacedEnum::Accepted,
+                "illegal" => PlacedEnum::Illegal,
+                "not_your_turn" => PlacedEnum::NotYourTurn,
+                "game_ended_draw" => PlacedEnum::Other(NetworkedGameState::Draw),
+                "game_ended_cyan_won" => PlacedEnum::Other(NetworkedGameState::CyanWon),
+                "game_ended_magenta_won" => PlacedEnum::Other(NetworkedGameState::MagentaWon),
+                "unknown_id" => PlacedEnum::Other(NetworkedGameState::UnknownID),
+                "not_paired_yet" => PlacedEnum::Other(NetworkedGameState::NotPaired),
+                _ => PlacedEnum::Other(NetworkedGameState::InternalError),
+            };
+
+            WrapperMsg::BackendResponse(BREnum::GotPlaced(placed_enum, response.board))
+        });
+    }
+
+    fn update_board_from_string(
+        &mut self,
+        shared: &SharedState,
+        document: &Document,
+        board_string: String,
+    ) {
+        let board = board_from_string(board_string.clone());
+        for (idx, slot) in board.iter().enumerate() {
+            let was_open =
+                element_has_class(&document, &format!("slot{}", idx), "open").unwrap_or(false);
+            element_remove_class(&document, &format!("slot{}", idx), "open").ok();
+            element_remove_class(&document, &format!("slot{}", idx), "placed").ok();
+            element_remove_class(&document, &format!("slot{}", idx), "win").ok();
+            element_remove_class(&document, &format!("slot{}", idx), "cyan").ok();
+            element_remove_class(&document, &format!("slot{}", idx), "magenta").ok();
+            match slot.get() {
+                BoardState::Empty => {
+                    element_append_class(&document, &format!("slot{}", idx), "open").ok();
+                }
+                BoardState::Cyan => {
+                    element_append_class(&document, &format!("slot{}", idx), "cyan").ok();
+                }
+                BoardState::CyanWin => {
+                    element_append_class(&document, &format!("slot{}", idx), "cyan").ok();
+                    element_append_class(&document, &format!("slot{}", idx), "win").ok();
+                }
+                BoardState::Magenta => {
+                    element_append_class(&document, &format!("slot{}", idx), "magenta").ok();
+                }
+                BoardState::MagentaWin => {
+                    element_append_class(&document, &format!("slot{}", idx), "magenta").ok();
+                    element_append_class(&document, &format!("slot{}", idx), "win").ok();
+                }
+            }
+            let char_at_idx = board_string
+                .chars()
+                .nth(idx)
+                .expect("idx into board_string should be in range");
+            if char_at_idx == 'f' {
+                element_append_class(&document, &format!("slot{}", idx), "placed").ok();
+                if was_open {
+                    append_to_info_text(
+                        &document,
+                        "info_text0",
+                        &format!("<b class=\"cyan\">CyanPlayer placed at {}</b>", idx),
+                        INFO_TEXT_MAX_ITEMS,
+                    )
+                    .ok();
+                }
+            } else if char_at_idx == 'g' {
+                element_append_class(&document, &format!("slot{}", idx), "placed").ok();
+                if was_open {
+                    append_to_info_text(
+                        &document,
+                        "info_text0",
+                        &format!("<b class=\"magenta\">MagentaPlayer placed at {}</b>", idx),
+                        INFO_TEXT_MAX_ITEMS,
+                    )
+                    .ok();
+                }
+            }
+            shared.board[idx].set(slot.get());
+        }
+    }
 }
 
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum BREnum {
     Error(String),
     GotID(u32, Option<Turn>),
+    GotPairing(Option<Turn>),
+    GotStatus(NetworkedGameState, Option<String>),
+    GotPlaced(PlacedEnum, String),
 }
 
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -476,7 +702,21 @@ impl Component for Wrapper {
                             current_side,
                             current_turn,
                         } => {
-                            // TODO
+                            log::warn!(
+                                "paired is {}, current_side is {:?}, current_turn is {:?}",
+                                paired,
+                                current_side,
+                                current_turn
+                            );
+                            if paired {
+                                if let Some(current_side) = current_side {
+                                    if current_side == current_turn {
+                                        self.place_request.replace(idx);
+                                    }
+                                }
+                            }
+                            log::warn!("Set place request to {:?}", self.place_request);
+                            return true;
                         }
                         GameState::PostGameResults(_) => (),
                     }
@@ -552,7 +792,7 @@ impl Component for Wrapper {
                             }
                         } else {
                             format!(
-                                "<b class=\"{}\">It is {}'s turn</b>",
+                                "<b class=\"{}\">It is {}'s Turn</b>",
                                 turn.get_color(),
                                 turn
                             )
@@ -585,8 +825,11 @@ impl Component for Wrapper {
                     } else {
                         // a player won
                         let turn = Turn::from(endgame_state);
-                        let text_string =
-                            format!("<b class=\"{}\">{} has won</b>", turn.get_color(), turn);
+                        let text_string = format!(
+                            "<b class=\"{}\">{} has won the game</b>",
+                            turn.get_color(),
+                            turn
+                        );
                         let text_append_result = append_to_info_text(
                             &document,
                             "info_text0",
@@ -942,6 +1185,23 @@ impl Component for Wrapper {
             WrapperMsg::BackendTick => {
                 if self.player_id.is_none() {
                     self.get_networked_player_id(ctx);
+                } else if shared
+                    .game_state
+                    .get()
+                    .get_networked_current_side()
+                    .is_none()
+                {
+                    self.get_networked_player_type(ctx);
+                } else if !matches!(shared.game_state.get(), GameState::PostGameResults(_)) {
+                    if self.place_request.is_some() {
+                        let placement = self.place_request.take().unwrap();
+                        self.send_place_request(ctx, placement);
+                    } else {
+                        self.get_game_status(ctx);
+                    }
+                } else {
+                    self.do_backend_tick = false;
+                    log::warn!("Ended backend tick");
                 }
 
                 // repeat BackendTick handling while "connected" to backend
@@ -954,11 +1214,284 @@ impl Component for Wrapper {
             }
             WrapperMsg::BackendResponse(br_enum) => match br_enum {
                 BREnum::Error(string) => {
+                    // TODO maybe suppress this for release builds
                     log::warn!("{}", string);
                 }
                 BREnum::GotID(id, turn_opt) => {
                     self.player_id = Some(id);
-                    log::warn!("Got player id {}", id);
+                    let mut game_state = shared.game_state.get();
+                    game_state.set_networked_paired();
+                    game_state.set_networked_current_side(turn_opt);
+                    shared.game_state.set(game_state);
+                    if let Some(turn_type) = turn_opt {
+                        append_to_info_text(
+                            &document,
+                            "info_text0",
+                            &format!(
+                                "<b class=\"{}\">Paired with player, you are the {}</b>",
+                                turn_type.get_color(),
+                                turn_type
+                            ),
+                            INFO_TEXT_MAX_ITEMS,
+                        )
+                        .ok();
+                        append_to_info_text(
+                            &document,
+                            "info_text1",
+                            "<b class=\"cyan\">It is CyanPlayer's Turn</b>",
+                            1,
+                        )
+                        .ok();
+                    }
+                }
+                BREnum::GotPairing(turn_opt) => {
+                    let mut game_state = shared.game_state.get();
+                    game_state.set_networked_current_side(turn_opt);
+                    shared.game_state.set(game_state);
+                    if let Some(turn_type) = turn_opt {
+                        append_to_info_text(
+                            &document,
+                            "info_text0",
+                            &format!(
+                                "<b class=\"{}\">Paired with player, you are the {}</b>",
+                                turn_type.get_color(),
+                                turn_type
+                            ),
+                            INFO_TEXT_MAX_ITEMS,
+                        )
+                        .ok();
+                        append_to_info_text(
+                            &document,
+                            "info_text1",
+                            "<b class=\"cyan\">It is CyanPlayer's Turn</b>",
+                            1,
+                        )
+                        .ok();
+                    }
+                }
+                BREnum::GotStatus(networked_game_state, board_opt) => {
+                    if let Some(board_string) = board_opt {
+                        self.update_board_from_string(&shared, &document, board_string);
+                    }
+
+                    let mut current_game_state = shared.game_state.get();
+                    match networked_game_state {
+                        NetworkedGameState::CyanTurn => {
+                            if current_game_state.get_current_turn() != Turn::CyanPlayer {
+                                current_game_state.set_networked_current_turn(Turn::CyanPlayer);
+                                shared.game_state.set(current_game_state);
+                                append_to_info_text(
+                                    &document,
+                                    "info_text1",
+                                    "<b class=\"cyan\">It is CyanPlayer's Turn</b>",
+                                    1,
+                                )
+                                .ok();
+                            }
+                        }
+                        NetworkedGameState::MagentaTurn => {
+                            if current_game_state.get_current_turn() != Turn::MagentaPlayer {
+                                current_game_state.set_networked_current_turn(Turn::MagentaPlayer);
+                                shared.game_state.set(current_game_state);
+                                append_to_info_text(
+                                    &document,
+                                    "info_text1",
+                                    "<b class=\"magenta\">It is MagentaPlayer's Turn</b>",
+                                    1,
+                                )
+                                .ok();
+                            }
+                        }
+                        NetworkedGameState::CyanWon => {
+                            append_to_info_text(
+                                &document,
+                                "info_text1",
+                                "<b class=\"cyan\">CyanPlayer won the game</b>",
+                                1,
+                            )
+                            .ok();
+                            shared
+                                .game_state
+                                .set(GameState::PostGameResults(BoardState::CyanWin));
+                            self.do_backend_tick = false;
+                        }
+                        NetworkedGameState::MagentaWon => {
+                            append_to_info_text(
+                                &document,
+                                "info_text1",
+                                "<b class=\"magenta\">MagentaPlayer won the game</b>",
+                                1,
+                            )
+                            .ok();
+                            shared
+                                .game_state
+                                .set(GameState::PostGameResults(BoardState::MagentaWin));
+                            self.do_backend_tick = false;
+                        }
+                        NetworkedGameState::Draw => {
+                            append_to_info_text(
+                                &document,
+                                "info_text1",
+                                "<b>The game ended in a draw</b>",
+                                1,
+                            )
+                            .ok();
+                            shared
+                                .game_state
+                                .set(GameState::PostGameResults(BoardState::Empty));
+                            self.do_backend_tick = false;
+                        }
+                        NetworkedGameState::Disconnected => {
+                            append_to_info_text(
+                                &document,
+                                "info_text1",
+                                "<b>The opponent disconnected</b>",
+                                1,
+                            )
+                            .ok();
+                            shared
+                                .game_state
+                                .set(GameState::PostGameResults(BoardState::Empty));
+                            self.do_backend_tick = false;
+                        }
+                        NetworkedGameState::InternalError => {
+                            append_to_info_text(
+                                &document,
+                                "info_text1",
+                                "<b>There was an internal error</b>",
+                                1,
+                            )
+                            .ok();
+                            shared
+                                .game_state
+                                .set(GameState::PostGameResults(BoardState::Empty));
+                            self.do_backend_tick = false;
+                        }
+                        NetworkedGameState::NotPaired => (),
+                        NetworkedGameState::UnknownID => {
+                            append_to_info_text(
+                                &document,
+                                "info_text1",
+                                "<b>The game has ended (disconnected?)</b>",
+                                1,
+                            )
+                            .ok();
+                            shared
+                                .game_state
+                                .set(GameState::PostGameResults(BoardState::Empty));
+                            self.do_backend_tick = false;
+                        }
+                    }
+                }
+                BREnum::GotPlaced(placed_status, board_string) => {
+                    self.update_board_from_string(&shared, &document, board_string);
+
+                    match placed_status {
+                        PlacedEnum::Accepted => {
+                            // noop, handled by update_board_from_string
+                        }
+                        PlacedEnum::Illegal => {
+                            append_to_info_text(
+                                &document,
+                                "info_text0",
+                                "<b>Cannot place a token there</b>",
+                                INFO_TEXT_MAX_ITEMS,
+                            )
+                            .ok();
+                        }
+                        PlacedEnum::NotYourTurn => {
+                            append_to_info_text(
+                                &document,
+                                "info_text0",
+                                "<b>Cannot place a token, not your turn</b>",
+                                INFO_TEXT_MAX_ITEMS,
+                            )
+                            .ok();
+                        }
+                        PlacedEnum::Other(networked_game_state) => match networked_game_state {
+                            NetworkedGameState::CyanTurn => (),
+                            NetworkedGameState::MagentaTurn => (),
+                            NetworkedGameState::CyanWon => {
+                                append_to_info_text(
+                                    &document,
+                                    "info_text1",
+                                    "<b class=\"cyan\">CyanPlayer has won the game</b>",
+                                    1,
+                                )
+                                .ok();
+                                shared
+                                    .game_state
+                                    .set(GameState::PostGameResults(BoardState::CyanWin));
+                                self.do_backend_tick = false;
+                            }
+                            NetworkedGameState::MagentaWon => {
+                                append_to_info_text(
+                                    &document,
+                                    "info_text1",
+                                    "<b class=\"magenta\">MagentaPlayer has won the game</b>",
+                                    1,
+                                )
+                                .ok();
+                                shared
+                                    .game_state
+                                    .set(GameState::PostGameResults(BoardState::MagentaWin));
+                                self.do_backend_tick = false;
+                            }
+                            NetworkedGameState::Draw => {
+                                append_to_info_text(
+                                    &document,
+                                    "info_text1",
+                                    "<b>The game ended in a draw</b>",
+                                    1,
+                                )
+                                .ok();
+                                shared
+                                    .game_state
+                                    .set(GameState::PostGameResults(BoardState::Empty));
+                                self.do_backend_tick = false;
+                            }
+                            NetworkedGameState::Disconnected => {
+                                append_to_info_text(
+                                    &document,
+                                    "info_text1",
+                                    "<b>The opponent disconnected</b>",
+                                    1,
+                                )
+                                .ok();
+                                shared
+                                    .game_state
+                                    .set(GameState::PostGameResults(BoardState::Empty));
+                                self.do_backend_tick = false;
+                            }
+                            NetworkedGameState::InternalError => {
+                                append_to_info_text(
+                                    &document,
+                                    "info_text1",
+                                    "<b>There was an internal error</b>",
+                                    1,
+                                )
+                                .ok();
+                                shared
+                                    .game_state
+                                    .set(GameState::PostGameResults(BoardState::Empty));
+                                self.do_backend_tick = false;
+                            }
+                            NetworkedGameState::NotPaired => (),
+                            NetworkedGameState::UnknownID => {
+                                append_to_info_text(
+                                    &document,
+                                    "info_text1",
+                                    "<b>The game has ended (disconnected?)</b>",
+                                    1,
+                                )
+                                .ok();
+                                shared
+                                    .game_state
+                                    .set(GameState::PostGameResults(BoardState::Empty));
+                                self.do_backend_tick = false;
+                            }
+                        },
+                    }
                 }
             },
         } // match (msg)

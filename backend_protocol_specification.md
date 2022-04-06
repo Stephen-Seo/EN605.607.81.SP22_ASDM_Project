@@ -85,14 +85,14 @@ then the back-end will respond with "too\_many\_players".
 
 ```
     {
-        "type": "pairing_response",
+        "type": "pairing_status",
         "status": "waiting", // or "unknown_id"
     }
 ```
 
 ```
     {
-        "type": "pairing_response",
+        "type": "pairing_status",
         "status": "paired",
         "color": "magenta", // or "cyan"
     }   
