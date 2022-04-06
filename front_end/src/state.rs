@@ -413,9 +413,9 @@ pub fn board_from_string(board_string: String) -> BoardType {
         match c {
             'a' => board[idx].replace(BoardState::Empty),
             'b' | 'f' => board[idx].replace(BoardState::Cyan),
-            'd' => board[idx].replace(BoardState::CyanWin),
+            'd' | 'h' => board[idx].replace(BoardState::CyanWin),
             'c' | 'g' => board[idx].replace(BoardState::Magenta),
-            'e' => board[idx].replace(BoardState::MagentaWin),
+            'e' | 'i' => board[idx].replace(BoardState::MagentaWin),
             _ => BoardState::Empty,
         };
     }
@@ -467,7 +467,11 @@ pub fn string_from_board(board: BoardType, placed: usize) -> (String, Option<Boa
             }
             BoardState::Cyan | BoardState::CyanWin => {
                 if win_set.contains(&idx) {
-                    'd'
+                    if idx == placed {
+                        'h'
+                    } else {
+                        'd'
+                    }
                 } else if idx == placed {
                     'f'
                 } else {
@@ -476,7 +480,11 @@ pub fn string_from_board(board: BoardType, placed: usize) -> (String, Option<Boa
             }
             BoardState::Magenta | BoardState::MagentaWin => {
                 if win_set.contains(&idx) {
-                    'e'
+                    if idx == placed {
+                        'i'
+                    } else {
+                        'e'
+                    }
                 } else if idx == placed {
                     'g'
                 } else {

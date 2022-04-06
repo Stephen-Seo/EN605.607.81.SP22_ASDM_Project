@@ -138,6 +138,8 @@ then the back-end will respond with "too\_many\_players".
                               // e - magenta winning piece
                               // f - cyan placed
                               // g - magenta placed
+                              // h - cyan winning and placed piece
+                              // i - magenta winning and placed piece
     }
 ```
 

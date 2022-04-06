@@ -533,8 +533,10 @@ impl Wrapper {
                 .chars()
                 .nth(idx)
                 .expect("idx into board_string should be in range");
-            if char_at_idx == 'f' {
-                element_append_class(&document, &format!("slot{}", idx), "placed").ok();
+            if char_at_idx == 'f' || char_at_idx == 'h' {
+                if char_at_idx == 'f' {
+                    element_append_class(&document, &format!("slot{}", idx), "placed").ok();
+                }
                 if was_open {
                     append_to_info_text(
                         &document,
@@ -544,8 +546,10 @@ impl Wrapper {
                     )
                     .ok();
                 }
-            } else if char_at_idx == 'g' {
-                element_append_class(&document, &format!("slot{}", idx), "placed").ok();
+            } else if char_at_idx == 'g' || char_at_idx == 'i' {
+                if char_at_idx == 'g' {
+                    element_append_class(&document, &format!("slot{}", idx), "placed").ok();
+                }
                 if was_open {
                     append_to_info_text(
                         &document,
