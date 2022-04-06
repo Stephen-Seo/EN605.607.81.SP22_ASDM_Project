@@ -2,6 +2,8 @@ use crate::ai::AIDifficulty;
 use crate::constants::{COLS, ROWS};
 use crate::game_logic::{check_win_draw, WinType};
 
+use serde::{Deserialize, Serialize};
+
 use std::cell::Cell;
 use std::collections::hash_set::HashSet;
 use std::fmt::Display;
@@ -422,6 +424,14 @@ pub fn string_from_board(board: BoardType, placed: usize) -> (String, Option<Boa
     } else {
         (board_string, None)
     }
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct PairingRequestResponse {
+    pub r#type: String,
+    pub id: u32,
+    pub status: String,
+    pub color: Option<String>,
 }
 
 #[cfg(test)]

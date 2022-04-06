@@ -1,5 +1,10 @@
-use wasm_bindgen::JsValue;
+use js_sys::{Function, JsString, Promise};
+use std::collections::HashMap;
+use wasm_bindgen::{JsCast, JsValue};
+use wasm_bindgen_futures::JsFuture;
 use web_sys::{window, Document, Request, RequestInit, Window};
+
+use crate::constants::BACKEND_URL;
 
 pub fn get_window_document() -> Result<(Window, Document), String> {
     let window = window().ok_or_else(|| String::from("Failed to get window"))?;
@@ -105,4 +110,53 @@ pub fn create_json_request(target_url: &str, json_body: &str) -> Result<Request,
         .map_err(|e| format!("{:?}", e))?;
 
     Ok(request)
+}
+
+pub async fn send_to_backend(entries: HashMap<String, String>) -> Result<String, String> {
+    let mut send_json_string = String::from("{");
+    for (key, value) in entries {
+        send_json_string.push('"');
+        send_json_string.push_str(&key);
+        send_json_string.push_str("\":\"");
+        send_json_string.push_str(&value);
+        send_json_string.push_str("\",");
+    }
+    send_json_string.truncate(send_json_string.len() - 1);
+    send_json_string.push('}');
+
+    // TODO check usage of "no-cors"
+    let function = Function::new_no_args(&format!(
+        "
+        let fetch_settings = {{}};
+        fetch_settings.method = 'POST';
+        fetch_settings.headers = {{}};
+        fetch_settings.headers['Content-Type'] = 'application/json';
+        fetch_settings.headers['Accept'] = 'text/html,application/json';
+        //fetch_settings.mode = 'no-cors';
+        fetch_settings.body = '{}';
+
+        return fetch('{}', fetch_settings)
+            .then((response) => {{
+                return response.text();
+            }});
+    ",
+        send_json_string, BACKEND_URL,
+    ));
+
+    let jsvalue: JsValue = function
+        .call0(&function)
+        .map_err(|e| format!("Failed to POST to backend: {:?}", e))?;
+    let promise: Promise = jsvalue.dyn_into().map_err(|e| {
+        format!(
+            "Failed to get Promise out of JsValue when POSTing to backend: {:?}",
+            e
+        )
+    })?;
+    let future_result: JsValue = JsFuture::from(promise)
+        .await
+        .map_err(|e| format!("Failed to await promise when POSTing to backend: {:?}", e))?;
+
+    let json_string = String::from(JsString::from(future_result));
+
+    Ok(json_string)
 }
