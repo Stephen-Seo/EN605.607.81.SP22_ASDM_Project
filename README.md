@@ -18,6 +18,9 @@ document for the Product Backlogs, and there will be a document for each Sprint.
 
 The directory `retrospectives` holds the retrospectives of Sprints 3 and onward.
 
+The directory `pictures` holds pertinent images to the project. It includes the
+"Simple Model" of the project.
+
 ## What is Four-Line Dropper?
 
 Four-Line Dropper is a game where two players take turns dropping tokens into
