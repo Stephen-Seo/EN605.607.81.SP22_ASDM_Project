@@ -971,7 +971,7 @@ impl DBHandler {
 
     fn cleanup_stale_players(&self, conn: Option<&Connection>) -> Result<(), String> {
         if conn.is_none() {
-            return self.cleanup_stale_games(Some(&self.get_conn(DBFirstRun::NotFirstRun)?));
+            return self.cleanup_stale_players(Some(&self.get_conn(DBFirstRun::NotFirstRun)?));
         }
         let conn = conn.unwrap();
 
