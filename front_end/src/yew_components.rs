@@ -191,6 +191,9 @@ impl Component for MainMenu {
                                     window
                                         .add_event_listener_with_callback("pagehide", &resolve)
                                         .expect("Should be able to set \"pagehide\" callback");
+                                    window
+                                        .add_event_listener_with_callback("beforeunload", &resolve)
+                                        .expect("Should be able to set \"beforeunload\" callback");
                                 });
                             let js_fut = JsFuture::from(promise);
                             js_fut.await.ok();
