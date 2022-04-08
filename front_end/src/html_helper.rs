@@ -72,7 +72,7 @@ pub fn element_append_class(document: &Document, id: &str, class: &str) -> Resul
         .get_element_by_id(id)
         .ok_or_else(|| format!("Failed to get element with id \"{}\"", id))?;
     let new_class = format!("{} {}", element.class_name(), class);
-    element.set_class_name(&new_class);
+    element.set_class_name(&string_remove_extra_whitespace(&new_class));
 
     Ok(())
 }
@@ -87,9 +87,27 @@ pub fn element_remove_class(document: &Document, id: &str, class: &str) -> Resul
         let mut remaining = element_class.split_off(idx);
         element_class += &remaining.split_off(class.len());
     }
-    element.set_class_name(&element_class);
+    element.set_class_name(&string_remove_extra_whitespace(&element_class));
 
     Ok(())
+}
+
+fn string_remove_extra_whitespace(s: &str) -> String {
+    let mut replacement_string = String::with_capacity(s.len());
+    let mut is_space = false;
+    for c in s.chars() {
+        if c != ' ' {
+            replacement_string.push(c);
+            is_space = false;
+        } else if is_space {
+            continue;
+        } else {
+            replacement_string.push(c);
+            is_space = true;
+        }
+    }
+
+    replacement_string
 }
 
 pub fn element_has_class(document: &Document, id: &str, class: &str) -> Result<bool, String> {

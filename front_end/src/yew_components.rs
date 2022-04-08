@@ -177,6 +177,25 @@ impl Component for MainMenu {
                         .clone()
                         .downcast::<Wrapper>()
                         .send_message(WrapperMsg::BackendTick);
+                    // set reset when page "unload"
+                    ctx.link()
+                        .get_parent()
+                        .expect("Wrapper should be a parent of MainMenu")
+                        .clone()
+                        .downcast::<Wrapper>()
+                        .send_future(async {
+                            let promise =
+                                Promise::new(&mut |resolve: js_sys::Function, _reject| {
+                                    let window =
+                                        web_sys::window().expect("Should be able to get window");
+                                    window
+                                        .add_event_listener_with_callback("pagehide", &resolve)
+                                        .expect("Should be able to set \"pagehide\" callback");
+                                });
+                            let js_fut = JsFuture::from(promise);
+                            js_fut.await.ok();
+                            WrapperMsg::Reset
+                        });
                 }
                 _ => {
                     append_to_info_text(
@@ -339,19 +358,6 @@ impl Wrapper {
                     "Backend returned invalid type for pairing_request".into(),
                 ));
             }
-
-            // set up onbeforeunload to disconnect with the received id
-            let function = Function::new_no_args(&format!(
-                "
-                window.addEventListener(\"beforeunload\", function(event) {{
-                    let xhr = new XMLHttpRequest();
-                    xhr.open('POST', '{}');
-                    xhr.send('{{\"type\": \"disconnect\", \"id\": {}}}');
-                }});
-            ",
-                BACKEND_URL, request.id
-            ));
-            function.call0(&function).ok();
 
             if let Some(color) = request.color {
                 WrapperMsg::BackendResponse(BREnum::GotID(
@@ -591,6 +597,7 @@ pub enum WrapperMsg {
     BackendTick,
     BackendRequest { place: u8 },
     BackendResponse(BREnum),
+    Reset,
 }
 
 impl WrapperMsg {
@@ -1537,6 +1544,33 @@ impl Component for Wrapper {
                         }
                     }
                 }
+            }
+            WrapperMsg::Reset => {
+                shared.game_state.set(GameState::default());
+                shared.turn.set(Turn::CyanPlayer);
+                for idx in 0..((ROWS * COLS) as usize) {
+                    shared.placed[idx].set(false);
+                    shared.board[idx].set(BoardState::Empty);
+                    element_remove_class(&document, &format!("slot{}", idx), "open").ok();
+                    element_remove_class(&document, &format!("slot{}", idx), "placed").ok();
+                    element_remove_class(&document, &format!("slot{}", idx), "win").ok();
+                    element_remove_class(&document, &format!("slot{}", idx), "cyan").ok();
+                    element_remove_class(&document, &format!("slot{}", idx), "magenta").ok();
+                    element_append_class(&document, &format!("slot{}", idx), "open").ok();
+                }
+                if let Some(id) = self.player_id.take() {
+                    let function = Function::new_no_args(&format!(
+                        "
+                        let xhr = new XMLHttpRequest();
+                        xhr.open('POST', '{}');
+                        xhr.send('{{\"type\": \"disconnect\", \"id\": {}}}');
+                    ",
+                        BACKEND_URL, id
+                    ));
+                    function.call0(&function).ok();
+                }
+                self.place_request = None;
+                self.do_backend_tick = false;
             }
         } // match (msg)
 
