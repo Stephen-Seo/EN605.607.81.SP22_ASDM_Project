@@ -29,7 +29,7 @@ use std::rc::Rc;
 
 use js_sys::{Function, Promise};
 use wasm_bindgen::JsCast;
-use web_sys::{Document, Response};
+use web_sys::{AddEventListenerOptions, Document, Response};
 
 use serde_json::Value as SerdeJSONValue;
 
@@ -1238,12 +1238,17 @@ impl Component for Wrapper {
                                     let binded_func =
                                         outer_function.bind1(&outer_function, &resolve);
                                     window
-                                        .add_event_listener_with_callback("pagehide", &binded_func)
+                                        .add_event_listener_with_callback_and_add_event_listener_options(
+                                            "pagehide",
+                                            &binded_func,
+                                            AddEventListenerOptions::new().capture(true).once(true)
+                                        )
                                         .expect("Should be able to set \"pagehide\" callback");
                                     window
-                                        .add_event_listener_with_callback(
+                                        .add_event_listener_with_callback_and_add_event_listener_options(
                                             "beforeunload",
                                             &binded_func,
+                                            AddEventListenerOptions::new().capture(true).once(true)
                                         )
                                         .expect("Should be able to set \"beforeunload\" callback");
                                 });
