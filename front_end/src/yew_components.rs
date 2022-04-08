@@ -1223,25 +1223,32 @@ impl Component for Wrapper {
                                 Promise::new(&mut |resolve: js_sys::Function, _reject| {
                                     let window =
                                         web_sys::window().expect("Should be able to get window");
+                                    let outer_function = Function::new_with_args(
+                                        "resolve",
+                                        &format!(
+                                            "
+                                        let xhr = new XMLHttpRequest();
+                                        xhr.open('POST', '{}');
+                                        xhr.send('{{\"type\": \"disconnect\", \"id\": {}}}');
+                                        resolve();
+                                    ",
+                                            BACKEND_URL, player_id
+                                        ),
+                                    );
+                                    let binded_func =
+                                        outer_function.bind1(&outer_function, &resolve);
                                     window
-                                        .add_event_listener_with_callback("pagehide", &resolve)
+                                        .add_event_listener_with_callback("pagehide", &binded_func)
                                         .expect("Should be able to set \"pagehide\" callback");
                                     window
-                                        .add_event_listener_with_callback("beforeunload", &resolve)
+                                        .add_event_listener_with_callback(
+                                            "beforeunload",
+                                            &binded_func,
+                                        )
                                         .expect("Should be able to set \"beforeunload\" callback");
                                 });
                             let js_fut = JsFuture::from(promise);
                             js_fut.await.ok();
-
-                            let function = Function::new_no_args(&format!(
-                                "
-                                    let xhr = new XMLHttpRequest();
-                                    xhr.open('POST', '{}');
-                                    xhr.send('{{\"type\": \"disconnect\", \"id\": {}}}');
-                                ",
-                                BACKEND_URL, player_id
-                            ));
-                            function.call0(&function).ok();
 
                             WrapperMsg::Reset
                         });
