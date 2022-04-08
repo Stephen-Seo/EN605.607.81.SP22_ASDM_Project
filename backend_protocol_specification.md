@@ -1,7 +1,7 @@
 # Backend Protocol
 
 The backend will be available at https://asdm.seodisparate.com/api .  
-The frontend will send http GET/POST requests to the URL with JSON as the body
+The frontend will send http POST requests to the URL with JSON as the body
 of the request, and the backend will respond with JSON.
 
 ## Requests
