@@ -177,28 +177,6 @@ impl Component for MainMenu {
                         .clone()
                         .downcast::<Wrapper>()
                         .send_message(WrapperMsg::BackendTick);
-                    // set reset when page "unload"
-                    ctx.link()
-                        .get_parent()
-                        .expect("Wrapper should be a parent of MainMenu")
-                        .clone()
-                        .downcast::<Wrapper>()
-                        .send_future(async {
-                            let promise =
-                                Promise::new(&mut |resolve: js_sys::Function, _reject| {
-                                    let window =
-                                        web_sys::window().expect("Should be able to get window");
-                                    window
-                                        .add_event_listener_with_callback("pagehide", &resolve)
-                                        .expect("Should be able to set \"pagehide\" callback");
-                                    window
-                                        .add_event_listener_with_callback("beforeunload", &resolve)
-                                        .expect("Should be able to set \"beforeunload\" callback");
-                                });
-                            let js_fut = JsFuture::from(promise);
-                            js_fut.await.ok();
-                            WrapperMsg::Reset
-                        });
                 }
                 _ => {
                     append_to_info_text(
@@ -1238,6 +1216,36 @@ impl Component for Wrapper {
                         log::warn!("{}", string);
                     }
                     BREnum::GotID(id, turn_opt) => {
+                        // set reset and disconnect on page "unload"
+                        let player_id = id;
+                        ctx.link().send_future(async move {
+                            let promise =
+                                Promise::new(&mut |resolve: js_sys::Function, _reject| {
+                                    let window =
+                                        web_sys::window().expect("Should be able to get window");
+                                    window
+                                        .add_event_listener_with_callback("pagehide", &resolve)
+                                        .expect("Should be able to set \"pagehide\" callback");
+                                    window
+                                        .add_event_listener_with_callback("beforeunload", &resolve)
+                                        .expect("Should be able to set \"beforeunload\" callback");
+                                });
+                            let js_fut = JsFuture::from(promise);
+                            js_fut.await.ok();
+
+                            let function = Function::new_no_args(&format!(
+                                "
+                                    let xhr = new XMLHttpRequest();
+                                    xhr.open('POST', '{}');
+                                    xhr.send('{{\"type\": \"disconnect\", \"id\": {}}}');
+                                ",
+                                BACKEND_URL, player_id
+                            ));
+                            function.call0(&function).ok();
+
+                            WrapperMsg::Reset
+                        });
+
                         self.player_id = Some(id);
                         let mut game_state = shared.game_state.get();
                         game_state.set_networked_paired();
