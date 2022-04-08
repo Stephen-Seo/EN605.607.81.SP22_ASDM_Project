@@ -35,9 +35,9 @@ impl GameState {
         matches!(
             self,
             GameState::NetworkedMultiplayer {
-                paired,
-                current_side,
-                current_turn
+                paired: _,
+                current_side: _,
+                current_turn: _
             }
         )
     }
@@ -55,9 +55,9 @@ impl GameState {
 
     pub fn get_networked_current_side(&self) -> Option<Turn> {
         if let GameState::NetworkedMultiplayer {
-            paired,
+            paired: _,
             current_side,
-            current_turn,
+            current_turn: _,
         } = *self
         {
             current_side
@@ -68,9 +68,9 @@ impl GameState {
 
     pub fn set_networked_current_side(&mut self, side: Option<Turn>) {
         if let GameState::NetworkedMultiplayer {
-            paired,
+            paired: _,
             ref mut current_side,
-            current_turn,
+            current_turn: _,
         } = self
         {
             *current_side = side;

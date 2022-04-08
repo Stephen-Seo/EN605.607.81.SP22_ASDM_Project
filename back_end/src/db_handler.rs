@@ -19,7 +19,9 @@ use std::{fmt, thread};
 use rand::{thread_rng, Rng};
 use rusqlite::{params, Connection, Error as RusqliteError};
 
-pub type GetIDSenderType = (u32, Option<bool>);
+/// first value is ID, None if too many players
+/// second value is true if player is cyan_player, None if not paired yet
+pub type GetIDSenderType = (Option<u32>, Option<bool>);
 /// first bool is player exists,
 /// second bool is if paired,
 /// third bool is if cyan player
@@ -172,6 +174,7 @@ impl DBHandler {
                 let create_player_result = self.create_new_player(Some(&conn));
                 if let Err(e) = create_player_result {
                     println!("{}", e);
+                    player_tx.send((None, None)).ok();
                     // don't stop server because player limit may have been reached
                     return false;
                 }
@@ -193,11 +196,11 @@ impl DBHandler {
                         if paired {
                             // don't stop server on send fail, may have timed
                             // out and dropped the receiver
-                            player_tx.send((player_id, Some(is_cyan))).ok();
+                            player_tx.send((Some(player_id), Some(is_cyan))).ok();
                         } else {
                             // don't stop server on send fail, may have timed
                             // out and dropped the receiver
-                            player_tx.send((player_id, None)).ok();
+                            player_tx.send((Some(player_id), None)).ok();
                         }
                     } else {
                         println!("Internal error, created player doesn't exist");

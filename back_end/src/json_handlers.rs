@@ -41,7 +41,11 @@ fn handle_pairing_request(tx: SyncSender<DBHandlerRequest>) -> Result<String, St
     if tx.send(DBHandlerRequest::GetID(player_tx)).is_err() {
         return Err("{\"type\":\"pairing_response\", \"status\":\"internal_error\"}".into());
     }
-    if let Ok((pid, is_cyan_opt)) = player_rx.recv_timeout(DB_REQUEST_TIMEOUT) {
+    if let Ok((pid_opt, is_cyan_opt)) = player_rx.recv_timeout(DB_REQUEST_TIMEOUT) {
+        if pid_opt.is_none() {
+            return Ok("{\"type\":\"pairing_response\", \"status\":\"too_many_players\"}".into());
+        }
+        let pid = pid_opt.unwrap();
         if let Some(is_cyan) = is_cyan_opt {
             Ok(format!(
                 "{{\"type\":\"pairing_response\", \"id\": {}, \"status\": \"paired\", \"color\": \"{}\"}}",
