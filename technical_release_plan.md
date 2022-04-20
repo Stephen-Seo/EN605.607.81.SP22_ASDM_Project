@@ -4,7 +4,7 @@ This Release Plan was created in April, a few weeks after the project weas
 actually started. However, the intended plan for releases has not changed during
 the creation of the project.
 
-# Release Plan
+# Technical Release Plan
 
 ## First Stage: Web-app Minimum Viable Product front-end
 
