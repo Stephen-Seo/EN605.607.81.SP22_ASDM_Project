@@ -8,12 +8,13 @@
 //You should have received a copy of the GNU General Public License along with this program. If not, see <https://www.gnu.org/licenses/>.
 use crate::ai::{get_ai_choice, AIDifficulty};
 use crate::constants::{
-    COLS, GAME_CLEANUP_TIMEOUT, PLAYER_CLEANUP_TIMEOUT, PLAYER_COUNT_LIMIT, ROWS, TURN_SECONDS,
+    BACKEND_CLEANUP_INTERVAL_SECONDS, COLS, GAME_CLEANUP_TIMEOUT, PLAYER_CLEANUP_TIMEOUT,
+    PLAYER_COUNT_LIMIT, ROWS, TURN_SECONDS,
 };
 use crate::state::{board_from_string, new_string_board, string_from_board, BoardState, Turn};
 
 use std::sync::mpsc::{Receiver, RecvTimeoutError, SyncSender};
-use std::time::Duration;
+use std::time::{Duration, Instant};
 use std::{fmt, thread};
 
 use rand::{thread_rng, Rng};
@@ -314,10 +315,13 @@ impl DBHandler {
     }
 
     fn create_new_player(&self, conn: Option<&Connection>) -> Result<u32, String> {
-        if conn.is_none() {
-            return self.create_new_player(Some(&self.get_conn(DBFirstRun::NotFirstRun)?));
-        }
-        let conn = conn.unwrap();
+        let mut _conn_result = Err(String::new());
+        let conn = if conn.is_none() {
+            _conn_result = self.get_conn(DBFirstRun::NotFirstRun);
+            _conn_result.as_ref().unwrap()
+        } else {
+            conn.unwrap()
+        };
 
         let row_result: Result<usize, _> =
             conn.query_row("SELECT count(id) FROM players;", [], |row| row.get(0));
@@ -358,10 +362,14 @@ impl DBHandler {
     }
 
     fn pair_up_players(&self, conn: Option<&Connection>) -> Result<(), String> {
-        if conn.is_none() {
-            return self.pair_up_players(Some(&self.get_conn(DBFirstRun::NotFirstRun)?));
-        }
-        let conn = conn.unwrap();
+        let mut _conn_result = Err(String::new());
+        let conn = if conn.is_none() {
+            _conn_result = self.get_conn(DBFirstRun::NotFirstRun);
+            _conn_result.as_ref().unwrap()
+        } else {
+            conn.unwrap()
+        };
+
         let mut to_pair: Option<u32> = None;
         let mut unpaired_players_stmt = conn
             .prepare("SELECT id FROM players WHERE game_id ISNULL ORDER BY date_added;")
@@ -388,10 +396,14 @@ impl DBHandler {
     }
 
     fn create_game(&self, conn: Option<&Connection>, players: &[u32; 2]) -> Result<u32, String> {
-        if conn.is_none() {
-            return self.create_game(Some(&self.get_conn(DBFirstRun::NotFirstRun)?), players);
-        }
-        let conn = conn.unwrap();
+        let mut _conn_result = Err(String::new());
+        let conn = if conn.is_none() {
+            _conn_result = self.get_conn(DBFirstRun::NotFirstRun);
+            _conn_result.as_ref().unwrap()
+        } else {
+            conn.unwrap()
+        };
+
         let mut game_id: u32 = thread_rng().gen();
         {
             let mut get_game_stmt = conn
@@ -435,13 +447,13 @@ impl DBHandler {
             }
         }
 
-        if conn.is_none() {
-            return self.check_if_player_is_paired(
-                Some(&self.get_conn(DBFirstRun::NotFirstRun)?),
-                player_id,
-            );
-        }
-        let conn = conn.unwrap();
+        let mut _conn_result = Err(String::new());
+        let conn = if conn.is_none() {
+            _conn_result = self.get_conn(DBFirstRun::NotFirstRun);
+            _conn_result.as_ref().unwrap()
+        } else {
+            conn.unwrap()
+        };
 
         let check_player_row = conn.query_row("SELECT games.cyan_player FROM players JOIN games where games.id = players.game_id AND players.id = ?;", [player_id], |row| row.get::<usize, u32>(0));
         if let Ok(cyan_player) = check_player_row {
@@ -478,11 +490,14 @@ impl DBHandler {
         conn: Option<&Connection>,
         player_id: u32,
     ) -> Result<bool, String> {
-        if conn.is_none() {
-            return self
-                .check_if_player_exists(Some(&self.get_conn(DBFirstRun::NotFirstRun)?), player_id);
-        }
-        let conn = conn.unwrap();
+        let mut _conn_result = Err(String::new());
+        let conn = if conn.is_none() {
+            _conn_result = self.get_conn(DBFirstRun::NotFirstRun);
+            _conn_result.as_ref().unwrap()
+        } else {
+            conn.unwrap()
+        };
+
         let check_player_row: Result<u32, _> =
             conn.query_row("SELECT id FROM players WHERE id = ?;", [player_id], |row| {
                 row.get(0)
@@ -499,13 +514,13 @@ impl DBHandler {
         conn: Option<&Connection>,
         player_id: u32,
     ) -> Result<bool, String> {
-        if conn.is_none() {
-            return self.check_if_player_in_game(
-                Some(&self.get_conn(DBFirstRun::NotFirstRun)?),
-                player_id,
-            );
-        }
-        let conn = conn.unwrap();
+        let mut _conn_result = Err(String::new());
+        let conn = if conn.is_none() {
+            _conn_result = self.get_conn(DBFirstRun::NotFirstRun);
+            _conn_result.as_ref().unwrap()
+        } else {
+            conn.unwrap()
+        };
 
         let check_player_game_row: Result<u32, _> = conn.query_row(
             "SELECT games.id FROM games JOIN players WHERE players.id = ? AND players.game_id NOTNULL AND players.game_id = games.id;",
@@ -523,10 +538,13 @@ impl DBHandler {
         conn: Option<&Connection>,
         player_id: u32,
     ) -> Result<BoardStateType, String> {
-        if conn.is_none() {
-            return self.get_board_state(Some(&self.get_conn(DBFirstRun::NotFirstRun)?), player_id);
-        }
-        let conn = conn.unwrap();
+        let mut _conn_result = Err(String::new());
+        let conn = if conn.is_none() {
+            _conn_result = self.get_conn(DBFirstRun::NotFirstRun);
+            _conn_result.as_ref().unwrap()
+        } else {
+            conn.unwrap()
+        };
 
         // TODO maybe handle "opponent_disconnected" case
         let row_result: Result<(String, i64, Option<u32>, Option<u32>), RusqliteError> = conn.query_row(
@@ -595,11 +613,13 @@ impl DBHandler {
     }
 
     fn disconnect_player(&self, conn: Option<&Connection>, player_id: u32) -> Result<(), String> {
-        if conn.is_none() {
-            return self
-                .disconnect_player(Some(&self.get_conn(DBFirstRun::NotFirstRun)?), player_id);
-        }
-        let conn = conn.unwrap();
+        let mut _conn_result = Err(String::new());
+        let conn = if conn.is_none() {
+            _conn_result = self.get_conn(DBFirstRun::NotFirstRun);
+            _conn_result.as_ref().unwrap()
+        } else {
+            conn.unwrap()
+        };
 
         let stmt_result = conn.execute("DELETE FROM players WHERE id = ?;", [player_id]);
         if let Ok(1) = stmt_result {
@@ -610,10 +630,13 @@ impl DBHandler {
     }
 
     fn clear_empty_games(&self, conn: Option<&Connection>) -> Result<(), String> {
-        if conn.is_none() {
-            return self.clear_empty_games(Some(&self.get_conn(DBFirstRun::NotFirstRun)?));
-        }
-        let conn = conn.unwrap();
+        let mut _conn_result = Err(String::new());
+        let conn = if conn.is_none() {
+            _conn_result = self.get_conn(DBFirstRun::NotFirstRun);
+            _conn_result.as_ref().unwrap()
+        } else {
+            conn.unwrap()
+        };
 
         // Only fails if no rows were removed, and that is not an issue
         conn.execute(
@@ -631,18 +654,13 @@ impl DBHandler {
         player_id: u32,
         pos: usize,
     ) -> PlaceResultType {
-        if conn.is_none() {
-            return self.place_token(
-                Some(
-                    &self
-                        .get_conn(DBFirstRun::NotFirstRun)
-                        .map_err(|_| DBPlaceError::InternalError)?,
-                ),
-                player_id,
-                pos,
-            );
-        }
-        let conn = conn.unwrap();
+        let mut _conn_result = Err(String::new());
+        let conn = if conn.is_none() {
+            _conn_result = self.get_conn(DBFirstRun::NotFirstRun);
+            _conn_result.as_ref().unwrap()
+        } else {
+            conn.unwrap()
+        };
 
         // check if player exists
         let player_exist_check_result = self.check_if_player_exists(Some(conn), player_id);
@@ -884,15 +902,13 @@ impl DBHandler {
             ));
         }
 
-        if conn.is_none() {
-            return self.have_ai_take_players_turn(
-                Some(&self.get_conn(DBFirstRun::NotFirstRun)?),
-                game_id,
-                status,
-                board_string,
-            );
-        }
-        let conn = conn.unwrap();
+        let mut _conn_result = Err(String::new());
+        let conn = if conn.is_none() {
+            _conn_result = self.get_conn(DBFirstRun::NotFirstRun);
+            _conn_result.as_ref().unwrap()
+        } else {
+            conn.unwrap()
+        };
 
         let is_cyan = status == 0;
         let board = board_from_string(board_string);
@@ -958,10 +974,13 @@ impl DBHandler {
     }
 
     fn cleanup_stale_games(&self, conn: Option<&Connection>) -> Result<(), String> {
-        if conn.is_none() {
-            return self.cleanup_stale_games(Some(&self.get_conn(DBFirstRun::NotFirstRun)?));
-        }
-        let conn = conn.unwrap();
+        let mut _conn_result = Err(String::new());
+        let conn = if conn.is_none() {
+            _conn_result = self.get_conn(DBFirstRun::NotFirstRun);
+            _conn_result.as_ref().unwrap()
+        } else {
+            conn.unwrap()
+        };
 
         conn.execute(
             "DELETE FROM games WHERE unixepoch() - unixepoch(date_added) > ?;",
@@ -973,10 +992,13 @@ impl DBHandler {
     }
 
     fn cleanup_stale_players(&self, conn: Option<&Connection>) -> Result<(), String> {
-        if conn.is_none() {
-            return self.cleanup_stale_players(Some(&self.get_conn(DBFirstRun::NotFirstRun)?));
-        }
-        let conn = conn.unwrap();
+        let mut _conn_result = Err(String::new());
+        let conn = if conn.is_none() {
+            _conn_result = self.get_conn(DBFirstRun::NotFirstRun);
+            _conn_result.as_ref().unwrap()
+        } else {
+            conn.unwrap()
+        };
 
         conn.execute(
             "DELETE FROM players WHERE unixepoch() - unixepoch(date_added) > ? AND game_id ISNULL;",
@@ -1007,6 +1029,8 @@ pub fn start_db_handler_thread(
             return;
         }
 
+        let mut cleanup_instant = Instant::now();
+        let cleanup_duration = Duration::from_secs(BACKEND_CLEANUP_INTERVAL_SECONDS);
         'outer: loop {
             if handler.handle_request() {
                 handler.shutdown_tx.send(()).ok();
@@ -1017,11 +1041,14 @@ pub fn start_db_handler_thread(
                 println!("{}", e);
             }
 
-            if let Err(e) = handler.cleanup_stale_games(None) {
-                println!("{}", e);
-            }
-            if let Err(e) = handler.cleanup_stale_players(None) {
-                println!("{}", e);
+            if cleanup_instant.elapsed() > cleanup_duration {
+                cleanup_instant = Instant::now();
+                if let Err(e) = handler.cleanup_stale_games(None) {
+                    println!("{}", e);
+                }
+                if let Err(e) = handler.cleanup_stale_players(None) {
+                    println!("{}", e);
+                }
             }
         }
     });
