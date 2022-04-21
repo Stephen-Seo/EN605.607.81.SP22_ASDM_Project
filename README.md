@@ -12,11 +12,16 @@ The directory `back_end` holds a Rust project for the "back\_end" code. It holds
 the server-side code for the project. It is mainly used to handle "Networked
 Multiplayer" mode for the game.
 
+The directory `specifications` holds defined specifications. It currently holds
+the back-end specifications (database and protocol).
+
 The directory `spreadsheets` hold LibreOffice Calc documents that are
 spreadsheets organizing the work. There is a document for User Stories, a
 document for the Product Backlogs, and there will be a document for each Sprint.
 
 The directory `retrospectives` holds the retrospectives of Sprints 3 and onward.
+
+The directory `plans` contains the release plans.
 
 The directory `pictures` holds pertinent images to the project. It includes the
 "Simple Model" of the project.
