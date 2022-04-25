@@ -1,29 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <office:document xmlns:presentation="urn:oasis:names:tc:opendocument:xmlns:presentation:1.0" xmlns:css3t="http://www.w3.org/TR/css3-text/" xmlns:grddl="http://www.w3.org/2003/g/data-view#" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:formx="urn:openoffice:names:experimental:ooxml-odf-interop:xmlns:form:1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:chart="urn:oasis:names:tc:opendocument:xmlns:chart:1.0" xmlns:svg="urn:oasis:names:tc:opendocument:xmlns:svg-compatible:1.0" xmlns:text="urn:oasis:names:tc:opendocument:xmlns:text:1.0" xmlns:oooc="http://openoffice.org/2004/calc" xmlns:style="urn:oasis:names:tc:opendocument:xmlns:style:1.0" xmlns:ooow="http://openoffice.org/2004/writer" xmlns:meta="urn:oasis:names:tc:opendocument:xmlns:meta:1.0" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:rpt="http://openoffice.org/2005/report" xmlns:draw="urn:oasis:names:tc:opendocument:xmlns:drawing:1.0" xmlns:config="urn:oasis:names:tc:opendocument:xmlns:config:1.0" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:fo="urn:oasis:names:tc:opendocument:xmlns:xsl-fo-compatible:1.0" xmlns:ooo="http://openoffice.org/2004/office" xmlns:office="urn:oasis:names:tc:opendocument:xmlns:office:1.0" xmlns:dr3d="urn:oasis:names:tc:opendocument:xmlns:dr3d:1.0" xmlns:table="urn:oasis:names:tc:opendocument:xmlns:table:1.0" xmlns:number="urn:oasis:names:tc:opendocument:xmlns:datastyle:1.0" xmlns:of="urn:oasis:names:tc:opendocument:xmlns:of:1.2" xmlns:calcext="urn:org:documentfoundation:names:experimental:calc:xmlns:calcext:1.0" xmlns:tableooo="http://openoffice.org/2009/table" xmlns:drawooo="http://openoffice.org/2010/draw" xmlns:loext="urn:org:documentfoundation:names:experimental:office:xmlns:loext:1.0" xmlns:dom="http://www.w3.org/2001/xml-events" xmlns:field="urn:openoffice:names:experimental:ooo-ms-interop:xmlns:field:1.0" xmlns:math="http://www.w3.org/1998/Math/MathML" xmlns:form="urn:oasis:names:tc:opendocument:xmlns:form:1.0" xmlns:script="urn:oasis:names:tc:opendocument:xmlns:script:1.0" xmlns:xforms="http://www.w3.org/2002/xforms" office:version="1.3" office:mimetype="application/vnd.oasis.opendocument.spreadsheet">
- <office:meta><meta:creation-date>2022-02-27T14:56:15.671560282</meta:creation-date><meta:generator>LibreOffice/7.3.1.3$Linux_X86_64 LibreOffice_project/30$Build-3</meta:generator><dc:date>2022-03-13T22:01:54.524481726</dc:date><meta:editing-duration>PT2H8M22S</meta:editing-duration><meta:editing-cycles>38</meta:editing-cycles><meta:document-statistic meta:table-count="1" meta:cell-count="298" meta:object-count="0"/></office:meta>
+ <office:meta><meta:creation-date>2022-02-27T14:56:15.671560282</meta:creation-date><meta:generator>LibreOffice/7.3.2.2$Linux_X86_64 LibreOffice_project/30$Build-2</meta:generator><dc:date>2022-04-25T13:32:18.184126271</dc:date><meta:editing-duration>PT2H14M</meta:editing-duration><meta:editing-cycles>39</meta:editing-cycles><meta:document-statistic meta:table-count="1" meta:cell-count="311" meta:object-count="0"/></office:meta>
  <office:settings>
   <config:config-item-set config:name="ooo:view-settings">
    <config:config-item config:name="VisibleAreaTop" config:type="int">0</config:config-item>
    <config:config-item config:name="VisibleAreaLeft" config:type="int">0</config:config-item>
    <config:config-item config:name="VisibleAreaWidth" config:type="int">46383</config:config-item>
-   <config:config-item config:name="VisibleAreaHeight" config:type="int">36844</config:config-item>
+   <config:config-item config:name="VisibleAreaHeight" config:type="int">38871</config:config-item>
    <config:config-item-map-indexed config:name="Views">
     <config:config-item-map-entry>
      <config:config-item config:name="ViewId" config:type="string">view1</config:config-item>
      <config:config-item-map-named config:name="Tables">
       <config:config-item-map-entry config:name="User Stories">
-       <config:config-item config:name="CursorPositionX" config:type="int">12</config:config-item>
-       <config:config-item config:name="CursorPositionY" config:type="int">23</config:config-item>
+       <config:config-item config:name="CursorPositionX" config:type="int">13</config:config-item>
+       <config:config-item config:name="CursorPositionY" config:type="int">26</config:config-item>
        <config:config-item config:name="HorizontalSplitMode" config:type="short">2</config:config-item>
        <config:config-item config:name="VerticalSplitMode" config:type="short">2</config:config-item>
        <config:config-item config:name="HorizontalSplitPosition" config:type="int">1</config:config-item>
        <config:config-item config:name="VerticalSplitPosition" config:type="int">1</config:config-item>
        <config:config-item config:name="ActiveSplitRange" config:type="short">3</config:config-item>
        <config:config-item config:name="PositionLeft" config:type="int">0</config:config-item>
-       <config:config-item config:name="PositionRight" config:type="int">5</config:config-item>
+       <config:config-item config:name="PositionRight" config:type="int">1</config:config-item>
        <config:config-item config:name="PositionTop" config:type="int">0</config:config-item>
-       <config:config-item config:name="PositionBottom" config:type="int">1</config:config-item>
+       <config:config-item config:name="PositionBottom" config:type="int">16</config:config-item>
        <config:config-item config:name="ZoomType" config:type="short">0</config:config-item>
        <config:config-item config:name="ZoomValue" config:type="int">100</config:config-item>
        <config:config-item config:name="PageViewZoomValue" config:type="int">60</config:config-item>
@@ -32,7 +32,7 @@
       </config:config-item-map-entry>
      </config:config-item-map-named>
      <config:config-item config:name="ActiveTable" config:type="string">User Stories</config:config-item>
-     <config:config-item config:name="HorizontalScrollbarWidth" config:type="int">1203</config:config-item>
+     <config:config-item config:name="HorizontalScrollbarWidth" config:type="int">2483</config:config-item>
      <config:config-item config:name="ZoomType" config:type="short">0</config:config-item>
      <config:config-item config:name="ZoomValue" config:type="int">100</config:config-item>
      <config:config-item config:name="PageViewZoomValue" config:type="int">60</config:config-item>
@@ -88,7 +88,7 @@
    <config:config-item config:name="LoadReadonly" config:type="boolean">false</config:config-item>
    <config:config-item config:name="PrinterName" config:type="string">Generic Printer</config:config-item>
    <config:config-item config:name="PrinterPaperFromSetup" config:type="boolean">false</config:config-item>
-   <config:config-item config:name="PrinterSetup" config:type="base64Binary">pAH+/0dlbmVyaWMgUHJpbnRlcgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAU0dFTlBSVAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWAAMAxQAAAAAAAAAIAFZUAAAkbQAASm9iRGF0YSAxCnByaW50ZXI9R2VuZXJpYyBQcmludGVyCm9yaWVudGF0aW9uPVBvcnRyYWl0CmNvcGllcz0xCmNvbGxhdGU9ZmFsc2UKbWFyZ2luYWRqdXN0bWVudD0wLDAsMCwwCmNvbG9yZGVwdGg9MjQKcHNsZXZlbD0wCnBkZmRldmljZT0xCmNvbG9yZGV2aWNlPTAKUFBEQ29udGV4dERhdGEKUGFnZVNpemU6TGV0dGVyAER1cGxleDpOb25lAAASAENPTVBBVF9EVVBMRVhfTU9ERQ8ARHVwbGV4TW9kZTo6T2Zm</config:config-item>
+   <config:config-item config:name="PrinterSetup" config:type="base64Binary">pAH+/0dlbmVyaWMgUHJpbnRlcgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAU0dFTlBSVAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWAAMAxQAAAAAAAAAIAFZUAAAkbQAASm9iRGF0YSAxCnByaW50ZXI9R2VuZXJpYyBQcmludGVyCm9yaWVudGF0aW9uPVBvcnRyYWl0CmNvcGllcz0xCmNvbGxhdGU9ZmFsc2UKbWFyZ2luYWRqdXN0bWVudD0wLDAsMCwwCmNvbG9yZGVwdGg9MjQKcHNsZXZlbD0wCnBkZmRldmljZT0xCmNvbG9yZGV2aWNlPTAKUFBEQ29udGV4dERhdGEKRHVwbGV4Ok5vbmUAUGFnZVNpemU6TGV0dGVyAAASAENPTVBBVF9EVVBMRVhfTU9ERQ8ARHVwbGV4TW9kZTo6T2Zm</config:config-item>
    <config:config-item config:name="RasterIsVisible" config:type="boolean">false</config:config-item>
    <config:config-item config:name="RasterResolutionX" config:type="int">1270</config:config-item>
    <config:config-item config:name="RasterResolutionY" config:type="int">1270</config:config-item>
@@ -357,7 +357,7 @@
      <text:p><text:sheet-name>???</text:sheet-name><text:s/>(<text:title>???</text:title>)</text:p>
     </style:region-left>
     <style:region-right>
-     <text:p><text:date style:data-style-name="N2" text:date-value="2022-03-13">00/00/0000</text:date>, <text:time style:data-style-name="N2" text:time-value="21:56:11.588245896">00:00:00</text:time></text:p>
+     <text:p><text:date style:data-style-name="N2" text:date-value="2022-04-25">00/00/0000</text:date>, <text:time style:data-style-name="N2" text:time-value="13:26:39.619810185">00:00:00</text:time></text:p>
     </style:region-right>
    </style:header>
    <style:header-left style:display="false"/>
@@ -442,17 +442,17 @@
      <table:table-cell table:style-name="ce45" office:value-type="string" calcext:value-type="string">
       <text:p>Mandatory</text:p>
      </table:table-cell>
-     <table:table-cell table:style-name="ce45" table:formula="of:=SUM([.$G3:.$G100])" office:value-type="float" office:value="800" calcext:value-type="float">
-      <text:p>800</text:p>
+     <table:table-cell table:style-name="ce45" table:formula="of:=SUM([.$G3:.$G100])" office:value-type="float" office:value="845" calcext:value-type="float">
+      <text:p>845</text:p>
      </table:table-cell>
-     <table:table-cell table:style-name="ce45" table:formula="of:=SUM([.$H3:.$H100])" office:value-type="float" office:value="174" calcext:value-type="float">
-      <text:p>174</text:p>
+     <table:table-cell table:style-name="ce45" table:formula="of:=SUM([.$H3:.$H100])" office:value-type="float" office:value="182" calcext:value-type="float">
+      <text:p>182</text:p>
      </table:table-cell>
-     <table:table-cell table:style-name="ce45" table:formula="of:=SUM([.$I3:.$I100])" office:value-type="float" office:value="148" calcext:value-type="float">
-      <text:p>148</text:p>
+     <table:table-cell table:style-name="ce45" table:formula="of:=SUM([.$I3:.$I100])" office:value-type="float" office:value="151" calcext:value-type="float">
+      <text:p>151</text:p>
      </table:table-cell>
-     <table:table-cell table:style-name="ce45" table:formula="of:=SUM([.$H2:.$I2])" office:value-type="float" office:value="322" calcext:value-type="float">
-      <text:p>322</text:p>
+     <table:table-cell table:style-name="ce45" table:formula="of:=SUM([.$H2:.$I2])" office:value-type="float" office:value="333" calcext:value-type="float">
+      <text:p>333</text:p>
      </table:table-cell>
      <table:table-cell table:number-columns-repeated="2" table:style-name="ce51" office:value-type="percentage" office:value="1" calcext:value-type="percentage">
       <text:p>100.00%</text:p>
@@ -490,14 +490,14 @@
      <table:table-cell table:style-name="ce46" table:formula="of:=SUM([.$H3:.$I3])" office:value-type="float" office:value="16" calcext:value-type="float">
       <text:p>16</text:p>
      </table:table-cell>
-     <table:table-cell table:style-name="ce52" table:formula="of:=[.$J3]/[.$J$2]" office:value-type="percentage" office:value="0.0496894409937888" calcext:value-type="percentage">
-      <text:p>4.97%</text:p>
+     <table:table-cell table:style-name="ce52" table:formula="of:=[.$J3]/[.$J$2]" office:value-type="percentage" office:value="0.0480480480480481" calcext:value-type="percentage">
+      <text:p>4.80%</text:p>
      </table:table-cell>
-     <table:table-cell table:style-name="ce52" table:formula="of:=[.$G3]/[.$G$2]" office:value-type="percentage" office:value="0.0125" calcext:value-type="percentage">
-      <text:p>1.25%</text:p>
+     <table:table-cell table:style-name="ce52" table:formula="of:=[.$G3]/[.$G$2]" office:value-type="percentage" office:value="0.0118343195266272" calcext:value-type="percentage">
+      <text:p>1.18%</text:p>
      </table:table-cell>
-     <table:table-cell table:style-name="ce46" table:formula="of:=[.$K3]/[.$L3]" office:value-type="float" office:value="3.9751552795031" calcext:value-type="float">
-      <text:p>3.9751552795031</text:p>
+     <table:table-cell table:style-name="ce46" table:formula="of:=[.$K3]/[.$L3]" office:value-type="float" office:value="4.06006006006006" calcext:value-type="float">
+      <text:p>4.06006006006006</text:p>
      </table:table-cell>
      <table:table-cell table:style-name="ce46" table:number-columns-repeated="1011"/>
     </table:table-row>
@@ -527,14 +527,14 @@
      <table:table-cell table:style-name="ce46" table:formula="of:=SUM([.$H4:.$I4])" office:value-type="float" office:value="16" calcext:value-type="float">
       <text:p>16</text:p>
      </table:table-cell>
-     <table:table-cell table:style-name="ce52" table:formula="of:=[.$J4]/[.$J$2]" office:value-type="percentage" office:value="0.0496894409937888" calcext:value-type="percentage">
-      <text:p>4.97%</text:p>
+     <table:table-cell table:style-name="ce52" table:formula="of:=[.$J4]/[.$J$2]" office:value-type="percentage" office:value="0.0480480480480481" calcext:value-type="percentage">
+      <text:p>4.80%</text:p>
      </table:table-cell>
-     <table:table-cell table:style-name="ce52" table:formula="of:=[.$G4]/[.$G$2]" office:value-type="percentage" office:value="0.05" calcext:value-type="percentage">
-      <text:p>5.00%</text:p>
+     <table:table-cell table:style-name="ce52" table:formula="of:=[.$G4]/[.$G$2]" office:value-type="percentage" office:value="0.0473372781065089" calcext:value-type="percentage">
+      <text:p>4.73%</text:p>
      </table:table-cell>
-     <table:table-cell table:style-name="ce46" table:formula="of:=[.$K4]/[.$L4]" office:value-type="float" office:value="0.993788819875776" calcext:value-type="float">
-      <text:p>0.993788819875776</text:p>
+     <table:table-cell table:style-name="ce46" table:formula="of:=[.$K4]/[.$L4]" office:value-type="float" office:value="1.01501501501502" calcext:value-type="float">
+      <text:p>1.01501501501502</text:p>
      </table:table-cell>
      <table:table-cell table:style-name="ce46" table:number-columns-repeated="1011"/>
     </table:table-row>
@@ -567,14 +567,14 @@
      <table:table-cell table:style-name="ce47" table:formula="of:=SUM([.$H5:.$I5])" office:value-type="float" office:value="8" calcext:value-type="float">
       <text:p>8</text:p>
      </table:table-cell>
-     <table:table-cell table:style-name="ce53" table:formula="of:=[.$J5]/[.$J$2]" office:value-type="percentage" office:value="0.0248447204968944" calcext:value-type="percentage">
-      <text:p>2.48%</text:p>
+     <table:table-cell table:style-name="ce53" table:formula="of:=[.$J5]/[.$J$2]" office:value-type="percentage" office:value="0.024024024024024" calcext:value-type="percentage">
+      <text:p>2.40%</text:p>
      </table:table-cell>
-     <table:table-cell table:style-name="ce53" table:formula="of:=[.$G5]/[.$G$2]" office:value-type="percentage" office:value="0.04625" calcext:value-type="percentage">
-      <text:p>4.63%</text:p>
+     <table:table-cell table:style-name="ce53" table:formula="of:=[.$G5]/[.$G$2]" office:value-type="percentage" office:value="0.0437869822485207" calcext:value-type="percentage">
+      <text:p>4.38%</text:p>
      </table:table-cell>
-     <table:table-cell table:style-name="ce47" table:formula="of:=[.$K5]/[.$L5]" office:value-type="float" office:value="0.537183145878798" calcext:value-type="float">
-      <text:p>0.537183145878798</text:p>
+     <table:table-cell table:style-name="ce47" table:formula="of:=[.$K5]/[.$L5]" office:value-type="float" office:value="0.548656764872981" calcext:value-type="float">
+      <text:p>0.548656764872981</text:p>
      </table:table-cell>
      <table:table-cell table:style-name="ce47" table:number-columns-repeated="1011"/>
     </table:table-row>
@@ -607,14 +607,14 @@
      <table:table-cell table:style-name="ce46" table:formula="of:=SUM([.$H6:.$I6])" office:value-type="float" office:value="16" calcext:value-type="float">
       <text:p>16</text:p>
      </table:table-cell>
-     <table:table-cell table:style-name="ce52" table:formula="of:=[.$J6]/[.$J$2]" office:value-type="percentage" office:value="0.0496894409937888" calcext:value-type="percentage">
-      <text:p>4.97%</text:p>
+     <table:table-cell table:style-name="ce52" table:formula="of:=[.$J6]/[.$J$2]" office:value-type="percentage" office:value="0.0480480480480481" calcext:value-type="percentage">
+      <text:p>4.80%</text:p>
      </table:table-cell>
-     <table:table-cell table:style-name="ce52" table:formula="of:=[.$G6]/[.$G$2]" office:value-type="percentage" office:value="0.01625" calcext:value-type="percentage">
-      <text:p>1.63%</text:p>
+     <table:table-cell table:style-name="ce52" table:formula="of:=[.$G6]/[.$G$2]" office:value-type="percentage" office:value="0.0153846153846154" calcext:value-type="percentage">
+      <text:p>1.54%</text:p>
      </table:table-cell>
-     <table:table-cell table:style-name="ce46" table:formula="of:=[.$K6]/[.$L6]" office:value-type="float" office:value="3.05781175346393" calcext:value-type="float">
-      <text:p>3.05781175346393</text:p>
+     <table:table-cell table:style-name="ce46" table:formula="of:=[.$K6]/[.$L6]" office:value-type="float" office:value="3.12312312312312" calcext:value-type="float">
+      <text:p>3.12312312312312</text:p>
      </table:table-cell>
      <table:table-cell table:style-name="ce46" table:number-columns-repeated="1011"/>
     </table:table-row>
@@ -644,14 +644,14 @@
      <table:table-cell table:style-name="ce46" table:formula="of:=SUM([.$H7:.$I7])" office:value-type="float" office:value="16" calcext:value-type="float">
       <text:p>16</text:p>
      </table:table-cell>
-     <table:table-cell table:style-name="ce52" table:formula="of:=[.$J7]/[.$J$2]" office:value-type="percentage" office:value="0.0496894409937888" calcext:value-type="percentage">
-      <text:p>4.97%</text:p>
+     <table:table-cell table:style-name="ce52" table:formula="of:=[.$J7]/[.$J$2]" office:value-type="percentage" office:value="0.0480480480480481" calcext:value-type="percentage">
+      <text:p>4.80%</text:p>
      </table:table-cell>
-     <table:table-cell table:style-name="ce52" table:formula="of:=[.$G7]/[.$G$2]" office:value-type="percentage" office:value="0.0225" calcext:value-type="percentage">
-      <text:p>2.25%</text:p>
+     <table:table-cell table:style-name="ce52" table:formula="of:=[.$G7]/[.$G$2]" office:value-type="percentage" office:value="0.021301775147929" calcext:value-type="percentage">
+      <text:p>2.13%</text:p>
      </table:table-cell>
-     <table:table-cell table:style-name="ce46" table:formula="of:=[.$K7]/[.$L7]" office:value-type="float" office:value="2.20841959972395" calcext:value-type="float">
-      <text:p>2.20841959972395</text:p>
+     <table:table-cell table:style-name="ce46" table:formula="of:=[.$K7]/[.$L7]" office:value-type="float" office:value="2.25558892225559" calcext:value-type="float">
+      <text:p>2.25558892225559</text:p>
      </table:table-cell>
      <table:table-cell table:style-name="ce46" table:number-columns-repeated="1011"/>
     </table:table-row>
@@ -686,14 +686,14 @@
      <table:table-cell table:style-name="ce46" table:formula="of:=SUM([.$H8:.$I8])" office:value-type="float" office:value="17" calcext:value-type="float">
       <text:p>17</text:p>
      </table:table-cell>
-     <table:table-cell table:style-name="ce52" table:formula="of:=[.$J8]/[.$J$2]" office:value-type="percentage" office:value="0.0527950310559006" calcext:value-type="percentage">
-      <text:p>5.28%</text:p>
+     <table:table-cell table:style-name="ce52" table:formula="of:=[.$J8]/[.$J$2]" office:value-type="percentage" office:value="0.0510510510510511" calcext:value-type="percentage">
+      <text:p>5.11%</text:p>
      </table:table-cell>
-     <table:table-cell table:style-name="ce52" table:formula="of:=[.$G8]/[.$G$2]" office:value-type="percentage" office:value="0.03125" calcext:value-type="percentage">
-      <text:p>3.13%</text:p>
+     <table:table-cell table:style-name="ce52" table:formula="of:=[.$G8]/[.$G$2]" office:value-type="percentage" office:value="0.029585798816568" calcext:value-type="percentage">
+      <text:p>2.96%</text:p>
      </table:table-cell>
-     <table:table-cell table:style-name="ce46" table:formula="of:=[.$K8]/[.$L8]" office:value-type="float" office:value="1.68944099378882" calcext:value-type="float">
-      <text:p>1.68944099378882</text:p>
+     <table:table-cell table:style-name="ce46" table:formula="of:=[.$K8]/[.$L8]" office:value-type="float" office:value="1.72552552552553" calcext:value-type="float">
+      <text:p>1.72552552552553</text:p>
      </table:table-cell>
      <table:table-cell table:style-name="ce46" table:number-columns-repeated="1011"/>
     </table:table-row>
@@ -725,14 +725,14 @@
      <table:table-cell table:style-name="ce46" table:formula="of:=SUM([.$H9:.$I9])" office:value-type="float" office:value="18" calcext:value-type="float">
       <text:p>18</text:p>
      </table:table-cell>
-     <table:table-cell table:style-name="ce52" table:formula="of:=[.$J9]/[.$J$2]" office:value-type="percentage" office:value="0.0559006211180124" calcext:value-type="percentage">
-      <text:p>5.59%</text:p>
+     <table:table-cell table:style-name="ce52" table:formula="of:=[.$J9]/[.$J$2]" office:value-type="percentage" office:value="0.0540540540540541" calcext:value-type="percentage">
+      <text:p>5.41%</text:p>
      </table:table-cell>
-     <table:table-cell table:style-name="ce52" table:formula="of:=[.$G9]/[.$G$2]" office:value-type="percentage" office:value="0.02875" calcext:value-type="percentage">
-      <text:p>2.88%</text:p>
+     <table:table-cell table:style-name="ce52" table:formula="of:=[.$G9]/[.$G$2]" office:value-type="percentage" office:value="0.0272189349112426" calcext:value-type="percentage">
+      <text:p>2.72%</text:p>
      </table:table-cell>
-     <table:table-cell table:style-name="ce46" table:formula="of:=[.$K9]/[.$L9]" office:value-type="float" office:value="1.94436943019174" calcext:value-type="float">
-      <text:p>1.94436943019174</text:p>
+     <table:table-cell table:style-name="ce46" table:formula="of:=[.$K9]/[.$L9]" office:value-type="float" office:value="1.98589894242068" calcext:value-type="float">
+      <text:p>1.98589894242068</text:p>
      </table:table-cell>
      <table:table-cell table:style-name="ce46" table:number-columns-repeated="1011"/>
     </table:table-row>
@@ -762,14 +762,14 @@
      <table:table-cell table:style-name="ce46" table:formula="of:=SUM([.$H10:.$I10])" office:value-type="float" office:value="16" calcext:value-type="float">
       <text:p>16</text:p>
      </table:table-cell>
-     <table:table-cell table:style-name="ce52" table:formula="of:=[.$J10]/[.$J$2]" office:value-type="percentage" office:value="0.0496894409937888" calcext:value-type="percentage">
-      <text:p>4.97%</text:p>
+     <table:table-cell table:style-name="ce52" table:formula="of:=[.$J10]/[.$J$2]" office:value-type="percentage" office:value="0.0480480480480481" calcext:value-type="percentage">
+      <text:p>4.80%</text:p>
      </table:table-cell>
-     <table:table-cell table:style-name="ce52" table:formula="of:=[.$G10]/[.$G$2]" office:value-type="percentage" office:value="0.025" calcext:value-type="percentage">
-      <text:p>2.50%</text:p>
+     <table:table-cell table:style-name="ce52" table:formula="of:=[.$G10]/[.$G$2]" office:value-type="percentage" office:value="0.0236686390532544" calcext:value-type="percentage">
+      <text:p>2.37%</text:p>
      </table:table-cell>
-     <table:table-cell table:style-name="ce46" table:formula="of:=[.$K10]/[.$L10]" office:value-type="float" office:value="1.98757763975155" calcext:value-type="float">
-      <text:p>1.98757763975155</text:p>
+     <table:table-cell table:style-name="ce46" table:formula="of:=[.$K10]/[.$L10]" office:value-type="float" office:value="2.03003003003003" calcext:value-type="float">
+      <text:p>2.03003003003003</text:p>
      </table:table-cell>
      <table:table-cell table:style-name="ce46" table:number-columns-repeated="1011"/>
     </table:table-row>
@@ -802,14 +802,14 @@
      <table:table-cell table:style-name="ce47" table:formula="of:=SUM([.$H11:.$I11])" office:value-type="float" office:value="9" calcext:value-type="float">
       <text:p>9</text:p>
      </table:table-cell>
-     <table:table-cell table:style-name="ce53" table:formula="of:=[.$J11]/[.$J$2]" office:value-type="percentage" office:value="0.0279503105590062" calcext:value-type="percentage">
-      <text:p>2.80%</text:p>
+     <table:table-cell table:style-name="ce53" table:formula="of:=[.$J11]/[.$J$2]" office:value-type="percentage" office:value="0.027027027027027" calcext:value-type="percentage">
+      <text:p>2.70%</text:p>
      </table:table-cell>
-     <table:table-cell table:style-name="ce53" table:formula="of:=[.$G11]/[.$G$2]" office:value-type="percentage" office:value="0.01625" calcext:value-type="percentage">
-      <text:p>1.63%</text:p>
+     <table:table-cell table:style-name="ce53" table:formula="of:=[.$G11]/[.$G$2]" office:value-type="percentage" office:value="0.0153846153846154" calcext:value-type="percentage">
+      <text:p>1.54%</text:p>
      </table:table-cell>
-     <table:table-cell table:style-name="ce47" table:formula="of:=[.$K11]/[.$L11]" office:value-type="float" office:value="1.72001911132346" calcext:value-type="float">
-      <text:p>1.72001911132346</text:p>
+     <table:table-cell table:style-name="ce47" table:formula="of:=[.$K11]/[.$L11]" office:value-type="float" office:value="1.75675675675676" calcext:value-type="float">
+      <text:p>1.75675675675676</text:p>
      </table:table-cell>
      <table:table-cell table:style-name="ce47" table:number-columns-repeated="1011"/>
     </table:table-row>
@@ -842,14 +842,14 @@
      <table:table-cell table:style-name="ce48" table:formula="of:=SUM([.$H12:.$I12])" office:value-type="float" office:value="17" calcext:value-type="float">
       <text:p>17</text:p>
      </table:table-cell>
-     <table:table-cell table:style-name="ce54" table:formula="of:=[.$J12]/[.$J$2]" office:value-type="percentage" office:value="0.0527950310559006" calcext:value-type="percentage">
-      <text:p>5.28%</text:p>
+     <table:table-cell table:style-name="ce54" table:formula="of:=[.$J12]/[.$J$2]" office:value-type="percentage" office:value="0.0510510510510511" calcext:value-type="percentage">
+      <text:p>5.11%</text:p>
      </table:table-cell>
-     <table:table-cell table:style-name="ce54" table:formula="of:=[.$G12]/[.$G$2]" office:value-type="percentage" office:value="0.03" calcext:value-type="percentage">
-      <text:p>3.00%</text:p>
+     <table:table-cell table:style-name="ce54" table:formula="of:=[.$G12]/[.$G$2]" office:value-type="percentage" office:value="0.0284023668639053" calcext:value-type="percentage">
+      <text:p>2.84%</text:p>
      </table:table-cell>
-     <table:table-cell table:style-name="ce48" table:formula="of:=[.$K12]/[.$L12]" office:value-type="float" office:value="1.75983436853002" calcext:value-type="float">
-      <text:p>1.75983436853002</text:p>
+     <table:table-cell table:style-name="ce48" table:formula="of:=[.$K12]/[.$L12]" office:value-type="float" office:value="1.79742242242242" calcext:value-type="float">
+      <text:p>1.79742242242242</text:p>
      </table:table-cell>
      <table:table-cell table:style-name="ce48" table:number-columns-repeated="1011"/>
     </table:table-row>
@@ -884,14 +884,14 @@
      <table:table-cell table:style-name="ce47" table:formula="of:=SUM([.$H13:.$I13])" office:value-type="float" office:value="11" calcext:value-type="float">
       <text:p>11</text:p>
      </table:table-cell>
-     <table:table-cell table:style-name="ce53" table:formula="of:=[.$J13]/[.$J$2]" office:value-type="percentage" office:value="0.0341614906832298" calcext:value-type="percentage">
-      <text:p>3.42%</text:p>
+     <table:table-cell table:style-name="ce53" table:formula="of:=[.$J13]/[.$J$2]" office:value-type="percentage" office:value="0.033033033033033" calcext:value-type="percentage">
+      <text:p>3.30%</text:p>
      </table:table-cell>
-     <table:table-cell table:style-name="ce53" table:formula="of:=[.$G13]/[.$G$2]" office:value-type="percentage" office:value="0.0875" calcext:value-type="percentage">
-      <text:p>8.75%</text:p>
+     <table:table-cell table:style-name="ce53" table:formula="of:=[.$G13]/[.$G$2]" office:value-type="percentage" office:value="0.0828402366863905" calcext:value-type="percentage">
+      <text:p>8.28%</text:p>
      </table:table-cell>
-     <table:table-cell table:style-name="ce47" table:formula="of:=[.$K13]/[.$L13]" office:value-type="float" office:value="0.390417036379769" calcext:value-type="float">
-      <text:p>0.390417036379769</text:p>
+     <table:table-cell table:style-name="ce47" table:formula="of:=[.$K13]/[.$L13]" office:value-type="float" office:value="0.398755898755899" calcext:value-type="float">
+      <text:p>0.398755898755899</text:p>
      </table:table-cell>
      <table:table-cell table:style-name="ce47" table:number-columns-repeated="1011"/>
     </table:table-row>
@@ -921,14 +921,14 @@
      <table:table-cell table:style-name="ce46" table:formula="of:=SUM([.$H14:.$I14])" office:value-type="float" office:value="16" calcext:value-type="float">
       <text:p>16</text:p>
      </table:table-cell>
-     <table:table-cell table:style-name="ce52" table:formula="of:=[.$J14]/[.$J$2]" office:value-type="percentage" office:value="0.0496894409937888" calcext:value-type="percentage">
-      <text:p>4.97%</text:p>
+     <table:table-cell table:style-name="ce52" table:formula="of:=[.$J14]/[.$J$2]" office:value-type="percentage" office:value="0.0480480480480481" calcext:value-type="percentage">
+      <text:p>4.80%</text:p>
      </table:table-cell>
-     <table:table-cell table:style-name="ce52" table:formula="of:=[.$G14]/[.$G$2]" office:value-type="percentage" office:value="0.0375" calcext:value-type="percentage">
-      <text:p>3.75%</text:p>
+     <table:table-cell table:style-name="ce52" table:formula="of:=[.$G14]/[.$G$2]" office:value-type="percentage" office:value="0.0355029585798817" calcext:value-type="percentage">
+      <text:p>3.55%</text:p>
      </table:table-cell>
-     <table:table-cell table:style-name="ce46" table:formula="of:=[.$K14]/[.$L14]" office:value-type="float" office:value="1.32505175983437" calcext:value-type="float">
-      <text:p>1.32505175983437</text:p>
+     <table:table-cell table:style-name="ce46" table:formula="of:=[.$K14]/[.$L14]" office:value-type="float" office:value="1.35335335335335" calcext:value-type="float">
+      <text:p>1.35335335335335</text:p>
      </table:table-cell>
      <table:table-cell table:style-name="ce46" table:number-columns-repeated="1011"/>
     </table:table-row>
@@ -958,14 +958,14 @@
      <table:table-cell table:style-name="ce46" table:formula="of:=SUM([.$H15:.$I15])" office:value-type="float" office:value="16" calcext:value-type="float">
       <text:p>16</text:p>
      </table:table-cell>
-     <table:table-cell table:style-name="ce52" table:formula="of:=[.$J15]/[.$J$2]" office:value-type="percentage" office:value="0.0496894409937888" calcext:value-type="percentage">
-      <text:p>4.97%</text:p>
+     <table:table-cell table:style-name="ce52" table:formula="of:=[.$J15]/[.$J$2]" office:value-type="percentage" office:value="0.0480480480480481" calcext:value-type="percentage">
+      <text:p>4.80%</text:p>
      </table:table-cell>
-     <table:table-cell table:style-name="ce52" table:formula="of:=[.$G15]/[.$G$2]" office:value-type="percentage" office:value="0.08125" calcext:value-type="percentage">
-      <text:p>8.13%</text:p>
+     <table:table-cell table:style-name="ce52" table:formula="of:=[.$G15]/[.$G$2]" office:value-type="percentage" office:value="0.0769230769230769" calcext:value-type="percentage">
+      <text:p>7.69%</text:p>
      </table:table-cell>
-     <table:table-cell table:style-name="ce46" table:formula="of:=[.$K15]/[.$L15]" office:value-type="float" office:value="0.611562350692785" calcext:value-type="float">
-      <text:p>0.611562350692785</text:p>
+     <table:table-cell table:style-name="ce46" table:formula="of:=[.$K15]/[.$L15]" office:value-type="float" office:value="0.624624624624625" calcext:value-type="float">
+      <text:p>0.624624624624625</text:p>
      </table:table-cell>
      <table:table-cell table:style-name="ce46" table:number-columns-repeated="1011"/>
     </table:table-row>
@@ -1000,14 +1000,14 @@
      <table:table-cell table:style-name="ce46" table:formula="of:=SUM([.$H16:.$I16])" office:value-type="float" office:value="15" calcext:value-type="float">
       <text:p>15</text:p>
      </table:table-cell>
-     <table:table-cell table:style-name="ce52" table:formula="of:=[.$J16]/[.$J$2]" office:value-type="percentage" office:value="0.046583850931677" calcext:value-type="percentage">
-      <text:p>4.66%</text:p>
+     <table:table-cell table:style-name="ce52" table:formula="of:=[.$J16]/[.$J$2]" office:value-type="percentage" office:value="0.045045045045045" calcext:value-type="percentage">
+      <text:p>4.50%</text:p>
      </table:table-cell>
-     <table:table-cell table:style-name="ce52" table:formula="of:=[.$G16]/[.$G$2]" office:value-type="percentage" office:value="0.0875" calcext:value-type="percentage">
-      <text:p>8.75%</text:p>
+     <table:table-cell table:style-name="ce52" table:formula="of:=[.$G16]/[.$G$2]" office:value-type="percentage" office:value="0.0828402366863905" calcext:value-type="percentage">
+      <text:p>8.28%</text:p>
      </table:table-cell>
-     <table:table-cell table:style-name="ce46" table:formula="of:=[.$K16]/[.$L16]" office:value-type="float" office:value="0.532386867790595" calcext:value-type="float">
-      <text:p>0.532386867790595</text:p>
+     <table:table-cell table:style-name="ce46" table:formula="of:=[.$K16]/[.$L16]" office:value-type="float" office:value="0.543758043758044" calcext:value-type="float">
+      <text:p>0.543758043758044</text:p>
      </table:table-cell>
      <table:table-cell table:style-name="ce46" table:number-columns-repeated="1011"/>
     </table:table-row>
@@ -1040,14 +1040,14 @@
      <table:table-cell table:style-name="ce47" table:formula="of:=SUM([.$H17:.$I17])" office:value-type="float" office:value="13" calcext:value-type="float">
       <text:p>13</text:p>
      </table:table-cell>
-     <table:table-cell table:style-name="ce53" table:formula="of:=[.$J17]/[.$J$2]" office:value-type="percentage" office:value="0.0403726708074534" calcext:value-type="percentage">
-      <text:p>4.04%</text:p>
+     <table:table-cell table:style-name="ce53" table:formula="of:=[.$J17]/[.$J$2]" office:value-type="percentage" office:value="0.039039039039039" calcext:value-type="percentage">
+      <text:p>3.90%</text:p>
      </table:table-cell>
-     <table:table-cell table:style-name="ce53" table:formula="of:=[.$G17]/[.$G$2]" office:value-type="percentage" office:value="0.09625" calcext:value-type="percentage">
-      <text:p>9.63%</text:p>
+     <table:table-cell table:style-name="ce53" table:formula="of:=[.$G17]/[.$G$2]" office:value-type="percentage" office:value="0.0911242603550296" calcext:value-type="percentage">
+      <text:p>9.11%</text:p>
      </table:table-cell>
-     <table:table-cell table:style-name="ce47" table:formula="of:=[.$K17]/[.$L17]" office:value-type="float" office:value="0.419456320077438" calcext:value-type="float">
-      <text:p>0.419456320077438</text:p>
+     <table:table-cell table:style-name="ce47" table:formula="of:=[.$K17]/[.$L17]" office:value-type="float" office:value="0.428415428415428" calcext:value-type="float">
+      <text:p>0.428415428415428</text:p>
      </table:table-cell>
      <table:table-cell table:style-name="ce47" table:number-columns-repeated="1011"/>
     </table:table-row>
@@ -1077,14 +1077,14 @@
      <table:table-cell table:style-name="ce46" table:formula="of:=SUM([.$H18:.$I18])" office:value-type="float" office:value="18" calcext:value-type="float">
       <text:p>18</text:p>
      </table:table-cell>
-     <table:table-cell table:style-name="ce52" table:formula="of:=[.$J18]/[.$J$2]" office:value-type="percentage" office:value="0.0559006211180124" calcext:value-type="percentage">
-      <text:p>5.59%</text:p>
+     <table:table-cell table:style-name="ce52" table:formula="of:=[.$J18]/[.$J$2]" office:value-type="percentage" office:value="0.0540540540540541" calcext:value-type="percentage">
+      <text:p>5.41%</text:p>
      </table:table-cell>
-     <table:table-cell table:style-name="ce52" table:formula="of:=[.$G18]/[.$G$2]" office:value-type="percentage" office:value="0.03125" calcext:value-type="percentage">
-      <text:p>3.13%</text:p>
+     <table:table-cell table:style-name="ce52" table:formula="of:=[.$G18]/[.$G$2]" office:value-type="percentage" office:value="0.029585798816568" calcext:value-type="percentage">
+      <text:p>2.96%</text:p>
      </table:table-cell>
-     <table:table-cell table:style-name="ce46" table:formula="of:=[.$K18]/[.$L18]" office:value-type="float" office:value="1.7888198757764" calcext:value-type="float">
-      <text:p>1.7888198757764</text:p>
+     <table:table-cell table:style-name="ce46" table:formula="of:=[.$K18]/[.$L18]" office:value-type="float" office:value="1.82702702702703" calcext:value-type="float">
+      <text:p>1.82702702702703</text:p>
      </table:table-cell>
      <table:table-cell table:style-name="ce46" table:number-columns-repeated="1011"/>
     </table:table-row>
@@ -1117,14 +1117,14 @@
      <table:table-cell table:style-name="ce46" table:formula="of:=SUM([.$H19:.$I19])" office:value-type="float" office:value="17" calcext:value-type="float">
       <text:p>17</text:p>
      </table:table-cell>
-     <table:table-cell table:style-name="ce52" table:formula="of:=[.$J19]/[.$J$2]" office:value-type="percentage" office:value="0.0527950310559006" calcext:value-type="percentage">
-      <text:p>5.28%</text:p>
+     <table:table-cell table:style-name="ce52" table:formula="of:=[.$J19]/[.$J$2]" office:value-type="percentage" office:value="0.0510510510510511" calcext:value-type="percentage">
+      <text:p>5.11%</text:p>
      </table:table-cell>
-     <table:table-cell table:style-name="ce52" table:formula="of:=[.$G19]/[.$G$2]" office:value-type="percentage" office:value="0.025" calcext:value-type="percentage">
-      <text:p>2.50%</text:p>
+     <table:table-cell table:style-name="ce52" table:formula="of:=[.$G19]/[.$G$2]" office:value-type="percentage" office:value="0.0236686390532544" calcext:value-type="percentage">
+      <text:p>2.37%</text:p>
      </table:table-cell>
-     <table:table-cell table:style-name="ce46" table:formula="of:=[.$K19]/[.$L19]" office:value-type="float" office:value="2.11180124223602" calcext:value-type="float">
-      <text:p>2.11180124223602</text:p>
+     <table:table-cell table:style-name="ce46" table:formula="of:=[.$K19]/[.$L19]" office:value-type="float" office:value="2.15690690690691" calcext:value-type="float">
+      <text:p>2.15690690690691</text:p>
      </table:table-cell>
      <table:table-cell table:style-name="ce46" table:number-columns-repeated="1011"/>
     </table:table-row>
@@ -1154,14 +1154,14 @@
      <table:table-cell table:style-name="ce46" table:formula="of:=SUM([.$H20:.$I20])" office:value-type="float" office:value="16" calcext:value-type="float">
       <text:p>16</text:p>
      </table:table-cell>
-     <table:table-cell table:style-name="ce52" table:formula="of:=[.$J20]/[.$J$2]" office:value-type="percentage" office:value="0.0496894409937888" calcext:value-type="percentage">
-      <text:p>4.97%</text:p>
+     <table:table-cell table:style-name="ce52" table:formula="of:=[.$J20]/[.$J$2]" office:value-type="percentage" office:value="0.0480480480480481" calcext:value-type="percentage">
+      <text:p>4.80%</text:p>
      </table:table-cell>
-     <table:table-cell table:style-name="ce52" table:formula="of:=[.$G20]/[.$G$2]" office:value-type="percentage" office:value="0.025" calcext:value-type="percentage">
-      <text:p>2.50%</text:p>
+     <table:table-cell table:style-name="ce52" table:formula="of:=[.$G20]/[.$G$2]" office:value-type="percentage" office:value="0.0236686390532544" calcext:value-type="percentage">
+      <text:p>2.37%</text:p>
      </table:table-cell>
-     <table:table-cell table:style-name="ce46" table:formula="of:=[.$K20]/[.$L20]" office:value-type="float" office:value="1.98757763975155" calcext:value-type="float">
-      <text:p>1.98757763975155</text:p>
+     <table:table-cell table:style-name="ce46" table:formula="of:=[.$K20]/[.$L20]" office:value-type="float" office:value="2.03003003003003" calcext:value-type="float">
+      <text:p>2.03003003003003</text:p>
      </table:table-cell>
      <table:table-cell table:style-name="ce46" table:number-columns-repeated="1011"/>
     </table:table-row>
@@ -1191,14 +1191,14 @@
      <table:table-cell table:style-name="ce48" table:formula="of:=SUM([.$H21:.$I21])" office:value-type="float" office:value="18" calcext:value-type="float">
       <text:p>18</text:p>
      </table:table-cell>
-     <table:table-cell table:style-name="ce54" table:formula="of:=[.$J21]/[.$J$2]" office:value-type="percentage" office:value="0.0559006211180124" calcext:value-type="percentage">
-      <text:p>5.59%</text:p>
+     <table:table-cell table:style-name="ce54" table:formula="of:=[.$J21]/[.$J$2]" office:value-type="percentage" office:value="0.0540540540540541" calcext:value-type="percentage">
+      <text:p>5.41%</text:p>
      </table:table-cell>
-     <table:table-cell table:style-name="ce54" table:formula="of:=[.$G21]/[.$G$2]" office:value-type="percentage" office:value="0.06625" calcext:value-type="percentage">
-      <text:p>6.63%</text:p>
+     <table:table-cell table:style-name="ce54" table:formula="of:=[.$G21]/[.$G$2]" office:value-type="percentage" office:value="0.0627218934911243" calcext:value-type="percentage">
+      <text:p>6.27%</text:p>
      </table:table-cell>
-     <table:table-cell table:style-name="ce48" table:formula="of:=[.$K21]/[.$L21]" office:value-type="float" office:value="0.843782960271886" calcext:value-type="float">
-      <text:p>0.843782960271886</text:p>
+     <table:table-cell table:style-name="ce48" table:formula="of:=[.$K21]/[.$L21]" office:value-type="float" office:value="0.861805201427843" calcext:value-type="float">
+      <text:p>0.861805201427843</text:p>
      </table:table-cell>
      <table:table-cell table:style-name="ce48" table:number-columns-repeated="1011"/>
     </table:table-row>
@@ -1231,14 +1231,14 @@
      <table:table-cell table:style-name="ce48" table:formula="of:=SUM([.$H22:.$I22])" office:value-type="float" office:value="15" calcext:value-type="float">
       <text:p>15</text:p>
      </table:table-cell>
-     <table:table-cell table:style-name="ce54" table:formula="of:=[.$J22]/[.$J$2]" office:value-type="percentage" office:value="0.046583850931677" calcext:value-type="percentage">
-      <text:p>4.66%</text:p>
+     <table:table-cell table:style-name="ce54" table:formula="of:=[.$J22]/[.$J$2]" office:value-type="percentage" office:value="0.045045045045045" calcext:value-type="percentage">
+      <text:p>4.50%</text:p>
      </table:table-cell>
-     <table:table-cell table:style-name="ce54" table:formula="of:=[.$G22]/[.$G$2]" office:value-type="percentage" office:value="0.06" calcext:value-type="percentage">
-      <text:p>6.00%</text:p>
+     <table:table-cell table:style-name="ce54" table:formula="of:=[.$G22]/[.$G$2]" office:value-type="percentage" office:value="0.0568047337278107" calcext:value-type="percentage">
+      <text:p>5.68%</text:p>
      </table:table-cell>
-     <table:table-cell table:style-name="ce48" table:formula="of:=[.$K22]/[.$L22]" office:value-type="float" office:value="0.77639751552795" calcext:value-type="float">
-      <text:p>0.77639751552795</text:p>
+     <table:table-cell table:style-name="ce48" table:formula="of:=[.$K22]/[.$L22]" office:value-type="float" office:value="0.792980480480481" calcext:value-type="float">
+      <text:p>0.792980480480481</text:p>
      </table:table-cell>
      <table:table-cell table:style-name="ce48" table:number-columns-repeated="1011"/>
     </table:table-row>
@@ -1271,14 +1271,14 @@
      <table:table-cell table:style-name="ce47" table:formula="of:=SUM([.$H23:.$I23])" office:value-type="float" office:value="9" calcext:value-type="float">
       <text:p>9</text:p>
      </table:table-cell>
-     <table:table-cell table:style-name="ce53" table:formula="of:=[.$J23]/[.$J$2]" office:value-type="percentage" office:value="0.0279503105590062" calcext:value-type="percentage">
-      <text:p>2.80%</text:p>
+     <table:table-cell table:style-name="ce53" table:formula="of:=[.$J23]/[.$J$2]" office:value-type="percentage" office:value="0.027027027027027" calcext:value-type="percentage">
+      <text:p>2.70%</text:p>
      </table:table-cell>
-     <table:table-cell table:style-name="ce53" table:formula="of:=[.$G23]/[.$G$2]" office:value-type="percentage" office:value="0.05875" calcext:value-type="percentage">
-      <text:p>5.88%</text:p>
+     <table:table-cell table:style-name="ce53" table:formula="of:=[.$G23]/[.$G$2]" office:value-type="percentage" office:value="0.0556213017751479" calcext:value-type="percentage">
+      <text:p>5.56%</text:p>
      </table:table-cell>
-     <table:table-cell table:style-name="ce47" table:formula="of:=[.$K23]/[.$L23]" office:value-type="float" office:value="0.475749966961808" calcext:value-type="float">
-      <text:p>0.475749966961808</text:p>
+     <table:table-cell table:style-name="ce47" table:formula="of:=[.$K23]/[.$L23]" office:value-type="float" office:value="0.485911443358252" calcext:value-type="float">
+      <text:p>0.485911443358252</text:p>
      </table:table-cell>
      <table:table-cell table:style-name="ce47" table:number-columns-repeated="1011"/>
     </table:table-row>
@@ -1311,14 +1311,14 @@
      <table:table-cell table:style-name="ce47" table:formula="of:=SUM([.$H24:.$I24])" office:value-type="float" office:value="9" calcext:value-type="float">
       <text:p>9</text:p>
      </table:table-cell>
-     <table:table-cell table:style-name="ce53" table:formula="of:=[.$J24]/[.$J$2]" office:value-type="percentage" office:value="0.0279503105590062" calcext:value-type="percentage">
-      <text:p>2.80%</text:p>
+     <table:table-cell table:style-name="ce53" table:formula="of:=[.$J24]/[.$J$2]" office:value-type="percentage" office:value="0.027027027027027" calcext:value-type="percentage">
+      <text:p>2.70%</text:p>
      </table:table-cell>
-     <table:table-cell table:style-name="ce53" table:formula="of:=[.$G24]/[.$G$2]" office:value-type="percentage" office:value="0.065" calcext:value-type="percentage">
-      <text:p>6.50%</text:p>
+     <table:table-cell table:style-name="ce53" table:formula="of:=[.$G24]/[.$G$2]" office:value-type="percentage" office:value="0.0615384615384615" calcext:value-type="percentage">
+      <text:p>6.15%</text:p>
      </table:table-cell>
-     <table:table-cell table:style-name="ce47" table:formula="of:=[.$K24]/[.$L24]" office:value-type="float" office:value="0.430004777830865" calcext:value-type="float">
-      <text:p>0.430004777830865</text:p>
+     <table:table-cell table:style-name="ce47" table:formula="of:=[.$K24]/[.$L24]" office:value-type="float" office:value="0.439189189189189" calcext:value-type="float">
+      <text:p>0.439189189189189</text:p>
      </table:table-cell>
      <table:table-cell table:style-name="ce47" table:number-columns-repeated="1011"/>
     </table:table-row>
@@ -1343,7 +1343,49 @@
      <table:table-cell table:style-name="ce21" table:number-columns-repeated="2"/>
      <table:table-cell table:style-name="ce13" table:number-columns-repeated="1012"/>
     </table:table-row>
-    <table:table-row table:style-name="ro1" table:number-rows-repeated="1048550">
+    <table:table-row table:style-name="ro6">
+     <table:table-cell table:style-name="ce41" office:value-type="string" calcext:value-type="string">
+      <text:p>Multiplayer Phrase Pairing</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce41" office:value-type="string" calcext:value-type="string">
+      <text:p>Networking</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce41" office:value-type="string" calcext:value-type="string">
+      <text:p>As a player, I would like to be able to pair with another Player I know, by setting up a common phrase that will match me with the Player I know, so that I can play a game with the Player I know.</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce41" office:value-type="string" calcext:value-type="string">
+      <text:p>Set up a “room code” system where Players can specify a “phrase” or “code word” that will only pair them with other Players that use the same “phrase”.</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce41" office:value-type="string" calcext:value-type="string">
+      <text:p>The back-end should be able to pair Players with identical “phrases” or “code words”. The front-end should allow the Player to set a “phrase” or “code word”.</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce47" office:value-type="string" calcext:value-type="string">
+      <text:p>Exciter</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce47" office:value-type="float" office:value="45" calcext:value-type="float">
+      <text:p>45</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce47" office:value-type="float" office:value="8" calcext:value-type="float">
+      <text:p>8</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce47" office:value-type="float" office:value="3" calcext:value-type="float">
+      <text:p>3</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce47" office:value-type="float" office:value="11" calcext:value-type="float">
+      <text:p>11</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce53" table:formula="of:=[.$J26]/[.$J$2]" office:value-type="percentage" office:value="0.033033033033033" calcext:value-type="percentage">
+      <text:p>3.30%</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce53" table:formula="of:=[.$G26]/[.$G$2]" office:value-type="percentage" office:value="0.0532544378698225" calcext:value-type="percentage">
+      <text:p>5.33%</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce47" table:formula="of:=[.$K26]/[.$L26]" office:value-type="float" office:value="0.620286953620287" calcext:value-type="float">
+      <text:p>0.620286953620287</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce47" table:number-columns-repeated="1011"/>
+    </table:table-row>
+    <table:table-row table:style-name="ro1" table:number-rows-repeated="1048549">
      <table:table-cell table:number-columns-repeated="1024"/>
     </table:table-row>
     <table:table-row table:style-name="ro1">
