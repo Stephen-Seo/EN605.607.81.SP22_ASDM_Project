@@ -21,6 +21,7 @@ pub const GAME_CLEANUP_TIMEOUT: u64 = (TURN_SECONDS + 1) * ((ROWS * COLS) as u64
 pub const PLAYER_CLEANUP_TIMEOUT: u64 = 300;
 
 pub const BACKEND_TICK_DURATION_MILLIS: i32 = 500;
+pub const BACKEND_CLEANUP_INTERVAL_SECONDS: u64 = 120;
 
 // TODO: Change this to "https://asdm.seodisparate.com/api" when backend is installed
 #[cfg(debug_assertions)]
