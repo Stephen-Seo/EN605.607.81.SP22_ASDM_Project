@@ -1228,7 +1228,7 @@ impl Component for Wrapper {
                 ctx.link().send_message(WrapperMsg::BackendTick);
             }
             WrapperMsg::BackendTick => {
-                if !self.do_backend_tick || shared.game_state.get() == GameState::default() {
+                if !self.do_backend_tick || !shared.game_state.get().is_networked_multiplayer() {
                     // disconnect id if backend tick is to be stopped
                     if let Some(id) = self.player_id.take() {
                         let function = Function::new_no_args(&format!(
