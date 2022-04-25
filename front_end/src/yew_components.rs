@@ -52,66 +52,62 @@ impl Component for MainMenu {
             .link()
             .context::<SharedState>(Callback::noop())
             .expect("state to be set");
-        match shared.game_state.get() {
-            GameState::MainMenu => {
-                let player_type: Turn;
-                {
-                    let mut rng = get_seeded_random().expect("Random should be available");
-                    player_type = if rng.rand_range(0..2) == 0 {
-                        Turn::CyanPlayer
-                    } else {
-                        Turn::MagentaPlayer
-                    };
-                }
+        let player_type: Turn;
+        {
+            let mut rng = get_seeded_random().expect("Random should be available");
+            player_type = if rng.rand_range(0..2) == 0 {
+                Turn::CyanPlayer
+            } else {
+                Turn::MagentaPlayer
+            };
+        }
 
-                let easy_player_type = player_type;
-                let normal_player_type = player_type;
-                let hard_player_type = player_type;
+        let easy_player_type = player_type;
+        let normal_player_type = player_type;
+        let hard_player_type = player_type;
 
-                let onclick_singleplayer_easy = ctx.link().callback(move |_| {
-                    MainMenuMessage::SinglePlayer(easy_player_type, AIDifficulty::Easy)
-                });
-                let onclick_singleplayer_normal = ctx.link().callback(move |_| {
-                    MainMenuMessage::SinglePlayer(normal_player_type, AIDifficulty::Normal)
-                });
-                let onclick_singleplayer_hard = ctx.link().callback(move |_| {
-                    MainMenuMessage::SinglePlayer(hard_player_type, AIDifficulty::Hard)
-                });
+        let onclick_singleplayer_easy = ctx
+            .link()
+            .callback(move |_| MainMenuMessage::SinglePlayer(easy_player_type, AIDifficulty::Easy));
+        let onclick_singleplayer_normal = ctx.link().callback(move |_| {
+            MainMenuMessage::SinglePlayer(normal_player_type, AIDifficulty::Normal)
+        });
+        let onclick_singleplayer_hard = ctx
+            .link()
+            .callback(move |_| MainMenuMessage::SinglePlayer(hard_player_type, AIDifficulty::Hard));
 
-                let onclick_local_multiplayer =
-                    ctx.link().callback(|_| MainMenuMessage::LocalMultiplayer);
+        let onclick_local_multiplayer = ctx.link().callback(|_| MainMenuMessage::LocalMultiplayer);
 
-                let onclick_networked_multiplayer = ctx
-                    .link()
-                    .callback(|_| MainMenuMessage::NetworkedMultiplayer);
+        let onclick_networked_multiplayer = ctx
+            .link()
+            .callback(|_| MainMenuMessage::NetworkedMultiplayer);
 
-                html! {
-                    <div class={"menu"} id={"mainmenu"}>
-                        <b class={"menuText"}>{"Please pick a game mode."}</b>
-                        <div class={"singlePlayerMenu"}>
-                            <button class={"menuSinglePlayerEasy"} onclick={onclick_singleplayer_easy}>
-                                {"Singleplayer Easy"}
-                            </button>
-                            <button class={"menuSinglePlayerNormal"} onclick={onclick_singleplayer_normal}>
-                                {"Singleplayer Normal"}
-                            </button>
-                            <button class={"menuSinglePlayerHard"} onclick={onclick_singleplayer_hard}>
-                                {"Singleplayer Hard"}
-                            </button>
-                        </div>
-                        <button class={"menuLocalMultiplayer"} onclick={onclick_local_multiplayer}>
-                            {"Local Multiplayer"}
-                        </button>
-                        <button class={"menuMultiplayer"} onclick={onclick_networked_multiplayer}>
-                            {"Networked Multiplayer"}
-                        </button>
-                    </div>
-                }
-            }
-            _ => html! {
-                <div class={"hidden_menu"} id={"mainmenu"}>
+        let menu_class = if shared.game_state.get() == GameState::MainMenu {
+            "menu"
+        } else {
+            "hidden_menu"
+        };
+        html! {
+            <div class={menu_class} id={"mainmenu"}>
+                <b class={"menuText"}>{"Please pick a game mode."}</b>
+                <div class={"singlePlayerMenu"}>
+                    <button class={"menuSinglePlayerEasy"} onclick={onclick_singleplayer_easy}>
+                        {"Singleplayer Easy"}
+                    </button>
+                    <button class={"menuSinglePlayerNormal"} onclick={onclick_singleplayer_normal}>
+                        {"Singleplayer Normal"}
+                    </button>
+                    <button class={"menuSinglePlayerHard"} onclick={onclick_singleplayer_hard}>
+                        {"Singleplayer Hard"}
+                    </button>
                 </div>
-            },
+                <button class={"menuLocalMultiplayer"} onclick={onclick_local_multiplayer}>
+                    {"Local Multiplayer"}
+                </button>
+                <button class={"menuMultiplayer"} onclick={onclick_networked_multiplayer}>
+                    {"Networked Multiplayer"}
+                </button>
+            </div>
         }
     }
 
@@ -129,7 +125,6 @@ impl Component for MainMenu {
                 .get_element_by_id("mainmenu")
                 .expect("mainmenu should exist");
             mainmenu.set_class_name("hidden_menu");
-            mainmenu.set_inner_html("");
 
             match shared.game_state.get() {
                 GameState::SinglePlayer(turn, _) => {
@@ -176,7 +171,7 @@ impl Component for MainMenu {
                         .expect("Wrapper should be a parent of MainMenu")
                         .clone()
                         .downcast::<Wrapper>()
-                        .send_message(WrapperMsg::BackendTick);
+                        .send_message(WrapperMsg::StartBackendTick);
                 }
                 _ => {
                     append_to_info_text(
@@ -190,6 +185,36 @@ impl Component for MainMenu {
             }
         }
 
+        true
+    }
+}
+
+struct ResetButton {}
+
+impl Component for ResetButton {
+    type Message = ();
+    type Properties = ();
+
+    fn create(_ctx: &Context<Self>) -> Self {
+        Self {}
+    }
+
+    fn view(&self, ctx: &Context<Self>) -> Html {
+        let onclick_reset = ctx.link().callback(|_| ());
+        html! {
+            <button class={"resetbutton"} id={"resetbutton"} onclick={onclick_reset}>
+                {"Reset"}
+            </button>
+        }
+    }
+
+    fn update(&mut self, ctx: &Context<Self>, _msg: Self::Message) -> bool {
+        ctx.link()
+            .get_parent()
+            .expect("Wrapper should be parent of ResetButton")
+            .clone()
+            .downcast::<Wrapper>()
+            .send_message(WrapperMsg::Reset);
         true
     }
 }
@@ -575,6 +600,8 @@ pub enum WrapperMsg {
     AIPressed(u8),
     AIChoice,
     AIChoiceImpl,
+    StartBackendTick,
+    StartBackendTickImpl,
     BackendTick,
     BackendRequest { place: u8 },
     BackendResponse(BREnum),
@@ -607,6 +634,7 @@ impl Component for Wrapper {
         html! {
             <div class="wrapper">
                 <MainMenu />
+                <ResetButton />
                 <Slot idx=0 state={shared.board[0].clone()} placed={shared.placed[0].clone()} />
                 <Slot idx=1 state={shared.board[1].clone()} placed={shared.placed[1].clone()} />
                 <Slot idx=2 state={shared.board[2].clone()} placed={shared.placed[2].clone()} />
@@ -1175,8 +1203,44 @@ impl Component for Wrapper {
                     }
                 }
             }
+            WrapperMsg::StartBackendTick => {
+                self.defer_message(
+                    ctx,
+                    WrapperMsg::StartBackendTickImpl,
+                    BACKEND_TICK_DURATION_MILLIS,
+                );
+            }
+            WrapperMsg::StartBackendTickImpl => {
+                // If previous id is still stored, request disconnect so that a
+                // new id can be received
+                if let Some(id) = self.player_id.take() {
+                    let function = Function::new_no_args(&format!(
+                        "
+                        let xhr = new XMLHttpRequest();
+                        xhr.open('POST', '{}');
+                        xhr.send('{{\"type\": \"disconnect\", \"id\": {}}}');
+                    ",
+                        BACKEND_URL, id
+                    ));
+                    function.call0(&function).ok();
+                }
+                self.do_backend_tick = true;
+                ctx.link().send_message(WrapperMsg::BackendTick);
+            }
             WrapperMsg::BackendTick => {
-                if !self.do_backend_tick {
+                if !self.do_backend_tick || shared.game_state.get() == GameState::default() {
+                    // disconnect id if backend tick is to be stopped
+                    if let Some(id) = self.player_id.take() {
+                        let function = Function::new_no_args(&format!(
+                            "
+                            let xhr = new XMLHttpRequest();
+                            xhr.open('POST', '{}');
+                            xhr.send('{{\"type\": \"disconnect\", \"id\": {}}}');
+                        ",
+                            BACKEND_URL, id
+                        ));
+                        function.call0(&function).ok();
+                    }
                     return false;
                 }
 
@@ -1417,6 +1481,13 @@ impl Component for Wrapper {
                             NetworkedGameState::Disconnected => {
                                 append_to_info_text(
                                     &document,
+                                    "info_text0",
+                                    "The opponent disconnected",
+                                    INFO_TEXT_MAX_ITEMS,
+                                )
+                                .ok();
+                                append_to_info_text(
+                                    &document,
                                     "info_text1",
                                     "<b>The opponent disconnected</b>",
                                     1,
@@ -1593,6 +1664,22 @@ impl Component for Wrapper {
                     function.call0(&function).ok();
                 }
                 self.place_request = None;
+                element_remove_class(&document, "mainmenu", "hidden_menu").ok();
+                element_append_class(&document, "mainmenu", "menu").ok();
+                append_to_info_text(
+                    &document,
+                    "info_text1",
+                    "<b>Waiting to choose game-mode...</b>",
+                    1,
+                )
+                .ok();
+                append_to_info_text(
+                    &document,
+                    "info_text0",
+                    "Reset button was pressed",
+                    INFO_TEXT_MAX_ITEMS,
+                )
+                .ok();
                 self.do_backend_tick = false;
             }
         } // match (msg)
