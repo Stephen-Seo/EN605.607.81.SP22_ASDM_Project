@@ -23,6 +23,8 @@ pub const PLAYER_CLEANUP_TIMEOUT: u64 = 300;
 pub const BACKEND_TICK_DURATION_MILLIS: i32 = 500;
 pub const BACKEND_CLEANUP_INTERVAL_SECONDS: u64 = 120;
 
+pub const BACKEND_PHRASE_MAX_LENGTH: usize = 128;
+
 // TODO: Change this to "https://asdm.seodisparate.com/api" when backend is installed
 #[cfg(debug_assertions)]
 pub const BACKEND_URL: &str = "http://testlocalhost/api";

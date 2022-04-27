@@ -6,7 +6,10 @@
 //This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 //
 //You should have received a copy of the GNU General Public License along with this program. If not, see <https://www.gnu.org/licenses/>.
-use crate::db_handler::{CheckPairingType, DBHandlerRequest, GetIDSenderType};
+use crate::{
+    constants::BACKEND_PHRASE_MAX_LENGTH,
+    db_handler::{CheckPairingType, DBHandlerRequest, GetIDSenderType},
+};
 
 use std::{
     sync::mpsc::{sync_channel, SyncSender},
@@ -40,8 +43,19 @@ fn handle_pairing_request(root: Value, tx: SyncSender<DBHandlerRequest>) -> Resu
     let (player_tx, player_rx) = sync_channel::<GetIDSenderType>(1);
     let mut phrase: Option<String> = None;
     if let Some(phrase_text) = root.get("phrase") {
-        if let Some(phrase_str) = phrase_text.as_str() {
+        if let Some(mut phrase_str) = phrase_text.as_str() {
             if !phrase_str.is_empty() {
+                if phrase_str.len() > BACKEND_PHRASE_MAX_LENGTH {
+                    let mut idx = BACKEND_PHRASE_MAX_LENGTH;
+                    while idx > 0 && !phrase_str.is_char_boundary(idx) {
+                        idx -= 1;
+                    }
+                    if idx == 0 {
+                        phrase_str = "";
+                    } else {
+                        phrase_str = phrase_str.split_at(idx).0;
+                    }
+                }
                 phrase = Some(phrase_str.to_owned());
             }
         }
