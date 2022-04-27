@@ -13,12 +13,12 @@ use crate::constants::{
 };
 use crate::game_logic::{check_win_draw, WinType};
 use crate::html_helper::{
-    append_to_info_text, create_json_request, element_append_class, element_has_class,
-    element_remove_class, get_window_document, send_to_backend,
+    append_to_info_text, element_append_class, element_has_class, element_remove_class,
+    get_window_document, send_to_backend,
 };
 use crate::random_helper::get_seeded_random;
 use crate::state::{
-    board_from_string, BoardState, BoardType, GameState, GameStateResponse, MainMenuMessage,
+    board_from_string, BoardState, GameState, GameStateResponse, MainMenuMessage,
     NetworkedGameState, PairingRequestResponse, PairingStatusResponse, PlaceTokenResponse,
     PlacedEnum, SharedState, Turn,
 };
@@ -28,10 +28,7 @@ use std::collections::HashMap;
 use std::rc::Rc;
 
 use js_sys::{Function, Promise};
-use wasm_bindgen::JsCast;
-use web_sys::{AddEventListenerOptions, Document, Response};
-
-use serde_json::Value as SerdeJSONValue;
+use web_sys::{AddEventListenerOptions, Document, HtmlInputElement};
 
 use wasm_bindgen_futures::JsFuture;
 
@@ -80,9 +77,9 @@ impl Component for MainMenu {
 
         let onclick_networked_multiplayer = ctx
             .link()
-            .callback(|_| MainMenuMessage::NetworkedMultiplayer);
+            .callback(|_| MainMenuMessage::NetworkedMultiplayer(None));
 
-        let menu_class = if shared.game_state.get() == GameState::MainMenu {
+        let menu_class = if shared.game_state.borrow().eq(&GameState::MainMenu) {
             "menu"
         } else {
             "hidden_menu"
@@ -104,9 +101,19 @@ impl Component for MainMenu {
                 <button class={"menuLocalMultiplayer"} onclick={onclick_local_multiplayer}>
                     {"Local Multiplayer"}
                 </button>
-                <button class={"menuMultiplayer"} onclick={onclick_networked_multiplayer}>
-                    {"Networked Multiplayer"}
-                </button>
+                <div class={"multiplayerMenu"}>
+                    <button class={"networkedMultiplayer"} onclick={onclick_networked_multiplayer}>
+                        {"Networked Multiplayer"}
+                    </button>
+                    <button class={"NMPhrase"} onclick={ctx.link().callback(|_| {
+                        let (_window, document) = get_window_document().expect("Should be able to get window/document");
+                        let input = HtmlInputElement::from(wasm_bindgen::JsValue::from(document.get_element_by_id("NMPhraseText").expect("Should be able to get NMPhrase input element")));
+                        MainMenuMessage::NetworkedMultiplayer(Some(input.value()))
+                    })}>
+                        {"NMultiplayer with Phrase"}
+                    </button>
+                    <input class={"NMPhrase"} id={"NMPhraseText"} placeholder={"input phrase here"} autofocus=true />
+                </div>
             </div>
         }
     }
@@ -120,13 +127,13 @@ impl Component for MainMenu {
         let document = window.document().expect("window should have a document");
 
         shared.game_state.replace(msg.into());
-        if shared.game_state.get() != GameState::MainMenu {
+        if !shared.game_state.borrow().eq(&GameState::MainMenu) {
             let mainmenu = document
                 .get_element_by_id("mainmenu")
                 .expect("mainmenu should exist");
             mainmenu.set_class_name("hidden_menu");
 
-            match shared.game_state.get() {
+            match shared.game_state.borrow().clone() {
                 GameState::SinglePlayer(turn, _) => {
                     if shared.turn.get() == turn {
                         append_to_info_text(
@@ -157,6 +164,7 @@ impl Component for MainMenu {
                     paired: _,
                     current_side: _,
                     current_turn: _,
+                    phrase: _,
                 } => {
                     append_to_info_text(
                         &document,
@@ -265,13 +273,14 @@ impl Component for Slot {
             .context::<SharedState>(Callback::noop())
             .expect("state to be set");
 
-        match shared.game_state.get() {
+        match shared.game_state.borrow().clone() {
             GameState::MainMenu => return false,
             GameState::SinglePlayer(_, _) | GameState::LocalMultiplayer => (),
             GameState::NetworkedMultiplayer {
                 paired,
                 current_side,
                 current_turn,
+                phrase: _,
             } => {
                 if paired && current_side.is_some() {
                     if current_side.as_ref().unwrap() == &current_turn {
@@ -289,7 +298,7 @@ impl Component for Slot {
             }
             GameState::PostGameResults(_) => return false,
         }
-        if shared.game_state.get() == GameState::MainMenu {
+        if shared.game_state.borrow().eq(&GameState::MainMenu) {
             return false;
         }
 
@@ -342,10 +351,19 @@ impl Wrapper {
     }
 
     fn get_networked_player_id(&mut self, ctx: &Context<Self>) {
+        let (shared, _) = ctx
+            .link()
+            .context::<SharedState>(Callback::noop())
+            .expect("state to be set");
+        let phrase_clone: Option<String> = shared.game_state.borrow().get_phrase();
+
         // make a request to get the player_id
-        ctx.link().send_future(async {
+        ctx.link().send_future(async move {
             let mut json_entries = HashMap::new();
             json_entries.insert("type".into(), "pairing_request".into());
+            if let Some(phrase_string) = phrase_clone {
+                json_entries.insert("phrase".into(), phrase_string);
+            }
 
             let send_to_backend_result = send_to_backend(json_entries).await;
             if let Err(e) = send_to_backend_result {
@@ -717,7 +735,7 @@ impl Component for Wrapper {
 
                 // check if player can make a move
                 if !msg.is_ai_pressed() {
-                    match shared.game_state.get() {
+                    match shared.game_state.borrow().clone() {
                         GameState::MainMenu => (),
                         GameState::SinglePlayer(turn, _) => {
                             if current_player != turn {
@@ -729,6 +747,7 @@ impl Component for Wrapper {
                             paired,
                             current_side,
                             current_turn,
+                            phrase: _,
                         } => {
                             if paired {
                                 if let Some(current_side) = current_side {
@@ -796,28 +815,29 @@ impl Component for Wrapper {
                 // info text right of the grid
                 {
                     let turn = shared.turn.get();
-                    let output_str =
-                        if let GameState::SinglePlayer(player_turn, _) = shared.game_state.get() {
-                            if shared.turn.get() == player_turn {
-                                format!(
-                                    "<b class=\"{}\">It is {}'s (player) turn</b>",
-                                    turn.get_color(),
-                                    turn
-                                )
-                            } else {
-                                format!(
-                                    "<b class=\"{}\">It is {}'s (ai) turn</b>",
-                                    turn.get_color(),
-                                    turn
-                                )
-                            }
-                        } else {
+                    let output_str = if let GameState::SinglePlayer(player_turn, _) =
+                        shared.game_state.borrow().clone()
+                    {
+                        if shared.turn.get() == player_turn {
                             format!(
-                                "<b class=\"{}\">It is {}'s Turn</b>",
+                                "<b class=\"{}\">It is {}'s (player) turn</b>",
                                 turn.get_color(),
                                 turn
                             )
-                        };
+                        } else {
+                            format!(
+                                "<b class=\"{}\">It is {}'s (ai) turn</b>",
+                                turn.get_color(),
+                                turn
+                            )
+                        }
+                    } else {
+                        format!(
+                            "<b class=\"{}\">It is {}'s Turn</b>",
+                            turn.get_color(),
+                            turn
+                        )
+                    };
 
                     let text_append_result =
                         append_to_info_text(&document, "info_text1", &output_str, 1);
@@ -1179,7 +1199,7 @@ impl Component for Wrapper {
 
                 // check if it is AI's turn
                 if let GameState::SinglePlayer(player_type, _ai_difficulty) =
-                    shared.game_state.get()
+                    shared.game_state.borrow().clone()
                 {
                     if shared.turn.get() != player_type {
                         ctx.link().send_message(WrapperMsg::AIChoice);
@@ -1192,7 +1212,8 @@ impl Component for Wrapper {
             }
             WrapperMsg::AIChoiceImpl => {
                 // get AI's choice
-                if let GameState::SinglePlayer(player_type, ai_difficulty) = shared.game_state.get()
+                if let GameState::SinglePlayer(player_type, ai_difficulty) =
+                    shared.game_state.borrow().clone()
                 {
                     if shared.turn.get() != player_type {
                         let choice =
@@ -1228,7 +1249,9 @@ impl Component for Wrapper {
                 ctx.link().send_message(WrapperMsg::BackendTick);
             }
             WrapperMsg::BackendTick => {
-                if !self.do_backend_tick || !shared.game_state.get().is_networked_multiplayer() {
+                let is_networked_multiplayer =
+                    shared.game_state.borrow().is_networked_multiplayer();
+                if !self.do_backend_tick || !is_networked_multiplayer {
                     // disconnect id if backend tick is to be stopped
                     if let Some(id) = self.player_id.take() {
                         let function = Function::new_no_args(&format!(
@@ -1248,12 +1271,15 @@ impl Component for Wrapper {
                     self.get_networked_player_id(ctx);
                 } else if shared
                     .game_state
-                    .get()
+                    .borrow()
                     .get_networked_current_side()
                     .is_none()
                 {
                     self.get_networked_player_type(ctx);
-                } else if !matches!(shared.game_state.get(), GameState::PostGameResults(_)) {
+                } else if !matches!(
+                    shared.game_state.borrow().clone(),
+                    GameState::PostGameResults(_)
+                ) {
                     if self.place_request.is_some() {
                         let placement = self.place_request.take().unwrap();
                         self.send_place_request(ctx, placement);
@@ -1323,10 +1349,10 @@ impl Component for Wrapper {
                         });
 
                         self.player_id = Some(id);
-                        let mut game_state = shared.game_state.get();
+                        let mut game_state = shared.game_state.borrow().clone();
                         game_state.set_networked_paired();
                         game_state.set_networked_current_side(turn_opt);
-                        shared.game_state.set(game_state);
+                        shared.game_state.replace(game_state);
                         if let Some(turn_type) = turn_opt {
                             append_to_info_text(
                                 &document,
@@ -1356,9 +1382,9 @@ impl Component for Wrapper {
                         }
                     }
                     BREnum::GotPairing(turn_opt) => {
-                        let mut game_state = shared.game_state.get();
+                        let mut game_state = shared.game_state.borrow().clone();
                         game_state.set_networked_current_side(turn_opt);
-                        shared.game_state.set(game_state);
+                        shared.game_state.replace(game_state);
                         if let Some(turn_type) = turn_opt {
                             append_to_info_text(
                                 &document,
@@ -1392,12 +1418,12 @@ impl Component for Wrapper {
                             self.update_board_from_string(&shared, &document, board_string);
                         }
 
-                        let mut current_game_state = shared.game_state.get();
+                        let mut current_game_state: GameState = shared.game_state.borrow().clone();
                         match networked_game_state {
                             NetworkedGameState::CyanTurn => {
                                 if current_game_state.get_current_turn() != Turn::CyanPlayer {
                                     current_game_state.set_networked_current_turn(Turn::CyanPlayer);
-                                    shared.game_state.set(current_game_state);
+                                    shared.game_state.replace(current_game_state.clone());
                                     append_to_info_text(
                                         &document,
                                         "info_text1",
@@ -1422,7 +1448,7 @@ impl Component for Wrapper {
                                 if current_game_state.get_current_turn() != Turn::MagentaPlayer {
                                     current_game_state
                                         .set_networked_current_turn(Turn::MagentaPlayer);
-                                    shared.game_state.set(current_game_state);
+                                    shared.game_state.replace(current_game_state.clone());
                                     append_to_info_text(
                                 &document,
                                 "info_text1",
@@ -1449,7 +1475,7 @@ impl Component for Wrapper {
                                 .ok();
                                 shared
                                     .game_state
-                                    .set(GameState::PostGameResults(BoardState::CyanWin));
+                                    .replace(GameState::PostGameResults(BoardState::CyanWin));
                                 self.do_backend_tick = false;
                             }
                             NetworkedGameState::MagentaWon => {
@@ -1462,7 +1488,7 @@ impl Component for Wrapper {
                                 .ok();
                                 shared
                                     .game_state
-                                    .set(GameState::PostGameResults(BoardState::MagentaWin));
+                                    .replace(GameState::PostGameResults(BoardState::MagentaWin));
                                 self.do_backend_tick = false;
                             }
                             NetworkedGameState::Draw => {
@@ -1475,7 +1501,7 @@ impl Component for Wrapper {
                                 .ok();
                                 shared
                                     .game_state
-                                    .set(GameState::PostGameResults(BoardState::Empty));
+                                    .replace(GameState::PostGameResults(BoardState::Empty));
                                 self.do_backend_tick = false;
                             }
                             NetworkedGameState::Disconnected => {
@@ -1495,7 +1521,7 @@ impl Component for Wrapper {
                                 .ok();
                                 shared
                                     .game_state
-                                    .set(GameState::PostGameResults(BoardState::Empty));
+                                    .replace(GameState::PostGameResults(BoardState::Empty));
                                 self.do_backend_tick = false;
                             }
                             NetworkedGameState::InternalError => {
@@ -1508,7 +1534,7 @@ impl Component for Wrapper {
                                 .ok();
                                 shared
                                     .game_state
-                                    .set(GameState::PostGameResults(BoardState::Empty));
+                                    .replace(GameState::PostGameResults(BoardState::Empty));
                                 self.do_backend_tick = false;
                             }
                             NetworkedGameState::NotPaired => (),
@@ -1522,7 +1548,7 @@ impl Component for Wrapper {
                                 .ok();
                                 shared
                                     .game_state
-                                    .set(GameState::PostGameResults(BoardState::Empty));
+                                    .replace(GameState::PostGameResults(BoardState::Empty));
                                 self.do_backend_tick = false;
                             }
                         }
@@ -1565,7 +1591,7 @@ impl Component for Wrapper {
                                     .ok();
                                     shared
                                         .game_state
-                                        .set(GameState::PostGameResults(BoardState::CyanWin));
+                                        .replace(GameState::PostGameResults(BoardState::CyanWin));
                                     self.do_backend_tick = false;
                                 }
                                 NetworkedGameState::MagentaWon => {
@@ -1576,9 +1602,9 @@ impl Component for Wrapper {
                                         1,
                                     )
                                     .ok();
-                                    shared
-                                        .game_state
-                                        .set(GameState::PostGameResults(BoardState::MagentaWin));
+                                    shared.game_state.replace(GameState::PostGameResults(
+                                        BoardState::MagentaWin,
+                                    ));
                                     self.do_backend_tick = false;
                                 }
                                 NetworkedGameState::Draw => {
@@ -1591,7 +1617,7 @@ impl Component for Wrapper {
                                     .ok();
                                     shared
                                         .game_state
-                                        .set(GameState::PostGameResults(BoardState::Empty));
+                                        .replace(GameState::PostGameResults(BoardState::Empty));
                                     self.do_backend_tick = false;
                                 }
                                 NetworkedGameState::Disconnected => {
@@ -1604,7 +1630,7 @@ impl Component for Wrapper {
                                     .ok();
                                     shared
                                         .game_state
-                                        .set(GameState::PostGameResults(BoardState::Empty));
+                                        .replace(GameState::PostGameResults(BoardState::Empty));
                                     self.do_backend_tick = false;
                                 }
                                 NetworkedGameState::InternalError => {
@@ -1617,7 +1643,7 @@ impl Component for Wrapper {
                                     .ok();
                                     shared
                                         .game_state
-                                        .set(GameState::PostGameResults(BoardState::Empty));
+                                        .replace(GameState::PostGameResults(BoardState::Empty));
                                     self.do_backend_tick = false;
                                 }
                                 NetworkedGameState::NotPaired => (),
@@ -1631,7 +1657,7 @@ impl Component for Wrapper {
                                     .ok();
                                     shared
                                         .game_state
-                                        .set(GameState::PostGameResults(BoardState::Empty));
+                                        .replace(GameState::PostGameResults(BoardState::Empty));
                                     self.do_backend_tick = false;
                                 }
                             },
@@ -1640,7 +1666,7 @@ impl Component for Wrapper {
                 }
             }
             WrapperMsg::Reset => {
-                shared.game_state.set(GameState::default());
+                shared.game_state.replace(GameState::default());
                 shared.turn.set(Turn::CyanPlayer);
                 for idx in 0..((ROWS * COLS) as usize) {
                     shared.placed[idx].set(false);
@@ -1718,7 +1744,7 @@ impl Component for InfoText {
                 }
             }
             1 => {
-                if shared.game_state.get() == GameState::MainMenu {
+                if shared.game_state.borrow().eq(&GameState::MainMenu) {
                     html! {
                         <div id={format!("info_text{}", ctx.props().id)} class={format!("info_text{}", ctx.props().id)}>
                             <p>

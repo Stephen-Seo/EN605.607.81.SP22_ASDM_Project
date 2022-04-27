@@ -41,7 +41,9 @@ fn handle_pairing_request(root: Value, tx: SyncSender<DBHandlerRequest>) -> Resu
     let mut phrase: Option<String> = None;
     if let Some(phrase_text) = root.get("phrase") {
         if let Some(phrase_str) = phrase_text.as_str() {
-            phrase = Some(phrase_str.to_owned());
+            if !phrase_str.is_empty() {
+                phrase = Some(phrase_str.to_owned());
+            }
         }
     }
     if tx

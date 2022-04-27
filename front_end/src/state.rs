@@ -12,12 +12,12 @@ use crate::game_logic::{check_win_draw, WinType};
 
 use serde::{Deserialize, Serialize};
 
-use std::cell::Cell;
+use std::cell::{Cell, RefCell};
 use std::collections::hash_set::HashSet;
 use std::fmt::Display;
 use std::rc::Rc;
 
-#[derive(Copy, Clone, Debug, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Eq)]
 pub enum GameState {
     MainMenu,
     SinglePlayer(Turn, AIDifficulty),
@@ -26,18 +26,20 @@ pub enum GameState {
         paired: bool,
         current_side: Option<Turn>,
         current_turn: Turn,
+        phrase: Option<String>,
     },
     PostGameResults(BoardState),
 }
 
 impl GameState {
-    pub fn is_networked_multiplayer(self) -> bool {
+    pub fn is_networked_multiplayer(&self) -> bool {
         matches!(
-            self,
+            *self,
             GameState::NetworkedMultiplayer {
                 paired: _,
                 current_side: _,
-                current_turn: _
+                current_turn: _,
+                phrase: _,
             }
         )
     }
@@ -47,6 +49,7 @@ impl GameState {
             ref mut paired,
             current_side: _,
             current_turn: _,
+            phrase: _,
         } = self
         {
             *paired = true;
@@ -58,6 +61,7 @@ impl GameState {
             paired: _,
             current_side,
             current_turn: _,
+            phrase: _,
         } = *self
         {
             current_side
@@ -71,6 +75,7 @@ impl GameState {
             paired: _,
             ref mut current_side,
             current_turn: _,
+            phrase: _,
         } = self
         {
             *current_side = side;
@@ -84,6 +89,7 @@ impl GameState {
             paired: _,
             current_side: _,
             current_turn,
+            phrase: _,
         } = *self
         {
             current_turn
@@ -97,6 +103,7 @@ impl GameState {
             paired: _,
             current_side,
             current_turn: _,
+            phrase: _,
         } = *self
         {
             current_side
@@ -110,9 +117,24 @@ impl GameState {
             paired: _,
             current_side: _,
             ref mut current_turn,
+            phrase: _,
         } = self
         {
             *current_turn = turn;
+        }
+    }
+
+    pub fn get_phrase(&self) -> Option<String> {
+        if let GameState::NetworkedMultiplayer {
+            paired: _,
+            current_side: _,
+            current_turn: _,
+            phrase,
+        } = self
+        {
+            phrase.clone()
+        } else {
+            None
         }
     }
 }
@@ -128,10 +150,11 @@ impl From<MainMenuMessage> for GameState {
         match msg {
             MainMenuMessage::SinglePlayer(t, ai) => GameState::SinglePlayer(t, ai),
             MainMenuMessage::LocalMultiplayer => GameState::LocalMultiplayer,
-            MainMenuMessage::NetworkedMultiplayer => GameState::NetworkedMultiplayer {
+            MainMenuMessage::NetworkedMultiplayer(phrase) => GameState::NetworkedMultiplayer {
                 paired: false,
                 current_side: None,
                 current_turn: Turn::CyanPlayer,
+                phrase,
             },
         }
     }
@@ -380,7 +403,7 @@ pub fn new_placed() -> PlacedType {
 #[derive(Clone, Debug, PartialEq)]
 pub struct SharedState {
     pub board: BoardType,
-    pub game_state: Rc<Cell<GameState>>,
+    pub game_state: Rc<RefCell<GameState>>,
     pub turn: Rc<Cell<Turn>>,
     pub placed: PlacedType,
 }
@@ -390,7 +413,7 @@ impl Default for SharedState {
         Self {
             // cannot use [<type>; 56] because Rc does not impl Copy
             board: new_empty_board(),
-            game_state: Rc::new(Cell::new(GameState::default())),
+            game_state: Rc::new(RefCell::new(GameState::default())),
             turn: Rc::new(Cell::new(Turn::CyanPlayer)),
             placed: new_placed(),
         }
@@ -399,11 +422,11 @@ impl Default for SharedState {
 
 // This enum moved from yew_components module so that this module would have no
 // dependencies on the yew_components module
-#[derive(Copy, Clone, Debug, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Eq)]
 pub enum MainMenuMessage {
     SinglePlayer(Turn, AIDifficulty),
     LocalMultiplayer,
-    NetworkedMultiplayer,
+    NetworkedMultiplayer(Option<String>),
 }
 
 pub fn new_string_board() -> String {
@@ -582,12 +605,15 @@ mod tests {
             paired: false,
             current_side: None,
             current_turn: Turn::CyanPlayer,
+            phrase: None,
         };
         assert!(state.is_networked_multiplayer());
         let state = GameState::NetworkedMultiplayer {
             paired: true,
             current_side: Some(Turn::CyanPlayer),
             current_turn: Turn::MagentaPlayer,
+            phrase: None,
         };
+        assert!(state.is_networked_multiplayer());
     }
 }
