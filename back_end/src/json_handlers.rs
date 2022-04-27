@@ -56,7 +56,10 @@ fn handle_pairing_request(root: Value, tx: SyncSender<DBHandlerRequest>) -> Resu
                         phrase_str = phrase_str.split_at(idx).0;
                     }
                 }
-                phrase = Some(phrase_str.to_owned());
+
+                if !phrase_str.is_empty() {
+                    phrase = Some(phrase_str.to_owned());
+                }
             }
         }
     }
