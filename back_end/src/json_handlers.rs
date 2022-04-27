@@ -24,7 +24,7 @@ pub fn handle_json(
 ) -> Result<String, String> {
     if let Some(Value::String(type_str)) = root.get("type") {
         match type_str.as_str() {
-            "pairing_request" => handle_pairing_request(tx),
+            "pairing_request" => handle_pairing_request(root, tx),
             "check_pairing" => handle_check_pairing(root, tx),
             "place_token" => handle_place_token(root, tx),
             "disconnect" => handle_disconnect(root, tx),
@@ -36,9 +36,21 @@ pub fn handle_json(
     }
 }
 
-fn handle_pairing_request(tx: SyncSender<DBHandlerRequest>) -> Result<String, String> {
+fn handle_pairing_request(root: Value, tx: SyncSender<DBHandlerRequest>) -> Result<String, String> {
     let (player_tx, player_rx) = sync_channel::<GetIDSenderType>(1);
-    if tx.send(DBHandlerRequest::GetID(player_tx)).is_err() {
+    let mut phrase: Option<String> = None;
+    if let Some(phrase_text) = root.get("phrase") {
+        if let Some(phrase_str) = phrase_text.as_str() {
+            phrase = Some(phrase_str.to_owned());
+        }
+    }
+    if tx
+        .send(DBHandlerRequest::GetID {
+            response_sender: player_tx,
+            phrase,
+        })
+        .is_err()
+    {
         return Err("{\"type\":\"pairing_response\", \"status\":\"internal_error\"}".into());
     }
     if let Ok((pid_opt, is_cyan_opt)) = player_rx.recv_timeout(DB_REQUEST_TIMEOUT) {

@@ -13,6 +13,7 @@ use crate::constants::{
 };
 use crate::state::{board_from_string, new_string_board, string_from_board, BoardState, Turn};
 
+use std::collections::HashMap;
 use std::sync::mpsc::{Receiver, RecvTimeoutError, SyncSender};
 use std::time::{Duration, Instant};
 use std::{fmt, thread};
@@ -118,7 +119,10 @@ impl fmt::Display for DBPlaceError {
 
 #[derive(Clone, Debug)]
 pub enum DBHandlerRequest {
-    GetID(SyncSender<GetIDSenderType>),
+    GetID {
+        response_sender: SyncSender<GetIDSenderType>,
+        phrase: Option<String>,
+    },
     CheckPairing {
         id: u32,
         response_sender: SyncSender<CheckPairingType>,
@@ -163,7 +167,10 @@ impl DBHandler {
         }
         let db_request = rx_recv_result.unwrap();
         match db_request {
-            DBHandlerRequest::GetID(player_tx) => {
+            DBHandlerRequest::GetID {
+                response_sender,
+                phrase,
+            } => {
                 // got request to create new player, create new player
                 let conn_result = self.get_conn(DBFirstRun::NotFirstRun);
                 if let Err(e) = conn_result {
@@ -172,10 +179,10 @@ impl DBHandler {
                 }
                 let conn = conn_result.unwrap();
 
-                let create_player_result = self.create_new_player(Some(&conn));
+                let create_player_result = self.create_new_player(Some(&conn), phrase);
                 if let Err(e) = create_player_result {
                     println!("{}", e);
-                    player_tx.send((None, None)).ok();
+                    response_sender.send((None, None)).ok();
                     // don't stop server because player limit may have been reached
                     return false;
                 }
@@ -197,11 +204,11 @@ impl DBHandler {
                         if paired {
                             // don't stop server on send fail, may have timed
                             // out and dropped the receiver
-                            player_tx.send((Some(player_id), Some(is_cyan))).ok();
+                            response_sender.send((Some(player_id), Some(is_cyan))).ok();
                         } else {
                             // don't stop server on send fail, may have timed
                             // out and dropped the receiver
-                            player_tx.send((Some(player_id), None)).ok();
+                            response_sender.send((Some(player_id), None)).ok();
                         }
                     } else {
                         println!("Internal error, created player doesn't exist");
@@ -341,7 +348,11 @@ impl DBHandler {
         Ok(())
     }
 
-    fn create_new_player(&self, conn: Option<&Connection>) -> Result<u32, String> {
+    fn create_new_player(
+        &self,
+        conn: Option<&Connection>,
+        phrase: Option<String>,
+    ) -> Result<u32, String> {
         let mut _conn_result = Err(String::new());
         let conn = if conn.is_none() {
             _conn_result = self.get_conn(DBFirstRun::NotFirstRun);
@@ -380,7 +391,10 @@ impl DBHandler {
             }
         }
 
-        let insert_result = conn.execute("INSERT INTO players (id) VALUES (?);", [player_id]);
+        let insert_result = conn.execute(
+            "INSERT INTO players (id, phrase) VALUES (?, ?);",
+            params![player_id, phrase],
+        );
         if let Err(e) = insert_result {
             return Err(format!("Failed to insert player into db: {:?}", e));
         }
@@ -399,23 +413,39 @@ impl DBHandler {
 
         let mut to_pair: Option<u32> = None;
         let mut unpaired_players_stmt = conn
-            .prepare("SELECT id FROM players WHERE game_id ISNULL ORDER BY date_added;")
+            .prepare("SELECT id, phrase FROM players WHERE game_id ISNULL ORDER BY date_added;")
             .map_err(|e| format!("{:?}", e))?;
         let mut unpaired_players_rows = unpaired_players_stmt
             .query([])
             .map_err(|e| format!("{:?}", e))?;
+        let mut phrase_map: HashMap<String, u32> = HashMap::new();
         while let Some(row) = unpaired_players_rows
             .next()
             .map_err(|e| format!("{:?}", e))?
         {
-            if to_pair.is_none() {
-                to_pair = Some(row.get(0).map_err(|e| format!("{:?}", e))?);
+            if let Ok(phrase_text) = row.get::<usize, String>(1) {
+                // pair players with matching phrases
+                if let Some(matching_player_id) = phrase_map.get(&phrase_text) {
+                    let players: [u32; 2] = [
+                        *matching_player_id,
+                        row.get(0).map_err(|e| format!("{:?}", e))?,
+                    ];
+                    self.create_game(Some(conn), &players)?;
+                    phrase_map.remove(&phrase_text);
+                } else {
+                    phrase_map.insert(phrase_text, row.get(0).map_err(|e| format!("{:?}", e))?);
+                }
             } else {
-                let players: [u32; 2] = [
-                    to_pair.take().unwrap(),
-                    row.get(0).map_err(|e| format!("{:?}", e))?,
-                ];
-                self.create_game(Some(conn), &players)?;
+                // pair players that did not use a phrase
+                if to_pair.is_none() {
+                    to_pair = Some(row.get(0).map_err(|e| format!("{:?}", e))?);
+                } else {
+                    let players: [u32; 2] = [
+                        to_pair.take().unwrap(),
+                        row.get(0).map_err(|e| format!("{:?}", e))?,
+                    ];
+                    self.create_game(Some(conn), &players)?;
+                }
             }
         }
 

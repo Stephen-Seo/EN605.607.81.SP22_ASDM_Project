@@ -14,6 +14,15 @@ of the request, and the backend will respond with JSON.
     }
 ```
 
+An optional "phrase" parameter can be sent to match against other players with
+the same "phrase".
+```
+    {
+        "type": "pairing_request",
+        "phrase": "user_defined_phrase",
+    }
+```
+
 2. Check pairing status
 
 ```
