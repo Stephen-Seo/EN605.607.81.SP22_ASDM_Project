@@ -275,6 +275,7 @@ impl DBHandler {
                 CREATE TABLE players (id INTEGER PRIMARY KEY NOT NULL,
                     date_added TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
                     game_id INTEGER,
+                    phrase TEXT,
                     FOREIGN KEY(game_id) REFERENCES games(id) ON DELETE CASCADE);
             ",
                 [],
@@ -285,6 +286,9 @@ impl DBHandler {
                 }
             } else if first_run == DBFirstRun::FirstRun {
                 println!("\"players\" table exists");
+                if let Err(e) = self.db_check_migration(&conn) {
+                    println!("{}", e);
+                }
             }
 
             let result = conn.execute(
@@ -312,6 +316,29 @@ impl DBHandler {
         } else {
             Err(String::from("Failed to open connection"))
         }
+    }
+
+    fn db_check_migration(&self, conn: &Connection) -> Result<(), String> {
+        let mut table_entries_stmt = conn
+            .prepare("PRAGMA table_info(players);")
+            .map_err(|e| format!("{:?}", e))?;
+        let mut table_entries_rows = table_entries_stmt
+            .query([])
+            .map_err(|e| format!("{:?}", e))?;
+        // check if "phrase" column exists
+        let mut phrase_exists = false;
+        while let Some(row) = table_entries_rows.next().map_err(|e| format!("{:?}", e))? {
+            let column_name: String = row.get(1).map_err(|e| format!("{:?}", e))?;
+            if column_name.contains("phrase") {
+                phrase_exists = true;
+            }
+        }
+        if !phrase_exists {
+            conn.execute("ALTER TABLE players ADD COLUMN phrase TEXT;", [])
+                .map_err(|e| format!("{:?}", e))?;
+            println!("Added \"phrase\" column to \"players\" in db.");
+        }
+        Ok(())
     }
 
     fn create_new_player(&self, conn: Option<&Connection>) -> Result<u32, String> {

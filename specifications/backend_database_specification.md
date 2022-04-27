@@ -10,9 +10,14 @@ IDs, and paired state), and games in progress.
 PRAGMA foreign_keys = ON;
 
 // fields should be self explanatory for the players table
+
+// "phrase" is used to connect players with identical "phrase" text to make it
+// easier to connect with the player one wants to play with
+
 CREATE TABLE players (id INTEGER PRIMARY KEY NOT NULL,
                       date_added TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
                       game_id INTEGER,
+                      phrase TEXT,
                       FOREIGN KEY(game_id) REFERENCES games(id) ON DELETE CASCADE);
 
 // "cyan_player" and "magenta_player" should correspond to an existing entry in
