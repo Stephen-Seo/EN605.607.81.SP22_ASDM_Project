@@ -354,11 +354,11 @@ impl DBHandler {
         phrase: Option<String>,
     ) -> Result<u32, String> {
         let mut _conn_result = Err(String::new());
-        let conn = if conn.is_none() {
+        let conn = if let Some(c) = conn {
+            c
+        } else {
             _conn_result = self.get_conn(DBFirstRun::NotFirstRun);
             _conn_result.as_ref().unwrap()
-        } else {
-            conn.unwrap()
         };
 
         let row_result: Result<usize, _> =
@@ -404,11 +404,11 @@ impl DBHandler {
 
     fn pair_up_players(&self, conn: Option<&Connection>) -> Result<(), String> {
         let mut _conn_result = Err(String::new());
-        let conn = if conn.is_none() {
+        let conn = if let Some(c) = conn {
+            c
+        } else {
             _conn_result = self.get_conn(DBFirstRun::NotFirstRun);
             _conn_result.as_ref().unwrap()
-        } else {
-            conn.unwrap()
         };
 
         let mut to_pair: Option<u32> = None;
@@ -454,11 +454,11 @@ impl DBHandler {
 
     fn create_game(&self, conn: Option<&Connection>, players: &[u32; 2]) -> Result<u32, String> {
         let mut _conn_result = Err(String::new());
-        let conn = if conn.is_none() {
+        let conn = if let Some(c) = conn {
+            c
+        } else {
             _conn_result = self.get_conn(DBFirstRun::NotFirstRun);
             _conn_result.as_ref().unwrap()
-        } else {
-            conn.unwrap()
         };
 
         let mut game_id: u32 = thread_rng().gen();
@@ -505,11 +505,11 @@ impl DBHandler {
         }
 
         let mut _conn_result = Err(String::new());
-        let conn = if conn.is_none() {
+        let conn = if let Some(c) = conn {
+            c
+        } else {
             _conn_result = self.get_conn(DBFirstRun::NotFirstRun);
             _conn_result.as_ref().unwrap()
-        } else {
-            conn.unwrap()
         };
 
         let check_player_row = conn.query_row("SELECT games.cyan_player FROM players JOIN games where games.id = players.game_id AND players.id = ?;", [player_id], |row| row.get::<usize, u32>(0));
@@ -548,11 +548,11 @@ impl DBHandler {
         player_id: u32,
     ) -> Result<bool, String> {
         let mut _conn_result = Err(String::new());
-        let conn = if conn.is_none() {
+        let conn = if let Some(c) = conn {
+            c
+        } else {
             _conn_result = self.get_conn(DBFirstRun::NotFirstRun);
             _conn_result.as_ref().unwrap()
-        } else {
-            conn.unwrap()
         };
 
         let check_player_row: Result<u32, _> =
@@ -572,11 +572,11 @@ impl DBHandler {
         player_id: u32,
     ) -> Result<bool, String> {
         let mut _conn_result = Err(String::new());
-        let conn = if conn.is_none() {
+        let conn = if let Some(c) = conn {
+            c
+        } else {
             _conn_result = self.get_conn(DBFirstRun::NotFirstRun);
             _conn_result.as_ref().unwrap()
-        } else {
-            conn.unwrap()
         };
 
         let check_player_game_row: Result<u32, _> = conn.query_row(
@@ -596,11 +596,11 @@ impl DBHandler {
         player_id: u32,
     ) -> Result<BoardStateType, String> {
         let mut _conn_result = Err(String::new());
-        let conn = if conn.is_none() {
+        let conn = if let Some(c) = conn {
+            c
+        } else {
             _conn_result = self.get_conn(DBFirstRun::NotFirstRun);
             _conn_result.as_ref().unwrap()
-        } else {
-            conn.unwrap()
         };
 
         // TODO maybe handle "opponent_disconnected" case
@@ -671,11 +671,11 @@ impl DBHandler {
 
     fn disconnect_player(&self, conn: Option<&Connection>, player_id: u32) -> Result<(), String> {
         let mut _conn_result = Err(String::new());
-        let conn = if conn.is_none() {
+        let conn = if let Some(c) = conn {
+            c
+        } else {
             _conn_result = self.get_conn(DBFirstRun::NotFirstRun);
             _conn_result.as_ref().unwrap()
-        } else {
-            conn.unwrap()
         };
 
         let stmt_result = conn.execute("DELETE FROM players WHERE id = ?;", [player_id]);
@@ -688,11 +688,11 @@ impl DBHandler {
 
     fn clear_empty_games(&self, conn: Option<&Connection>) -> Result<(), String> {
         let mut _conn_result = Err(String::new());
-        let conn = if conn.is_none() {
+        let conn = if let Some(c) = conn {
+            c
+        } else {
             _conn_result = self.get_conn(DBFirstRun::NotFirstRun);
             _conn_result.as_ref().unwrap()
-        } else {
-            conn.unwrap()
         };
 
         // Only fails if no rows were removed, and that is not an issue
@@ -712,11 +712,11 @@ impl DBHandler {
         pos: usize,
     ) -> PlaceResultType {
         let mut _conn_result = Err(String::new());
-        let conn = if conn.is_none() {
+        let conn = if let Some(c) = conn {
+            c
+        } else {
             _conn_result = self.get_conn(DBFirstRun::NotFirstRun);
             _conn_result.as_ref().unwrap()
-        } else {
-            conn.unwrap()
         };
 
         // check if player exists
@@ -960,11 +960,11 @@ impl DBHandler {
         }
 
         let mut _conn_result = Err(String::new());
-        let conn = if conn.is_none() {
+        let conn = if let Some(c) = conn {
+            c
+        } else {
             _conn_result = self.get_conn(DBFirstRun::NotFirstRun);
             _conn_result.as_ref().unwrap()
-        } else {
-            conn.unwrap()
         };
 
         let is_cyan = status == 0;
@@ -1032,11 +1032,11 @@ impl DBHandler {
 
     fn cleanup_stale_games(&self, conn: Option<&Connection>) -> Result<(), String> {
         let mut _conn_result = Err(String::new());
-        let conn = if conn.is_none() {
+        let conn = if let Some(c) = conn {
+            c
+        } else {
             _conn_result = self.get_conn(DBFirstRun::NotFirstRun);
             _conn_result.as_ref().unwrap()
-        } else {
-            conn.unwrap()
         };
 
         conn.execute(
@@ -1050,11 +1050,11 @@ impl DBHandler {
 
     fn cleanup_stale_players(&self, conn: Option<&Connection>) -> Result<(), String> {
         let mut _conn_result = Err(String::new());
-        let conn = if conn.is_none() {
+        let conn = if let Some(c) = conn {
+            c
+        } else {
             _conn_result = self.get_conn(DBFirstRun::NotFirstRun);
             _conn_result.as_ref().unwrap()
-        } else {
-            conn.unwrap()
         };
 
         conn.execute(

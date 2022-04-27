@@ -282,17 +282,18 @@ impl Component for Slot {
                 current_turn,
                 phrase: _,
             } => {
-                if paired && current_side.is_some() {
-                    if current_side.as_ref().unwrap() == &current_turn {
-                        // notify Wrapper with picked slot
-                        if let Some(p) = ctx.link().get_parent() {
-                            p.clone().downcast::<Wrapper>().send_message(
-                                WrapperMsg::BackendRequest {
-                                    place: ctx.props().idx,
-                                },
-                            );
-                            return false;
-                        }
+                if paired
+                    && current_side.is_some()
+                    && current_side.as_ref().unwrap() == &current_turn
+                {
+                    // notify Wrapper with picked slot
+                    if let Some(p) = ctx.link().get_parent() {
+                        p.clone()
+                            .downcast::<Wrapper>()
+                            .send_message(WrapperMsg::BackendRequest {
+                                place: ctx.props().idx,
+                            });
+                        return false;
                     }
                 }
             }
@@ -542,29 +543,29 @@ impl Wrapper {
         let board = board_from_string(board_string.clone());
         for (idx, slot) in board.iter().enumerate() {
             let was_open =
-                element_has_class(&document, &format!("slot{}", idx), "open").unwrap_or(false);
-            element_remove_class(&document, &format!("slot{}", idx), "open").ok();
-            element_remove_class(&document, &format!("slot{}", idx), "placed").ok();
-            element_remove_class(&document, &format!("slot{}", idx), "win").ok();
-            element_remove_class(&document, &format!("slot{}", idx), "cyan").ok();
-            element_remove_class(&document, &format!("slot{}", idx), "magenta").ok();
+                element_has_class(document, &format!("slot{}", idx), "open").unwrap_or(false);
+            element_remove_class(document, &format!("slot{}", idx), "open").ok();
+            element_remove_class(document, &format!("slot{}", idx), "placed").ok();
+            element_remove_class(document, &format!("slot{}", idx), "win").ok();
+            element_remove_class(document, &format!("slot{}", idx), "cyan").ok();
+            element_remove_class(document, &format!("slot{}", idx), "magenta").ok();
             match slot.get() {
                 BoardState::Empty => {
-                    element_append_class(&document, &format!("slot{}", idx), "open").ok();
+                    element_append_class(document, &format!("slot{}", idx), "open").ok();
                 }
                 BoardState::Cyan => {
-                    element_append_class(&document, &format!("slot{}", idx), "cyan").ok();
+                    element_append_class(document, &format!("slot{}", idx), "cyan").ok();
                 }
                 BoardState::CyanWin => {
-                    element_append_class(&document, &format!("slot{}", idx), "cyan").ok();
-                    element_append_class(&document, &format!("slot{}", idx), "win").ok();
+                    element_append_class(document, &format!("slot{}", idx), "cyan").ok();
+                    element_append_class(document, &format!("slot{}", idx), "win").ok();
                 }
                 BoardState::Magenta => {
-                    element_append_class(&document, &format!("slot{}", idx), "magenta").ok();
+                    element_append_class(document, &format!("slot{}", idx), "magenta").ok();
                 }
                 BoardState::MagentaWin => {
-                    element_append_class(&document, &format!("slot{}", idx), "magenta").ok();
-                    element_append_class(&document, &format!("slot{}", idx), "win").ok();
+                    element_append_class(document, &format!("slot{}", idx), "magenta").ok();
+                    element_append_class(document, &format!("slot{}", idx), "win").ok();
                 }
             }
             let char_at_idx = board_string
@@ -573,11 +574,11 @@ impl Wrapper {
                 .expect("idx into board_string should be in range");
             if char_at_idx == 'f' || char_at_idx == 'h' {
                 if char_at_idx == 'f' {
-                    element_append_class(&document, &format!("slot{}", idx), "placed").ok();
+                    element_append_class(document, &format!("slot{}", idx), "placed").ok();
                 }
                 if was_open {
                     append_to_info_text(
-                        &document,
+                        document,
                         "info_text0",
                         &format!("<b class=\"cyan\">CyanPlayer placed at {}</b>", idx),
                         INFO_TEXT_MAX_ITEMS,
@@ -586,11 +587,11 @@ impl Wrapper {
                 }
             } else if char_at_idx == 'g' || char_at_idx == 'i' {
                 if char_at_idx == 'g' {
-                    element_append_class(&document, &format!("slot{}", idx), "placed").ok();
+                    element_append_class(document, &format!("slot{}", idx), "placed").ok();
                 }
                 if was_open {
                     append_to_info_text(
-                        &document,
+                        document,
                         "info_text0",
                         &format!("<b class=\"magenta\">MagentaPlayer placed at {}</b>", idx),
                         INFO_TEXT_MAX_ITEMS,
@@ -627,7 +628,7 @@ pub enum WrapperMsg {
 }
 
 impl WrapperMsg {
-    fn is_ai_pressed(self) -> bool {
+    fn is_ai_pressed(&self) -> bool {
         matches!(self, WrapperMsg::AIPressed(_))
     }
 }
