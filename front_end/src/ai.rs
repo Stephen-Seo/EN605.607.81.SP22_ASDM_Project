@@ -13,6 +13,8 @@ use crate::game_logic::check_win_draw;
 use crate::random_helper::get_seeded_random;
 use crate::state::{board_deep_clone, BoardState, BoardType, Turn};
 
+const AI_THIRD_MAX_UTILITY: f64 = 0.89;
+
 #[derive(Copy, Clone, Debug, PartialEq, Eq)]
 pub enum AIDifficulty {
     Easy,
@@ -176,25 +178,25 @@ fn get_utility_for_slot(player: Turn, slot: SlotChoice, board: &BoardType) -> Op
 
     // check if placing a token here connects 2 pieces
     if get_block_amount(player.get_opposite(), idx, 2, board) {
-        utility *= 1.5;
-        if utility >= 0.8 {
-            utility = 0.8;
+        utility *= 1.22;
+        if utility >= AI_THIRD_MAX_UTILITY {
+            utility = AI_THIRD_MAX_UTILITY;
         }
     }
 
     // check if placing a token here blocks 2 pieces
     if get_block_amount(player, idx, 2, board) {
-        utility *= 1.2;
-        if utility >= 0.8 {
-            utility = 0.8;
+        utility *= 1.11;
+        if utility >= AI_THIRD_MAX_UTILITY {
+            utility = AI_THIRD_MAX_UTILITY;
         }
     }
 
     // check if placing a token here connects 1 piece
     if get_block_amount(player.get_opposite(), idx, 1, board) {
-        utility *= 1.09;
-        if utility >= 0.8 {
-            utility = 0.8;
+        utility *= 1.05;
+        if utility >= AI_THIRD_MAX_UTILITY {
+            utility = AI_THIRD_MAX_UTILITY;
         }
     }
 
@@ -329,4 +331,25 @@ fn get_block_amount(player: Turn, idx: usize, amount: usize, board: &BoardType) 
 
     // exhausted all possible potential wins, therefore does not block a win
     false
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::state::new_empty_board;
+
+    use super::*;
+
+    #[test]
+    fn test_get_block_amount() {
+        let board = new_empty_board();
+        board[51].set(BoardState::Cyan);
+        board[52].set(BoardState::Cyan);
+        board[53].set(BoardState::Cyan);
+        assert!(!get_block_amount(Turn::MagentaPlayer, 50, 4, &board));
+        assert!(get_block_amount(Turn::MagentaPlayer, 50, 3, &board));
+        assert!(get_block_amount(Turn::MagentaPlayer, 50, 2, &board));
+        assert!(!get_block_amount(Turn::MagentaPlayer, 54, 4, &board));
+        assert!(get_block_amount(Turn::MagentaPlayer, 54, 3, &board));
+        assert!(get_block_amount(Turn::MagentaPlayer, 54, 2, &board));
+    }
 }
