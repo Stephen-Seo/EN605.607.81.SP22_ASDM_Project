@@ -528,9 +528,11 @@ pub fn string_from_board(board: BoardType, placed: usize) -> (String, Option<Boa
     if is_full && win_set.is_empty() {
         (board_string, Some(BoardState::Empty))
     } else if !win_set.is_empty() {
+        let winning_char: char =
+            board_string.chars().collect::<Vec<char>>()[*win_set.iter().next().unwrap()];
         (
             board_string.clone(),
-            if board_string.chars().collect::<Vec<char>>()[*win_set.iter().next().unwrap()] == 'd' {
+            if winning_char == 'd' || winning_char == 'h' {
                 Some(BoardState::CyanWin)
             } else {
                 Some(BoardState::MagentaWin)
@@ -615,5 +617,49 @@ mod tests {
             phrase: None,
         };
         assert!(state.is_networked_multiplayer());
+    }
+
+    #[test]
+    fn test_board_string() {
+        let board = new_empty_board();
+        board[49].set(BoardState::Cyan);
+        board[51].set(BoardState::Cyan);
+        board[52].set(BoardState::Cyan);
+        board[53].set(BoardState::Cyan);
+        board[54].set(BoardState::Cyan);
+        board[55].set(BoardState::Magenta);
+
+        let (board_string, state_opt) = string_from_board(board.clone(), 51);
+
+        let board_chars: Vec<char> = board_string.chars().collect();
+        assert_eq!(board_chars[49], 'b');
+        assert_eq!(board_chars[50], 'a');
+        assert_eq!(board_chars[51], 'h');
+        assert_eq!(board_chars[52], 'd');
+        assert_eq!(board_chars[53], 'd');
+        assert_eq!(board_chars[54], 'd');
+        assert_eq!(board_chars[55], 'c');
+
+        assert_eq!(state_opt, Some(BoardState::CyanWin));
+
+        board[49].set(BoardState::Magenta);
+        board[51].set(BoardState::Magenta);
+        board[52].set(BoardState::Magenta);
+        board[53].set(BoardState::Magenta);
+        board[54].set(BoardState::Magenta);
+        board[55].set(BoardState::Cyan);
+
+        let (board_string, state_opt) = string_from_board(board.clone(), 51);
+
+        let board_chars: Vec<char> = board_string.chars().collect();
+        assert_eq!(board_chars[49], 'c');
+        assert_eq!(board_chars[50], 'a');
+        assert_eq!(board_chars[51], 'i');
+        assert_eq!(board_chars[52], 'e');
+        assert_eq!(board_chars[53], 'e');
+        assert_eq!(board_chars[54], 'e');
+        assert_eq!(board_chars[55], 'b');
+
+        assert_eq!(state_opt, Some(BoardState::MagentaWin));
     }
 }
