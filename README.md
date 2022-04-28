@@ -26,6 +26,11 @@ The directory `plans` contains the release plans.
 The directory `pictures` holds pertinent images to the project. It includes the
 "Simple Model" of the project.
 
+## Tags
+
+The git repository is tagged per Sprint and per Day. [One can visualize the
+progress here.](https://git.seodisparate.com/stephenseo/EN605.607.81.SP22_ASDM_Project/graph)
+
 ## What is Four-Line Dropper?
 
 Four-Line Dropper is a game where two players take turns dropping tokens into
