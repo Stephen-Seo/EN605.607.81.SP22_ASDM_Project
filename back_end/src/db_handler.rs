@@ -11,10 +11,9 @@ use crate::constants::{
     BACKEND_CLEANUP_INTERVAL_SECONDS, COLS, GAME_CLEANUP_TIMEOUT, PLAYER_CLEANUP_TIMEOUT,
     PLAYER_COUNT_LIMIT, ROWS, TURN_SECONDS,
 };
-use crate::state::{board_from_string, new_string_board, string_from_board, BoardState, Turn};
+use crate::state::{board_from_string, new_string_board, string_from_board, BoardState, Turn, EmoteEnum};
 
 use std::collections::HashMap;
-use std::fmt::Display;
 use std::sync::mpsc::{Receiver, RecvTimeoutError, SyncSender};
 use std::time::{Duration, Instant};
 use std::{fmt, thread};
@@ -115,50 +114,6 @@ impl fmt::Display for DBPlaceError {
             DBPlaceError::OpponentDisconnected => write!(f, "opponent_disconnected"),
             DBPlaceError::UnknownID => write!(f, "unknown_id"),
             DBPlaceError::InternalError => write!(f, "internal_error"),
-        }
-    }
-}
-
-#[derive(Copy, Clone, PartialEq, Eq, Debug)]
-pub enum EmoteEnum {
-    Smile,
-    Neutral,
-    Frown,
-    Think,
-}
-
-impl Display for EmoteEnum {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        match *self {
-            EmoteEnum::Smile => f.write_str("smile"),
-            EmoteEnum::Neutral => f.write_str("neutral"),
-            EmoteEnum::Frown => f.write_str("frown"),
-            EmoteEnum::Think => f.write_str("think"),
-        }
-    }
-}
-
-impl TryFrom<&str> for EmoteEnum {
-    type Error = ();
-
-    fn try_from(value: &str) -> Result<Self, Self::Error> {
-        match value.to_lowercase().as_str() {
-            "smile" => Ok(Self::Smile),
-            "neutral" => Ok(Self::Neutral),
-            "frown" => Ok(Self::Frown),
-            "think" => Ok(Self::Think),
-            _ => Err(()),
-        }
-    }
-}
-
-impl From<EmoteEnum> for String {
-    fn from(e: EmoteEnum) -> Self {
-        match e {
-            EmoteEnum::Smile => "smile".into(),
-            EmoteEnum::Neutral => "neutral".into(),
-            EmoteEnum::Frown => "frown".into(),
-            EmoteEnum::Think => "think".into(),
         }
     }
 }

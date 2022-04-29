@@ -8,7 +8,7 @@
 //You should have received a copy of the GNU General Public License along with this program. If not, see <https://www.gnu.org/licenses/>.
 use crate::{
     constants::BACKEND_PHRASE_MAX_LENGTH,
-    db_handler::{CheckPairingType, DBHandlerRequest, EmoteEnum, GetIDSenderType},
+    db_handler::{CheckPairingType, DBHandlerRequest, GetIDSenderType}, state::EmoteEnum,
 };
 
 use std::{

@@ -563,6 +563,7 @@ pub struct GameStateResponse {
     pub r#type: String,
     pub status: String,
     pub board: Option<String>,
+    pub peer_emote: Option<String>,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -591,6 +592,50 @@ pub enum PlacedEnum {
     Illegal,
     NotYourTurn,
     Other(NetworkedGameState),
+}
+
+#[derive(Copy, Clone, PartialEq, Eq, Debug)]
+pub enum EmoteEnum {
+    Smile,
+    Neutral,
+    Frown,
+    Think,
+}
+
+impl Display for EmoteEnum {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match *self {
+            EmoteEnum::Smile => f.write_str("smile"),
+            EmoteEnum::Neutral => f.write_str("neutral"),
+            EmoteEnum::Frown => f.write_str("frown"),
+            EmoteEnum::Think => f.write_str("think"),
+        }
+    }
+}
+
+impl TryFrom<&str> for EmoteEnum {
+    type Error = ();
+
+    fn try_from(value: &str) -> Result<Self, Self::Error> {
+        match value.to_lowercase().as_str() {
+            "smile" => Ok(Self::Smile),
+            "neutral" => Ok(Self::Neutral),
+            "frown" => Ok(Self::Frown),
+            "think" => Ok(Self::Think),
+            _ => Err(()),
+        }
+    }
+}
+
+impl From<EmoteEnum> for String {
+    fn from(e: EmoteEnum) -> Self {
+        match e {
+            EmoteEnum::Smile => "smile".into(),
+            EmoteEnum::Neutral => "neutral".into(),
+            EmoteEnum::Frown => "frown".into(),
+            EmoteEnum::Think => "think".into(),
+        }
+    }
 }
 
 #[cfg(test)]
@@ -629,7 +674,7 @@ mod tests {
         board[54].set(BoardState::Cyan);
         board[55].set(BoardState::Magenta);
 
-        let (board_string, state_opt) = string_from_board(board.clone(), 51);
+        let (board_string, state_opt) = string_from_board(&board, 51);
 
         let board_chars: Vec<char> = board_string.chars().collect();
         assert_eq!(board_chars[49], 'b');
@@ -649,7 +694,7 @@ mod tests {
         board[54].set(BoardState::Magenta);
         board[55].set(BoardState::Cyan);
 
-        let (board_string, state_opt) = string_from_board(board.clone(), 51);
+        let (board_string, state_opt) = string_from_board(&board, 51);
 
         let board_chars: Vec<char> = board_string.chars().collect();
         assert_eq!(board_chars[49], 'c');
