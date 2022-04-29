@@ -630,6 +630,20 @@ impl Wrapper {
             }
         }
     }
+
+    fn send_disconnect(&mut self) {
+        if let Some(id) = self.player_id.take() {
+            let function = Function::new_no_args(&format!(
+                "
+                let xhr = new XMLHttpRequest();
+                xhr.open('POST', '{}');
+                xhr.send('{{\"type\": \"disconnect\", \"id\": {}}}');
+            ",
+                BACKEND_URL, id
+            ));
+            function.call0(&function).ok();
+        }
+    }
 }
 
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -1264,17 +1278,7 @@ impl Component for Wrapper {
             WrapperMsg::StartBackendTickImpl => {
                 // If previous id is still stored, request disconnect so that a
                 // new id can be received
-                if let Some(id) = self.player_id.take() {
-                    let function = Function::new_no_args(&format!(
-                        "
-                        let xhr = new XMLHttpRequest();
-                        xhr.open('POST', '{}');
-                        xhr.send('{{\"type\": \"disconnect\", \"id\": {}}}');
-                    ",
-                        BACKEND_URL, id
-                    ));
-                    function.call0(&function).ok();
-                }
+                self.send_disconnect();
                 self.do_backend_tick = true;
                 ctx.link().send_message(WrapperMsg::BackendTick);
             }
@@ -1283,17 +1287,7 @@ impl Component for Wrapper {
                     shared.game_state.borrow().is_networked_multiplayer();
                 if !self.do_backend_tick || !is_networked_multiplayer {
                     // disconnect id if backend tick is to be stopped
-                    if let Some(id) = self.player_id.take() {
-                        let function = Function::new_no_args(&format!(
-                            "
-                            let xhr = new XMLHttpRequest();
-                            xhr.open('POST', '{}');
-                            xhr.send('{{\"type\": \"disconnect\", \"id\": {}}}');
-                        ",
-                            BACKEND_URL, id
-                        ));
-                        function.call0(&function).ok();
-                    }
+                    self.send_disconnect();
                     return false;
                 }
 
@@ -1714,17 +1708,7 @@ impl Component for Wrapper {
                     element_remove_class(&document, &format!("slot{}", idx), "magenta").ok();
                     element_append_class(&document, &format!("slot{}", idx), "open").ok();
                 }
-                if let Some(id) = self.player_id.take() {
-                    let function = Function::new_no_args(&format!(
-                        "
-                        let xhr = new XMLHttpRequest();
-                        xhr.open('POST', '{}');
-                        xhr.send('{{\"type\": \"disconnect\", \"id\": {}}}');
-                    ",
-                        BACKEND_URL, id
-                    ));
-                    function.call0(&function).ok();
-                }
+                self.send_disconnect();
                 self.place_request = None;
                 element_remove_class(&document, "mainmenu", "hidden_menu").ok();
                 element_append_class(&document, "mainmenu", "menu").ok();
