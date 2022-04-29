@@ -23,12 +23,12 @@ use crate::state::{
     PlacedEnum, SharedState, Turn,
 };
 
-use std::cell::Cell;
+use std::cell::{Cell, RefCell};
 use std::collections::HashMap;
 use std::rc::Rc;
 
 use js_sys::{Function, Promise};
-use web_sys::{AddEventListenerOptions, Document, HtmlInputElement};
+use web_sys::{AddEventListenerOptions, Document, EventListenerOptions, HtmlInputElement};
 
 use wasm_bindgen_futures::JsFuture;
 
@@ -321,6 +321,7 @@ pub struct Wrapper {
     player_id: Option<u32>,
     place_request: Option<u8>,
     do_backend_tick: bool,
+    cleanup_id_callback: Rc<RefCell<Option<Function>>>,
 }
 
 impl Wrapper {
@@ -602,6 +603,33 @@ impl Wrapper {
             shared.board[idx].set(slot.get());
         }
     }
+
+    fn cleanup_disconnect_callbacks(&mut self) {
+        let window = web_sys::window().expect("Should be able to get window");
+        // if previously set disconnect callback is set, unset it
+        if let Some(callback) = self.cleanup_id_callback.borrow_mut().take() {
+            let mut options = EventListenerOptions::new();
+            options.capture(true);
+            if window
+                .remove_event_listener_with_callback_and_event_listener_options(
+                    "pagehide", &callback, &options,
+                )
+                .is_err()
+            {
+                log::warn!("Failed to remove event listener for disconnect ID on pagehide");
+            }
+            if window
+                .remove_event_listener_with_callback_and_event_listener_options(
+                    "beforeunload",
+                    &callback,
+                    &options,
+                )
+                .is_err()
+            {
+                log::warn!("Failed to remove event listener for disconnect ID on beforeunload");
+            }
+        }
+    }
 }
 
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -642,6 +670,7 @@ impl Component for Wrapper {
             player_id: None,
             place_request: None,
             do_backend_tick: true,
+            cleanup_id_callback: Rc::new(RefCell::new(None)),
         }
     }
 
@@ -1307,11 +1336,16 @@ impl Component for Wrapper {
                         log::warn!("{}", string);
                     }
                     BREnum::GotID(id, turn_opt) => {
+                        self.cleanup_disconnect_callbacks();
+
                         // set reset and disconnect on page "unload"
                         let player_id = id;
+                        let listener_function: Rc<RefCell<Option<Function>>> =
+                            self.cleanup_id_callback.clone();
                         ctx.link().send_future(async move {
+                            let listener_function = listener_function;
                             let promise =
-                                Promise::new(&mut |resolve: js_sys::Function, _reject| {
+                                Promise::new(&mut move |resolve: js_sys::Function, _reject| {
                                     let window =
                                         web_sys::window().expect("Should be able to get window");
                                     let outer_function = Function::new_with_args(
@@ -1328,17 +1362,18 @@ impl Component for Wrapper {
                                     );
                                     let binded_func =
                                         outer_function.bind1(&outer_function, &resolve);
+                                    listener_function.replace(Some(binded_func));
                                     window
                                         .add_event_listener_with_callback_and_add_event_listener_options(
                                             "pagehide",
-                                            &binded_func,
+                                            listener_function.borrow().as_ref().unwrap(),
                                             AddEventListenerOptions::new().capture(true).once(true)
                                         )
                                         .expect("Should be able to set \"pagehide\" callback");
                                     window
                                         .add_event_listener_with_callback_and_add_event_listener_options(
                                             "beforeunload",
-                                            &binded_func,
+                                            listener_function.borrow().as_ref().unwrap(),
                                             AddEventListenerOptions::new().capture(true).once(true)
                                         )
                                         .expect("Should be able to set \"beforeunload\" callback");
@@ -1708,6 +1743,7 @@ impl Component for Wrapper {
                 )
                 .ok();
                 self.do_backend_tick = false;
+                self.cleanup_disconnect_callbacks();
             }
         } // match (msg)
 
