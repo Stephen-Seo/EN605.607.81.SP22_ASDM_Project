@@ -256,13 +256,43 @@ impl Component for EmoteButton {
         }
     }
 
-    fn update(&mut self, ctx: &Context<Self>, msg: Self::Message) -> bool {
-        ctx.link()
-            .get_parent()
-            .expect("Wrapper should be parent of EmoteButton")
-            .clone()
-            .downcast::<Wrapper>()
-            .send_message(WrapperMsg::SendEmote(ctx.props().emote));
+    fn update(&mut self, ctx: &Context<Self>, _msg: Self::Message) -> bool {
+        let (shared, _) = ctx
+            .link()
+            .context::<SharedState>(Callback::noop())
+            .expect("state to be set");
+        let (_window, document) =
+            get_window_document().expect("Should be able to get Window and Document");
+
+        if shared.game_state.borrow().is_networked_multiplayer() {
+            ctx.link()
+                .get_parent()
+                .expect("Wrapper should be parent of EmoteButton")
+                .clone()
+                .downcast::<Wrapper>()
+                .send_message(WrapperMsg::SendEmote(ctx.props().emote));
+        } else if let Some(side) = shared.game_state.borrow().get_singleplayer_current_side() {
+            append_to_info_text(
+                &document,
+                "info_text0",
+                &format!(
+                    "<b class=\"{}\">{} emoted with <b class=\"emote\">{}</b></b>",
+                    side.get_color(),
+                    side,
+                    ctx.props().emote.get_unicode()
+                ),
+                INFO_TEXT_MAX_ITEMS,
+            )
+            .ok();
+        } else {
+            append_to_info_text(
+                &document,
+                "info_text0",
+                "<b>Cannot use emotes at this time</b>",
+                INFO_TEXT_MAX_ITEMS,
+            )
+            .ok();
+        }
         true
     }
 }
@@ -1508,7 +1538,7 @@ impl Component for Wrapper {
                                     &document,
                                     "info_text0",
                                     &format!(
-                                        "<b class=\"{}\">{} sent <b class=\"emote\">{}</p></b>",
+                                        "<b class=\"{}\">{} sent <b class=\"emote\">{}</b></b>",
                                         current_side.get_opposite().get_color(),
                                         current_side.get_opposite(),
                                         emote_enum.get_unicode()
@@ -1854,7 +1884,7 @@ impl Component for Wrapper {
                         &document,
                         "info_text0",
                         &format!(
-                            "<b class=\"{}\">{} sent <b class=\"emote\">{}</p></b>",
+                            "<b class=\"{}\">{} sent <b class=\"emote\">{}</b></b>",
                             current_side.get_color(),
                             current_side,
                             emote.get_unicode()

@@ -123,6 +123,14 @@ impl GameState {
             None
         }
     }
+
+    pub fn get_singleplayer_current_side(&self) -> Option<Turn> {
+        if let GameState::SinglePlayer(turn, _) = *self {
+            Some(turn)
+        } else {
+            None
+        }
+    }
 }
 
 impl Default for GameState {
