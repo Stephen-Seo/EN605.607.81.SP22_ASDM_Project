@@ -11,7 +11,9 @@ use crate::constants::{
     BACKEND_CLEANUP_INTERVAL_SECONDS, COLS, GAME_CLEANUP_TIMEOUT, PLAYER_CLEANUP_TIMEOUT,
     PLAYER_COUNT_LIMIT, ROWS, TURN_SECONDS,
 };
-use crate::state::{board_from_string, new_string_board, string_from_board, BoardState, Turn, EmoteEnum};
+use crate::state::{
+    board_from_string, new_string_board, string_from_board, BoardState, EmoteEnum, Turn,
+};
 
 use std::collections::HashMap;
 use std::sync::mpsc::{Receiver, RecvTimeoutError, SyncSender};
@@ -1159,7 +1161,7 @@ impl DBHandler {
             _conn_result.as_ref().unwrap()
         };
 
-        let mut prepared_stmt = conn.prepare("SELECT games.cyan_player, games.magenta_player FROM games JOIN players WHERE players.id = ?, games.id = players.game_id;")
+        let mut prepared_stmt = conn.prepare("SELECT games.cyan_player, games.magenta_player FROM games JOIN players WHERE players.id = ? AND games.id = players.game_id;")
             .map_err(|_| String::from("Failed to prepare db query for getting opponent id for sending emote"))?;
         let row_result: Result<(Option<u32>, Option<u32>), RusqliteError> =
             prepared_stmt.query_row([sender_id], |row| Ok((row.get(0).ok(), row.get(1).ok())));

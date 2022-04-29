@@ -98,20 +98,6 @@ impl GameState {
         }
     }
 
-    pub fn get_network_current_side(&self) -> Option<Turn> {
-        if let GameState::NetworkedMultiplayer {
-            paired: _,
-            current_side,
-            current_turn: _,
-            phrase: _,
-        } = *self
-        {
-            current_side
-        } else {
-            None
-        }
-    }
-
     pub fn set_networked_current_turn(&mut self, turn: Turn) {
         if let GameState::NetworkedMultiplayer {
             paired: _,
@@ -573,6 +559,12 @@ pub struct PlaceTokenResponse {
     pub board: String,
 }
 
+#[derive(Debug, Serialize, Deserialize)]
+pub struct SendEmoteRequestResponse {
+    pub r#type: String,
+    pub status: String,
+}
+
 #[derive(Copy, Clone, Debug, PartialEq, Eq)]
 pub enum NetworkedGameState {
     CyanTurn,
@@ -634,6 +626,17 @@ impl From<EmoteEnum> for String {
             EmoteEnum::Neutral => "neutral".into(),
             EmoteEnum::Frown => "frown".into(),
             EmoteEnum::Think => "think".into(),
+        }
+    }
+}
+
+impl EmoteEnum {
+    pub fn get_unicode(&self) -> char {
+        match *self {
+            EmoteEnum::Smile => '🙂',
+            EmoteEnum::Neutral => '😐',
+            EmoteEnum::Frown => '🙁',
+            EmoteEnum::Think => '🤔',
         }
     }
 }

@@ -18,9 +18,9 @@ use crate::html_helper::{
 };
 use crate::random_helper::get_seeded_random;
 use crate::state::{
-    board_from_string, BoardState, GameState, GameStateResponse, MainMenuMessage,
+    board_from_string, BoardState, EmoteEnum, GameState, GameStateResponse, MainMenuMessage,
     NetworkedGameState, PairingRequestResponse, PairingStatusResponse, PlaceTokenResponse,
-    PlacedEnum, SharedState, Turn,
+    PlacedEnum, SendEmoteRequestResponse, SharedState, Turn,
 };
 
 use std::cell::{Cell, RefCell};
@@ -223,6 +223,46 @@ impl Component for ResetButton {
             .clone()
             .downcast::<Wrapper>()
             .send_message(WrapperMsg::Reset);
+        true
+    }
+}
+
+struct EmoteButton {}
+
+enum EmoteButtonMsg {
+    Pressed,
+}
+
+#[derive(Copy, Clone, Debug, PartialEq, Eq, Properties)]
+struct EmoteButtonProperties {
+    emote: EmoteEnum,
+}
+
+impl Component for EmoteButton {
+    type Message = EmoteButtonMsg;
+    type Properties = EmoteButtonProperties;
+
+    fn create(_ctx: &Context<Self>) -> Self {
+        Self {}
+    }
+
+    fn view(&self, ctx: &Context<Self>) -> Html {
+        let onclick = ctx.link().callback(|_| EmoteButtonMsg::Pressed);
+        let emote_id = format!("emote_{}", ctx.props().emote);
+        html! {
+            <button class={"emote"} id={emote_id} onclick={onclick}>
+                {ctx.props().emote.get_unicode()}
+            </button>
+        }
+    }
+
+    fn update(&mut self, ctx: &Context<Self>, msg: Self::Message) -> bool {
+        ctx.link()
+            .get_parent()
+            .expect("Wrapper should be parent of EmoteButton")
+            .clone()
+            .downcast::<Wrapper>()
+            .send_message(WrapperMsg::SendEmote(ctx.props().emote));
         true
     }
 }
@@ -485,7 +525,11 @@ impl Wrapper {
                 _ => NetworkedGameState::InternalError,
             };
 
-            WrapperMsg::BackendResponse(BREnum::GotStatus(networked_game_state, response.board))
+            WrapperMsg::BackendResponse(BREnum::GotStatus(
+                networked_game_state,
+                response.board,
+                response.peer_emote,
+            ))
         });
     }
 
@@ -651,7 +695,8 @@ pub enum BREnum {
     Error(String),
     GotID(u32, Option<Turn>),
     GotPairing(Option<Turn>),
-    GotStatus(NetworkedGameState, Option<String>),
+    /// Second opt string is board_str, third opt string is received emote
+    GotStatus(NetworkedGameState, Option<String>, Option<String>),
     GotPlaced(PlacedEnum, String),
 }
 
@@ -667,6 +712,8 @@ pub enum WrapperMsg {
     BackendRequest { place: u8 },
     BackendResponse(BREnum),
     Reset,
+    SendEmote(EmoteEnum),
+    SentEmote(EmoteEnum),
 }
 
 impl WrapperMsg {
@@ -697,6 +744,12 @@ impl Component for Wrapper {
             <div class="wrapper">
                 <MainMenu />
                 <ResetButton />
+                <div class="emote_wrapper">
+                    <EmoteButton emote={EmoteEnum::Smile} />
+                    <EmoteButton emote={EmoteEnum::Neutral} />
+                    <EmoteButton emote={EmoteEnum::Frown} />
+                    <EmoteButton emote={EmoteEnum::Think} />
+                </div>
                 <Slot idx=0 state={shared.board[0].clone()} placed={shared.placed[0].clone()} />
                 <Slot idx=1 state={shared.board[1].clone()} placed={shared.placed[1].clone()} />
                 <Slot idx=2 state={shared.board[2].clone()} placed={shared.placed[2].clone()} />
@@ -1286,7 +1339,6 @@ impl Component for Wrapper {
                 let is_networked_multiplayer =
                     shared.game_state.borrow().is_networked_multiplayer();
                 if !self.do_backend_tick || !is_networked_multiplayer {
-                    // disconnect id if backend tick is to be stopped
                     self.send_disconnect();
                     self.cleanup_disconnect_callbacks();
                     return false;
@@ -1444,7 +1496,41 @@ impl Component for Wrapper {
                             .ok();
                         }
                     }
-                    BREnum::GotStatus(networked_game_state, board_opt) => {
+                    BREnum::GotStatus(networked_game_state, board_opt, emote_opt) => {
+                        let current_side = shared
+                            .game_state
+                            .borrow()
+                            .get_networked_current_side()
+                            .expect("Should be Networked mode");
+                        if let Some(emote_string) = emote_opt {
+                            if let Ok(emote_enum) = EmoteEnum::try_from(emote_string.as_str()) {
+                                append_to_info_text(
+                                    &document,
+                                    "info_text0",
+                                    &format!(
+                                        "<b class=\"{}\">{} sent <b class=\"emote\">{}</p></b>",
+                                        current_side.get_opposite().get_color(),
+                                        current_side.get_opposite(),
+                                        emote_enum.get_unicode()
+                                    ),
+                                    INFO_TEXT_MAX_ITEMS,
+                                )
+                                .ok();
+                            } else {
+                                append_to_info_text(
+                                    &document,
+                                    "info_text0",
+                                    &format!(
+                                        "<b class=\"{}\">{} sent invalid emote</b>",
+                                        current_side.get_color(),
+                                        current_side.get_opposite()
+                                    ),
+                                    INFO_TEXT_MAX_ITEMS,
+                                )
+                                .ok();
+                            }
+                        }
+
                         if let Some(board_string) = board_opt {
                             self.update_board_from_string(&shared, &document, board_string);
                         }
@@ -1461,7 +1547,7 @@ impl Component for Wrapper {
                                         &format!(
                                             "<b class=\"cyan\">It is CyanPlayer's ({}) Turn</b>",
                                             if current_game_state
-                                                .get_network_current_side()
+                                                .get_networked_current_side()
                                                 .unwrap_or(Turn::CyanPlayer)
                                                 == Turn::CyanPlayer
                                             {
@@ -1485,7 +1571,7 @@ impl Component for Wrapper {
                                 "info_text1",
                                 &format!(
                                     "<b class=\"magenta\">It is MagentaPlayer's ({}) Turn</b>",
-                                    if current_game_state.get_network_current_side().unwrap_or(Turn::CyanPlayer) == Turn::MagentaPlayer
+                                    if current_game_state.get_networked_current_side().unwrap_or(Turn::CyanPlayer) == Turn::MagentaPlayer
                                     {
                                         "your"
                                     } else {
@@ -1729,6 +1815,54 @@ impl Component for Wrapper {
                 .ok();
                 self.do_backend_tick = false;
                 self.cleanup_disconnect_callbacks();
+            }
+            WrapperMsg::SendEmote(emote) => {
+                if self.player_id.is_none() {
+                    return false;
+                }
+                let emote = emote;
+                let player_id = self.player_id.unwrap();
+                ctx.link().send_future(async move {
+                    let mut json_entries = HashMap::new();
+                    json_entries.insert("id".into(), format!("{}", player_id));
+                    json_entries.insert("type".into(), "send_emote".into());
+                    json_entries.insert("emote".into(), emote.to_string());
+
+                    let send_to_backend_result = send_to_backend(json_entries).await;
+                    if let Err(e) = send_to_backend_result {
+                        return WrapperMsg::BackendResponse(BREnum::Error(format!("{:?}", e)));
+                    }
+
+                    let request_result: Result<SendEmoteRequestResponse, _> =
+                        serde_json::from_str(&send_to_backend_result.unwrap());
+                    if let Err(e) = request_result {
+                        return WrapperMsg::BackendResponse(BREnum::Error(format!("{:?}", e)));
+                    }
+                    let response = request_result.unwrap();
+
+                    if response.status.as_str() == "ok" {
+                        WrapperMsg::SentEmote(emote)
+                    } else {
+                        WrapperMsg::BackendResponse(BREnum::Error(format!("{:?}", response.status)))
+                    }
+                });
+            }
+            WrapperMsg::SentEmote(emote) => {
+                let current_side_opt = shared.game_state.borrow().get_networked_current_side();
+                if let Some(current_side) = current_side_opt {
+                    append_to_info_text(
+                        &document,
+                        "info_text0",
+                        &format!(
+                            "<b class=\"{}\">{} sent <b class=\"emote\">{}</p></b>",
+                            current_side.get_color(),
+                            current_side,
+                            emote.get_unicode()
+                        ),
+                        INFO_TEXT_MAX_ITEMS,
+                    )
+                    .ok();
+                }
             }
         } // match (msg)
 
