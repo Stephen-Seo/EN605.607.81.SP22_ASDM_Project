@@ -60,6 +60,16 @@ the same "phrase".
     }
 ```
 
+6. Chat Emote Send:
+
+```
+    {
+        "id": "id given by backend",
+        "type": "send_emote",
+        "emote": "smile", // or "frown", or "neutral", or "think"
+    }
+```
+
 ## Responses
 
 1. Request ID Response
@@ -149,6 +159,8 @@ then the back-end will respond with "too\_many\_players".
                               // g - magenta placed
                               // h - cyan winning and placed piece
                               // i - magenta winning and placed piece
+        // optional "peer_emote" entry is message from opponent
+        "peer_emote": "smile" // or "frown", or "neutral", or "think"
     }
 ```
 
