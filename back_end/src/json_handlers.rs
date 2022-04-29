@@ -8,7 +8,7 @@
 //You should have received a copy of the GNU General Public License along with this program. If not, see <https://www.gnu.org/licenses/>.
 use crate::{
     constants::BACKEND_PHRASE_MAX_LENGTH,
-    db_handler::{CheckPairingType, DBHandlerRequest, GetIDSenderType},
+    db_handler::{CheckPairingType, DBHandlerRequest, EmoteEnum, GetIDSenderType},
 };
 
 use std::{
@@ -32,6 +32,7 @@ pub fn handle_json(
             "place_token" => handle_place_token(root, tx),
             "disconnect" => handle_disconnect(root, tx),
             "game_state" => handle_game_state(root, tx),
+            "send_emote" => handle_send_emote(root, tx),
             _ => Err("{\"type\":\"invalid_type\"}".into()),
         }
     } else {
@@ -264,12 +265,21 @@ fn handle_game_state(root: Value, tx: SyncSender<DBHandlerRequest>) -> Result<St
         return Err("{\"type\":\"game_state\", \"status\":\"internal_error\"}".into());
     }
 
-    if let Ok((db_game_state, board_string_opt)) = resp_rx.recv_timeout(DB_REQUEST_TIMEOUT) {
+    if let Ok((db_game_state, board_string_opt, received_emote_opt)) =
+        resp_rx.recv_timeout(DB_REQUEST_TIMEOUT)
+    {
         if let Some(board_string) = board_string_opt {
-            Ok(format!(
-                "{{\"type\":\"game_state\", \"status\":\"{}\", \"board\":\"{}\"}}",
-                db_game_state, board_string
-            ))
+            if let Some(emote) = received_emote_opt {
+                Ok(format!(
+                    "{{\"type\":\"game_state\", \"status\":\"{}\", \"board\":\"{}\", \"peer_emote\": \"{}\"}}",
+                    db_game_state, board_string, emote
+                ))
+            } else {
+                Ok(format!(
+                    "{{\"type\":\"game_state\", \"status\":\"{}\", \"board\":\"{}\"}}",
+                    db_game_state, board_string
+                ))
+            }
         } else {
             Ok(format!(
                 "{{\"type\":\"game_state\", \"status\":\"{}\"}}",
@@ -278,5 +288,58 @@ fn handle_game_state(root: Value, tx: SyncSender<DBHandlerRequest>) -> Result<St
         }
     } else {
         Err("{\"type\":\"game_state\", \"status\":\"internal_error_timeout\"}".into())
+    }
+}
+
+fn handle_send_emote(root: Value, tx: SyncSender<DBHandlerRequest>) -> Result<String, String> {
+    let id_option = root.get("id");
+    if id_option.is_none() {
+        return Err("{\"type\":\"invalid_syntax\"}".into());
+    }
+    let player_id = id_option
+        .unwrap()
+        .as_u64()
+        .ok_or_else(|| String::from("{\"type\":\"invalid_syntax\"}"))?;
+    let player_id: u32 = player_id
+        .try_into()
+        .map_err(|_| String::from("{\"type\":\"invalid_syntax\"}"))?;
+
+    let emote_type_option = root.get("emote");
+    if emote_type_option.is_none() {
+        return Err("{\"type\":\"invalid_syntax\"}".into());
+    }
+    let emote_type_option = emote_type_option.unwrap().as_str();
+    if emote_type_option.is_none() {
+        return Err("{\"type\":\"invalid_syntax\"}".into());
+    }
+    let emote_type = emote_type_option.unwrap();
+
+    let emote_enum: Result<EmoteEnum, ()> = emote_type.try_into();
+    if emote_enum.is_err() {
+        return Err("{\"type\":\"invalid_syntax\"}".into());
+    }
+    let emote_enum = emote_enum.unwrap();
+
+    let (resp_tx, resp_rx) = sync_channel(1);
+
+    if tx
+        .send(DBHandlerRequest::SendEmote {
+            id: player_id,
+            emote_type: emote_enum,
+            response_sender: resp_tx,
+        })
+        .is_err()
+    {
+        return Err("{\"type\":\"send_emote\", \"status\":\"internal_error\"}".into());
+    }
+
+    if let Ok(db_response) = resp_rx.recv_timeout(DB_REQUEST_TIMEOUT) {
+        if db_response.is_ok() {
+            Ok("{\"type\":\"send_emote\", \"status\":\"ok\"}".into())
+        } else {
+            Err("{\"type\":\"send_emote\", \"status\":\"internal_error\"}".into())
+        }
+    } else {
+        Err("{\"type\":\"send_emote\", \"status\":\"internal_error\"}".into())
     }
 }

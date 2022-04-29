@@ -14,6 +14,7 @@ use crate::constants::{
 use crate::state::{board_from_string, new_string_board, string_from_board, BoardState, Turn};
 
 use std::collections::HashMap;
+use std::fmt::Display;
 use std::sync::mpsc::{Receiver, RecvTimeoutError, SyncSender};
 use std::time::{Duration, Instant};
 use std::{fmt, thread};
@@ -29,7 +30,8 @@ pub type GetIDSenderType = (Option<u32>, Option<bool>);
 /// third bool is if cyan player
 pub type CheckPairingType = (bool, bool, bool);
 
-pub type BoardStateType = (DBGameState, Option<String>);
+/// second String is board string, third String is received emote type
+pub type BoardStateType = (DBGameState, Option<String>, Option<EmoteEnum>);
 
 pub type PlaceResultType = Result<(DBPlaceStatus, Option<String>), DBPlaceError>;
 
@@ -117,6 +119,50 @@ impl fmt::Display for DBPlaceError {
     }
 }
 
+#[derive(Copy, Clone, PartialEq, Eq, Debug)]
+pub enum EmoteEnum {
+    Smile,
+    Neutral,
+    Frown,
+    Think,
+}
+
+impl Display for EmoteEnum {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match *self {
+            EmoteEnum::Smile => f.write_str("smile"),
+            EmoteEnum::Neutral => f.write_str("neutral"),
+            EmoteEnum::Frown => f.write_str("frown"),
+            EmoteEnum::Think => f.write_str("think"),
+        }
+    }
+}
+
+impl TryFrom<&str> for EmoteEnum {
+    type Error = ();
+
+    fn try_from(value: &str) -> Result<Self, Self::Error> {
+        match value.to_lowercase().as_str() {
+            "smile" => Ok(Self::Smile),
+            "neutral" => Ok(Self::Neutral),
+            "frown" => Ok(Self::Frown),
+            "think" => Ok(Self::Think),
+            _ => Err(()),
+        }
+    }
+}
+
+impl From<EmoteEnum> for String {
+    fn from(e: EmoteEnum) -> Self {
+        match e {
+            EmoteEnum::Smile => "smile".into(),
+            EmoteEnum::Neutral => "neutral".into(),
+            EmoteEnum::Frown => "frown".into(),
+            EmoteEnum::Think => "think".into(),
+        }
+    }
+}
+
 #[derive(Clone, Debug)]
 pub enum DBHandlerRequest {
     GetID {
@@ -139,6 +185,11 @@ pub enum DBHandlerRequest {
         id: u32,
         pos: usize,
         response_sender: SyncSender<PlaceResultType>,
+    },
+    SendEmote {
+        id: u32,
+        emote_type: EmoteEnum,
+        response_sender: SyncSender<Result<(), ()>>,
     },
 }
 
@@ -241,7 +292,9 @@ impl DBHandler {
                     println!("{}", e);
                     // don't stop server on send fail, may have timed out and
                     // dropped the receiver
-                    response_sender.send((DBGameState::UnknownID, None)).ok();
+                    response_sender
+                        .send((DBGameState::UnknownID, None, None))
+                        .ok();
                     return false;
                 }
                 // don't stop server on send fail, may have timed out and
@@ -267,6 +320,23 @@ impl DBHandler {
                 // don't stop server on send fail, may have timed out and
                 // dropped the receiver
                 response_sender.send(place_result).ok();
+            }
+            DBHandlerRequest::SendEmote {
+                id,
+                emote_type,
+                response_sender,
+            } => {
+                let result = self.create_new_sent_emote(None, id, emote_type);
+                if let Err(error_string) = result {
+                    println!("{}", error_string);
+                    // don't stop server on send fail, may have timed
+                    // out and dropped the receiver
+                    response_sender.send(Err(())).ok();
+                } else {
+                    // don't stop server on send fail, may have timed
+                    // out and dropped the receiver
+                    response_sender.send(Ok(())).ok();
+                }
             }
         } // match db_request
 
@@ -319,6 +389,25 @@ impl DBHandler {
             } else if first_run == DBFirstRun::FirstRun {
                 println!("\"games\" table exists");
             }
+
+            let result = conn.execute(
+                "
+                CREATE TABLE emotes (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                    type TEXT NOT NULL,
+                    date_added TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                    receiver_id INTEGER NOT NULL,
+                    FOREIGN KEY(receiver_id) REFERENCES players (id) ON DELETE CASCADE);
+            ",
+                [],
+            );
+            if result.is_ok() {
+                if first_run == DBFirstRun::FirstRun {
+                    println!("Created \"emotes\" table");
+                }
+            } else if first_run == DBFirstRun::FirstRun {
+                println!("\"emotes\" table exists");
+            }
+
             Ok(conn)
         } else {
             Err(String::from("Failed to open connection"))
@@ -603,6 +692,33 @@ impl DBHandler {
             _conn_result.as_ref().unwrap()
         };
 
+        let mut received_emote: Option<EmoteEnum> = None;
+        {
+            let row_result: Result<(u64, String), RusqliteError> = conn.query_row(
+                "SELECT id, type FROM emotes WHERE receiver_id = ? ORDER BY date_added ASC;",
+                [player_id],
+                |row| {
+                    Ok((
+                        row.get(0).expect("emotes.id should exist"),
+                        row.get(1).expect("emotes.type should exist"),
+                    ))
+                },
+            );
+            if let Err(RusqliteError::QueryReturnedNoRows) = row_result {
+                // no-op
+            } else if let Err(e) = row_result {
+                println!("Error while fetching received emotes: {:?}", e);
+            } else {
+                let (emote_id, emote_type) = row_result.unwrap();
+                received_emote = emote_type.as_str().try_into().ok();
+                if received_emote.is_none() {
+                    println!("WARNING: Invalid emote type \"{}\" in db", emote_type);
+                }
+                conn.execute("DELETE FROM emotes WHERE id = ?;", [emote_id])
+                    .ok();
+            }
+        }
+
         // TODO maybe handle "opponent_disconnected" case
         let row_result: Result<(String, i64, Option<u32>, Option<u32>), RusqliteError> = conn.query_row(
             "SELECT games.board, games.status, games.cyan_player, games.magenta_player FROM games JOIN players WHERE players.id = ? AND games.id = players.game_id;",
@@ -636,30 +752,34 @@ impl DBHandler {
         if let Ok((board, status, cyan_opt, magenta_opt)) = row_result {
             if board.len() != (ROWS * COLS) as usize {
                 // board is invalid size
-                Ok((DBGameState::InternalError, None))
+                Ok((DBGameState::InternalError, None, received_emote))
             } else if cyan_opt.is_none() || magenta_opt.is_none() {
                 // One player disconnected
                 self.disconnect_player(Some(conn), player_id).ok();
                 // Remove the game(s) with disconnected players
                 if self.clear_empty_games(Some(conn)).is_err() {
-                    Ok((DBGameState::InternalError, None))
+                    Ok((DBGameState::InternalError, None, received_emote))
                 } else if status == 2 || status == 3 {
-                    Ok((DBGameState::from(status), Some(board)))
+                    Ok((DBGameState::from(status), Some(board), received_emote))
                 } else {
-                    Ok((DBGameState::OpponentDisconnected, Some(board)))
+                    Ok((
+                        DBGameState::OpponentDisconnected,
+                        Some(board),
+                        received_emote,
+                    ))
                 }
             } else {
                 // Game in progress, or other state depending on "status"
-                Ok((DBGameState::from(status), Some(board)))
+                Ok((DBGameState::from(status), Some(board), received_emote))
             }
         } else if let Err(RusqliteError::QueryReturnedNoRows) = row_result {
             // No rows is either player doesn't exist or not paired
             let (exists, is_paired, _is_cyan) =
                 self.check_if_player_is_paired(Some(conn), player_id)?;
             if !exists {
-                Ok((DBGameState::UnknownID, None))
+                Ok((DBGameState::UnknownID, None, received_emote))
             } else if !is_paired {
-                Ok((DBGameState::NotPaired, None))
+                Ok((DBGameState::NotPaired, None, received_emote))
             } else {
                 unreachable!("either exists or is_paired must be false");
             }
@@ -805,26 +925,14 @@ impl DBHandler {
             }
             2 => {
                 // game over, cyan won
-                self.disconnect_player(Some(conn), player_id).ok();
-                if self.clear_empty_games(Some(conn)).is_err() {
-                    return Err(DBPlaceError::InternalError);
-                }
                 return Ok((DBPlaceStatus::GameEndedCyanWon, Some(board_string)));
             }
             3 => {
                 // game over, magenta won
-                self.disconnect_player(Some(conn), player_id).ok();
-                if self.clear_empty_games(Some(conn)).is_err() {
-                    return Err(DBPlaceError::InternalError);
-                }
                 return Ok((DBPlaceStatus::GameEndedMagentaWon, Some(board_string)));
             }
             4 => {
                 // game over, draw
-                self.disconnect_player(Some(conn), player_id).ok();
-                if self.clear_empty_games(Some(conn)).is_err() {
-                    return Err(DBPlaceError::InternalError);
-                }
                 return Ok((DBPlaceStatus::GameEndedDraw, Some(board_string)));
             }
             _ => (),
@@ -888,7 +996,6 @@ impl DBHandler {
         }
 
         if let Some(ended_state) = ended_state_opt {
-            self.disconnect_player(Some(conn), player_id).ok();
             Ok((
                 match ended_state {
                     BoardState::Empty => DBPlaceStatus::GameEndedDraw,
@@ -1065,6 +1172,79 @@ impl DBHandler {
 
         Ok(())
     }
+
+    fn cleanup_stale_emotes(&self, conn: Option<&Connection>) -> Result<(), String> {
+        let mut _conn_result = Err(String::new());
+        let conn = if let Some(c) = conn {
+            c
+        } else {
+            _conn_result = self.get_conn(DBFirstRun::NotFirstRun);
+            _conn_result.as_ref().unwrap()
+        };
+
+        conn.execute(
+            "DELETE FROM emotes WHERE unixepoch() - unixepoch(date_added) > ?;",
+            [GAME_CLEANUP_TIMEOUT],
+        )
+        .ok();
+        Ok(())
+    }
+
+    fn create_new_sent_emote(
+        &self,
+        conn: Option<&Connection>,
+        sender_id: u32,
+        emote: EmoteEnum,
+    ) -> Result<(), String> {
+        let mut _conn_result = Err(String::new());
+        let conn = if let Some(c) = conn {
+            c
+        } else {
+            _conn_result = self.get_conn(DBFirstRun::NotFirstRun);
+            _conn_result.as_ref().unwrap()
+        };
+
+        let mut prepared_stmt = conn.prepare("SELECT games.cyan_player, games.magenta_player FROM games JOIN players WHERE players.id = ?, games.id = players.game_id;")
+            .map_err(|_| String::from("Failed to prepare db query for getting opponent id for sending emote"))?;
+        let row_result: Result<(Option<u32>, Option<u32>), RusqliteError> =
+            prepared_stmt.query_row([sender_id], |row| Ok((row.get(0).ok(), row.get(1).ok())));
+        if let Err(RusqliteError::QueryReturnedNoRows) = row_result {
+            return Err(String::from("Failed to send emote, game doesn't exist"));
+        } else if let Err(e) = row_result {
+            return Err(format!("Failed to send emote: {:?}", e));
+        }
+        let (cyan_player_opt, magenta_player_opt) = row_result.unwrap();
+        if cyan_player_opt.is_none() {
+            return Err(String::from(
+                "Failed to send emote, cyan player disconnected",
+            ));
+        } else if magenta_player_opt.is_none() {
+            return Err(String::from(
+                "Failed to send emote, magenta player disconnected",
+            ));
+        }
+        let cyan_player_id = cyan_player_opt.unwrap();
+        let magenta_player_id = magenta_player_opt.unwrap();
+
+        let receiver_id = if cyan_player_id == sender_id {
+            magenta_player_id
+        } else {
+            cyan_player_id
+        };
+
+        conn.execute(
+            "INSERT INTO emotes (type, receiver_id) VALUES (?, ?);",
+            params![String::from(emote), receiver_id],
+        )
+        .map_err(|_| {
+            format!(
+                "Failed to store emote from player {} to player {}",
+                sender_id, receiver_id
+            )
+        })?;
+
+        Ok(())
+    }
 }
 
 pub fn start_db_handler_thread(
@@ -1104,6 +1284,12 @@ pub fn start_db_handler_thread(
                     println!("{}", e);
                 }
                 if let Err(e) = handler.cleanup_stale_players(None) {
+                    println!("{}", e);
+                }
+                if let Err(e) = handler.cleanup_stale_emotes(None) {
+                    println!("{}", e);
+                }
+                if let Err(e) = handler.clear_empty_games(None) {
                     println!("{}", e);
                 }
             }

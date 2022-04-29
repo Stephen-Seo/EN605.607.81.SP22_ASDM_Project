@@ -164,6 +164,16 @@ then the back-end will respond with "too\_many\_players".
     }
 ```
 
+6. Send Emote Request Response
+
+```
+    {
+        "type": "send_emote",
+        "status": "ok", // or "invalid_emote", "peer_disconnected",
+                        // "internal_error"
+    }
+```
+
 Note that the backend will stop keeping track of the game once both players have
 successfully requested the Game State once after the game has ended. Thus,
 future requests may return "unknown\_id" as the "status".
