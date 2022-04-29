@@ -456,12 +456,12 @@ pub fn board_from_string(board_string: String) -> BoardType {
 
 /// Returns the board as a String, and None if game has not ended, Empty if game
 /// ended in a draw, or a player if that player has won
-pub fn string_from_board(board: BoardType, placed: usize) -> (String, Option<BoardState>) {
+pub fn string_from_board(board: &BoardType, placed: usize) -> (String, Option<BoardState>) {
     let mut board_string = String::with_capacity(56);
 
     // check for winning pieces
     let mut win_set: HashSet<usize> = HashSet::new();
-    let win_opt = check_win_draw(&board);
+    let win_opt = check_win_draw(board);
     if let Some((_board_state, win_type)) = win_opt {
         match win_type {
             WinType::Horizontal(pos) => {

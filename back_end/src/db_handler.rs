@@ -857,7 +857,7 @@ impl DBHandler {
         }
 
         // board back to string
-        let (board_string, ended_state_opt) = string_from_board(board, final_pos);
+        let (board_string, ended_state_opt) = string_from_board(&board, final_pos);
 
         // update DB
         let update_result = if ended_state_opt.is_none() {
@@ -1004,7 +1004,7 @@ impl DBHandler {
         });
 
         // get board string from board while checking if game has ended
-        let (board_string, end_state_opt) = string_from_board(board, ai_choice_pos);
+        let (board_string, end_state_opt) = string_from_board(&board, ai_choice_pos);
 
         let state;
         if let Some(board_state) = end_state_opt {
