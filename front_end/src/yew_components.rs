@@ -605,9 +605,9 @@ impl Wrapper {
     }
 
     fn cleanup_disconnect_callbacks(&mut self) {
-        let window = web_sys::window().expect("Should be able to get window");
         // if previously set disconnect callback is set, unset it
         if let Some(callback) = self.cleanup_id_callback.take() {
+            let window = web_sys::window().expect("Should be able to get window");
             let mut options = EventListenerOptions::new();
             options.capture(true);
             if window
@@ -1288,6 +1288,7 @@ impl Component for Wrapper {
                 if !self.do_backend_tick || !is_networked_multiplayer {
                     // disconnect id if backend tick is to be stopped
                     self.send_disconnect();
+                    self.cleanup_disconnect_callbacks();
                     return false;
                 }
 
