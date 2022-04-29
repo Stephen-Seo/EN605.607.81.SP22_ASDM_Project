@@ -607,7 +607,7 @@ impl Wrapper {
     fn cleanup_disconnect_callbacks(&mut self) {
         let window = web_sys::window().expect("Should be able to get window");
         // if previously set disconnect callback is set, unset it
-        if let Some(callback) = self.cleanup_id_callback.borrow_mut().take() {
+        if let Some(callback) = self.cleanup_id_callback.take() {
             let mut options = EventListenerOptions::new();
             options.capture(true);
             if window
