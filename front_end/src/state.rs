@@ -558,6 +558,7 @@ pub struct GameStateResponse {
     pub status: String,
     pub board: Option<String>,
     pub peer_emote: Option<String>,
+    pub updated_time: Option<String>,
 }
 
 #[derive(Debug, Serialize, Deserialize)]

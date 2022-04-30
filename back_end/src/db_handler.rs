@@ -31,8 +31,14 @@ pub type GetIDSenderType = (Option<u32>, Option<bool>);
 /// third bool is if cyan player
 pub type CheckPairingType = (bool, bool, bool);
 
-/// second String is board string, third String is received emote type
-pub type BoardStateType = (DBGameState, Option<String>, Option<EmoteEnum>);
+/// second String is board string, third String is date updated, fourth value
+/// is EmoteEnum
+pub type BoardStateType = (
+    DBGameState,
+    Option<String>,
+    Option<String>,
+    Option<EmoteEnum>,
+);
 
 pub type PlaceResultType = Result<(DBPlaceStatus, Option<String>), DBPlaceError>;
 
@@ -250,7 +256,7 @@ impl DBHandler {
                     // don't stop server on send fail, may have timed out and
                     // dropped the receiver
                     response_sender
-                        .send((DBGameState::UnknownID, None, None))
+                        .send((DBGameState::UnknownID, None, None, None))
                         .ok();
                     return false;
                 }
@@ -677,66 +683,91 @@ impl DBHandler {
         }
 
         // TODO maybe handle "opponent_disconnected" case
-        let row_result: Result<(String, i64, Option<u32>, Option<u32>), RusqliteError> = conn.query_row(
-            "SELECT games.board, games.status, games.cyan_player, games.magenta_player FROM games JOIN players WHERE players.id = ? AND games.id = players.game_id;",
+        let row_result: Result<(String, i64, Option<u32>, Option<u32>, String), RusqliteError> = conn.query_row(
+            "SELECT games.board, games.status, games.cyan_player, games.magenta_player, games.turn_time_start FROM games JOIN players WHERE players.id = ? AND games.id = players.game_id;",
             [player_id],
             |row| {
                 let board_result = row.get(0);
                 let status_result = row.get(1);
                 let cyan_player = row.get(2);
                 let magenta_player = row.get(3);
-                if board_result.is_ok() && status_result.is_ok() && cyan_player.is_ok() && magenta_player.is_ok() {
-                    if let (Ok(board), Ok(status), Ok(cyan_id), Ok(magenta_id)) = (board_result, status_result, cyan_player, magenta_player) {
-                        Ok((board, status, cyan_id, magenta_id))
+                let updated_time = row.get(4);
+                if board_result.is_ok() && status_result.is_ok() && cyan_player.is_ok() && magenta_player.is_ok() && updated_time.is_ok() {
+                    if let (Ok(board), Ok(status), Ok(cyan_id), Ok(magenta_id), Ok(updated_time)) = (board_result, status_result, cyan_player, magenta_player, updated_time) {
+                        Ok((board, status, cyan_id, magenta_id, updated_time))
                     } else {
-                        unreachable!("Both row items should be Ok");
+                        unreachable!("All row items should be Ok");
                     }
                 } else if board_result.is_err() {
                     board_result
-                        .map(|_| (String::from("this value should never be returned"), 0, None, None))
+                        .map(|_| (String::from("this value should never be returned"), 0, None, None, String::new()))
                 } else if status_result.is_err() {
                     status_result
-                        .map(|_| (String::from("this value should never be returned"), 0, None, None))
+                        .map(|_| (String::from("this value should never be returned"), 0, None, None, String::new()))
                 } else if cyan_player.is_err() {
                    cyan_player
-                        .map(|_| (String::from("this value should never be returned"), 0, None, None))
-                } else {
+                        .map(|_| (String::from("this value should never be returned"), 0, None, None, String::new()))
+                } else if magenta_player.is_err() {
                   magenta_player
-                        .map(|_| (String::from("this value should never be returned"), 0, None, None))
+                        .map(|_| (String::from("this value should never be returned"), 0, None, None, String::new()))
+                } else {
+                    updated_time
+                        .map(|_| (String::from("this value should never be returned"), 0, None, None, String::new()))
                 }
             }
         );
-        if let Ok((board, status, cyan_opt, magenta_opt)) = row_result {
+        if let Ok((board, status, cyan_opt, magenta_opt, updated_time)) = row_result {
             if board.len() != (ROWS * COLS) as usize {
                 // board is invalid size
-                Ok((DBGameState::InternalError, None, received_emote))
+                Ok((
+                    DBGameState::InternalError,
+                    None,
+                    Some(updated_time),
+                    received_emote,
+                ))
             } else if cyan_opt.is_none() || magenta_opt.is_none() {
                 // One player disconnected
                 self.disconnect_player(Some(conn), player_id).ok();
                 // Remove the game(s) with disconnected players
                 if self.clear_empty_games(Some(conn)).is_err() {
-                    Ok((DBGameState::InternalError, None, received_emote))
+                    Ok((
+                        DBGameState::InternalError,
+                        None,
+                        Some(updated_time),
+                        received_emote,
+                    ))
                 } else if status == 2 || status == 3 {
-                    Ok((DBGameState::from(status), Some(board), received_emote))
+                    Ok((
+                        DBGameState::from(status),
+                        Some(board),
+                        Some(updated_time),
+                        received_emote,
+                    ))
                 } else {
                     Ok((
                         DBGameState::OpponentDisconnected,
                         Some(board),
+                        Some(updated_time),
                         received_emote,
                     ))
                 }
             } else {
                 // Game in progress, or other state depending on "status"
-                Ok((DBGameState::from(status), Some(board), received_emote))
+                Ok((
+                    DBGameState::from(status),
+                    Some(board),
+                    Some(updated_time),
+                    received_emote,
+                ))
             }
         } else if let Err(RusqliteError::QueryReturnedNoRows) = row_result {
             // No rows is either player doesn't exist or not paired
             let (exists, is_paired, _is_cyan) =
                 self.check_if_player_is_paired(Some(conn), player_id)?;
             if !exists {
-                Ok((DBGameState::UnknownID, None, received_emote))
+                Ok((DBGameState::UnknownID, None, None, received_emote))
             } else if !is_paired {
-                Ok((DBGameState::NotPaired, None, received_emote))
+                Ok((DBGameState::NotPaired, None, None, received_emote))
             } else {
                 unreachable!("either exists or is_paired must be false");
             }

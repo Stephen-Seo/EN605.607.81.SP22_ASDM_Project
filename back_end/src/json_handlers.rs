@@ -266,19 +266,25 @@ fn handle_game_state(root: Value, tx: SyncSender<DBHandlerRequest>) -> Result<St
         return Err("{\"type\":\"game_state\", \"status\":\"internal_error\"}".into());
     }
 
-    if let Ok((db_game_state, board_string_opt, received_emote_opt)) =
+    if let Ok((db_game_state, board_string_opt, updated_time_opt, received_emote_opt)) =
         resp_rx.recv_timeout(DB_REQUEST_TIMEOUT)
     {
         if let Some(board_string) = board_string_opt {
+            let updated_time = if let Some(time_string) = updated_time_opt {
+                time_string
+            } else {
+                return Err("{\"type\":\"game_state\", \"status\":\"internal_error\"}".into());
+            };
+
             if let Some(emote) = received_emote_opt {
                 Ok(format!(
-                    "{{\"type\":\"game_state\", \"status\":\"{}\", \"board\":\"{}\", \"peer_emote\": \"{}\"}}",
-                    db_game_state, board_string, emote
+                    "{{\"type\":\"game_state\", \"status\":\"{}\", \"board\":\"{}\", \"peer_emote\": \"{}\", \"updated_time\": \"{}\"}}",
+                    db_game_state, board_string, emote, updated_time
                 ))
             } else {
                 Ok(format!(
-                    "{{\"type\":\"game_state\", \"status\":\"{}\", \"board\":\"{}\"}}",
-                    db_game_state, board_string
+                    "{{\"type\":\"game_state\", \"status\":\"{}\", \"board\":\"{}\", \"updated_time\": \"{}\"}}",
+                    db_game_state, board_string, updated_time
                 ))
             }
         } else {

@@ -149,7 +149,7 @@ then the back-end will respond with "too\_many\_players".
                                 // "opponent_disconnected", "internal_error"
 
         // "board" may not be in the response if "unknown_id" is the status
-        "board": "abcdefg..." // 56-char long string with mapping:
+        "board": "abcdefg...",// 56-char long string with mapping:
                               // a - empty
                               // b - cyan
                               // c - magenta
@@ -160,7 +160,10 @@ then the back-end will respond with "too\_many\_players".
                               // h - cyan winning and placed piece
                               // i - magenta winning and placed piece
         // optional "peer_emote" entry is message from opponent
-        "peer_emote": "smile" // or "frown", or "neutral", or "think"
+        "peer_emote": "smile",// or "frown", or "neutral", or "think"
+
+        // should always be available when "board" is available
+        "updated_time": "2022-04-30 12:00:00"
     }
 ```
 

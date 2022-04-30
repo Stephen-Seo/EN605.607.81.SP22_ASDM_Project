@@ -392,6 +392,7 @@ pub struct Wrapper {
     place_request: Option<u8>,
     do_backend_tick: bool,
     cleanup_id_callback: Rc<RefCell<Option<Function>>>,
+    board_updated_time: Option<String>,
 }
 
 impl Wrapper {
@@ -555,11 +556,12 @@ impl Wrapper {
                 _ => NetworkedGameState::InternalError,
             };
 
-            WrapperMsg::BackendResponse(BREnum::GotStatus(
+            WrapperMsg::BackendResponse(BREnum::GotStatus {
                 networked_game_state,
-                response.board,
-                response.peer_emote,
-            ))
+                board_string: response.board,
+                received_emote: response.peer_emote,
+                updated_time: response.updated_time,
+            })
         });
     }
 
@@ -725,8 +727,14 @@ pub enum BREnum {
     Error(String),
     GotID(u32, Option<Turn>),
     GotPairing(Option<Turn>),
-    /// Second opt string is board_str, third opt string is received emote
-    GotStatus(NetworkedGameState, Option<String>, Option<String>),
+    /// Second opt string is board_str, third opt string is received emote,
+    /// fourth opt string is updated_time
+    GotStatus {
+        networked_game_state: NetworkedGameState,
+        board_string: Option<String>,
+        received_emote: Option<String>,
+        updated_time: Option<String>,
+    },
     GotPlaced(PlacedEnum, String),
 }
 
@@ -762,6 +770,7 @@ impl Component for Wrapper {
             place_request: None,
             do_backend_tick: true,
             cleanup_id_callback: Rc::new(RefCell::new(None)),
+            board_updated_time: None,
         }
     }
 
@@ -1526,13 +1535,18 @@ impl Component for Wrapper {
                             .ok();
                         }
                     }
-                    BREnum::GotStatus(networked_game_state, board_opt, emote_opt) => {
+                    BREnum::GotStatus {
+                        networked_game_state,
+                        board_string,
+                        received_emote,
+                        updated_time,
+                    } => {
                         let current_side = shared
                             .game_state
                             .borrow()
                             .get_networked_current_side()
                             .expect("Should be Networked mode");
-                        if let Some(emote_string) = emote_opt {
+                        if let Some(emote_string) = received_emote {
                             if let Ok(emote_enum) = EmoteEnum::try_from(emote_string.as_str()) {
                                 append_to_info_text(
                                     &document,
@@ -1561,8 +1575,14 @@ impl Component for Wrapper {
                             }
                         }
 
-                        if let Some(board_string) = board_opt {
-                            self.update_board_from_string(&shared, &document, board_string);
+                        // only update board string if updated_time is different
+                        if self.board_updated_time != updated_time {
+                            if let Some(updated_time) = updated_time {
+                                self.board_updated_time.replace(updated_time);
+                                if let Some(board_string) = board_string {
+                                    self.update_board_from_string(&shared, &document, board_string);
+                                }
+                            }
                         }
 
                         let mut current_game_state: GameState = shared.game_state.borrow().clone();
