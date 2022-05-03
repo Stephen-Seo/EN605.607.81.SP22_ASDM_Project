@@ -683,7 +683,8 @@ impl DBHandler {
         }
 
         // TODO maybe handle "opponent_disconnected" case
-        let row_result: Result<(String, i64, Option<u32>, Option<u32>, String), RusqliteError> = conn.query_row(
+        type ResultTuple = (String, i64, Option<u32>, Option<u32>, String);
+        let row_result: Result<ResultTuple, RusqliteError> = conn.query_row(
             "SELECT games.board, games.status, games.cyan_player, games.magenta_player, games.turn_time_start FROM games JOIN players WHERE players.id = ? AND games.id = players.game_id;",
             [player_id],
             |row| {

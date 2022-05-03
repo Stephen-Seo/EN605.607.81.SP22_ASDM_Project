@@ -10,7 +10,7 @@ use js_sys::{Function, JsString, Promise};
 use std::collections::HashMap;
 use wasm_bindgen::{JsCast, JsValue};
 use wasm_bindgen_futures::JsFuture;
-use web_sys::{window, Document, Request, RequestInit, Window};
+use web_sys::{window, Document, Window};
 
 use crate::constants::BACKEND_URL;
 
@@ -117,34 +117,6 @@ pub fn element_has_class(document: &Document, id: &str, class: &str) -> Result<b
     let element_class: String = element.class_name();
 
     Ok(element_class.contains(class))
-}
-
-pub fn create_json_request(target_url: &str, json_body: &str) -> Result<Request, String> {
-    let mut req_init: RequestInit = RequestInit::new();
-    req_init.body(Some(&JsValue::from_str(json_body)));
-    req_init.method("POST");
-    // TODO omit the NoCors when hosted on website
-    req_init.mode(web_sys::RequestMode::NoCors);
-    //    req_init.headers(
-    //        &JsValue::from_str("{'Content-Type': 'application/json'}"),
-    //        &JsValue::from_serde("{'Content-Type': 'application/json'}")
-    //            .map_err(|e| format!("{}", e))?,
-    //        &JsValue::from_serde("'headers': { 'Content-Type': 'application/json' }")
-    //            .map_err(|e| format!("{}", e))?,
-    //    );
-
-    let request: Request =
-        Request::new_with_str_and_init(target_url, &req_init).map_err(|e| format!("{:?}", e))?;
-    request
-        .headers()
-        .set("Content-Type", "application/json")
-        .map_err(|e| format!("{:?}", e))?;
-    request
-        .headers()
-        .set("Accept", "application/json")
-        .map_err(|e| format!("{:?}", e))?;
-
-    Ok(request)
 }
 
 pub async fn send_to_backend(entries: HashMap<String, String>) -> Result<String, String> {

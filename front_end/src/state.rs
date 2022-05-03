@@ -17,6 +17,7 @@ use std::collections::hash_set::HashSet;
 use std::fmt::Display;
 use std::rc::Rc;
 
+#[allow(dead_code)]
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum GameState {
     MainMenu,
@@ -32,6 +33,7 @@ pub enum GameState {
 }
 
 impl GameState {
+    #[allow(dead_code)]
     pub fn is_networked_multiplayer(&self) -> bool {
         matches!(
             *self,
@@ -44,6 +46,7 @@ impl GameState {
         )
     }
 
+    #[allow(dead_code)]
     pub fn set_networked_paired(&mut self) {
         if let GameState::NetworkedMultiplayer {
             ref mut paired,
@@ -56,6 +59,7 @@ impl GameState {
         }
     }
 
+    #[allow(dead_code)]
     pub fn get_networked_current_side(&self) -> Option<Turn> {
         if let GameState::NetworkedMultiplayer {
             paired: _,
@@ -70,6 +74,7 @@ impl GameState {
         }
     }
 
+    #[allow(dead_code)]
     pub fn set_networked_current_side(&mut self, side: Option<Turn>) {
         if let GameState::NetworkedMultiplayer {
             paired: _,
@@ -82,6 +87,7 @@ impl GameState {
         }
     }
 
+    #[allow(dead_code)]
     pub fn get_current_turn(&self) -> Turn {
         if let GameState::SinglePlayer(turn, _) = *self {
             turn
@@ -98,6 +104,7 @@ impl GameState {
         }
     }
 
+    #[allow(dead_code)]
     pub fn set_networked_current_turn(&mut self, turn: Turn) {
         if let GameState::NetworkedMultiplayer {
             paired: _,
@@ -110,6 +117,7 @@ impl GameState {
         }
     }
 
+    #[allow(dead_code)]
     pub fn get_phrase(&self) -> Option<String> {
         if let GameState::NetworkedMultiplayer {
             paired: _,
@@ -124,6 +132,7 @@ impl GameState {
         }
     }
 
+    #[allow(dead_code)]
     pub fn get_singleplayer_current_side(&self) -> Option<Turn> {
         if let GameState::SinglePlayer(turn, _) = *self {
             Some(turn)
@@ -154,6 +163,7 @@ impl From<MainMenuMessage> for GameState {
     }
 }
 
+#[allow(dead_code)]
 #[derive(Copy, Clone, Debug, PartialEq, Eq)]
 pub enum BoardState {
     Empty,
@@ -191,10 +201,12 @@ impl From<Turn> for BoardState {
 }
 
 impl BoardState {
+    #[allow(dead_code)]
     pub fn is_empty(&self) -> bool {
         *self == BoardState::Empty
     }
 
+    #[allow(dead_code)]
     pub fn is_win(self) -> bool {
         match self {
             BoardState::Empty | BoardState::Cyan | BoardState::Magenta => false,
@@ -202,6 +214,7 @@ impl BoardState {
         }
     }
 
+    #[allow(dead_code)]
     pub fn into_win(self) -> Self {
         match self {
             BoardState::Empty => BoardState::Empty,
@@ -210,8 +223,9 @@ impl BoardState {
         }
     }
 
-    pub fn from_win(&self) -> Self {
-        match *self {
+    #[allow(dead_code, clippy::wrong_self_convention)]
+    pub fn from_win(self) -> Self {
+        match self {
             BoardState::Empty => BoardState::Empty,
             BoardState::Cyan | BoardState::CyanWin => BoardState::Cyan,
             BoardState::Magenta | BoardState::MagentaWin => BoardState::Magenta,
@@ -219,6 +233,7 @@ impl BoardState {
     }
 }
 
+#[allow(dead_code)]
 #[derive(Copy, Clone, Debug, PartialEq, Eq)]
 pub enum Turn {
     CyanPlayer,
@@ -244,6 +259,7 @@ impl From<BoardState> for Turn {
 }
 
 impl Turn {
+    #[allow(dead_code)]
     pub fn get_color(&self) -> &str {
         match *self {
             Turn::CyanPlayer => "cyan",
@@ -261,6 +277,7 @@ impl Turn {
 
 pub type BoardType = [Rc<Cell<BoardState>>; 56];
 
+#[allow(dead_code)]
 pub fn new_empty_board() -> BoardType {
     [
         Rc::new(Cell::new(BoardState::default())),
@@ -322,6 +339,7 @@ pub fn new_empty_board() -> BoardType {
     ]
 }
 
+#[allow(dead_code)]
 pub fn board_deep_clone(board: &BoardType) -> BoardType {
     let cloned_board = new_empty_board();
     for i in 0..board.len() {
@@ -333,6 +351,7 @@ pub fn board_deep_clone(board: &BoardType) -> BoardType {
 
 pub type PlacedType = [Rc<Cell<bool>>; 56];
 
+#[allow(dead_code)]
 pub fn new_placed() -> PlacedType {
     [
         Rc::new(Cell::new(false)),
@@ -394,6 +413,7 @@ pub fn new_placed() -> PlacedType {
     ]
 }
 
+#[allow(dead_code)]
 #[derive(Clone, Debug, PartialEq)]
 pub struct SharedState {
     pub board: BoardType,
@@ -416,6 +436,7 @@ impl Default for SharedState {
 
 // This enum moved from yew_components module so that this module would have no
 // dependencies on the yew_components module
+#[allow(dead_code)]
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum MainMenuMessage {
     SinglePlayer(Turn, AIDifficulty),
@@ -423,6 +444,7 @@ pub enum MainMenuMessage {
     NetworkedMultiplayer(Option<String>),
 }
 
+#[allow(dead_code)]
 pub fn new_string_board() -> String {
     let mut board = String::with_capacity(56);
     for _i in 0..56 {
@@ -431,6 +453,7 @@ pub fn new_string_board() -> String {
     board
 }
 
+#[allow(dead_code)]
 pub fn board_from_string(board_string: String) -> BoardType {
     let board = new_empty_board();
 
@@ -450,6 +473,7 @@ pub fn board_from_string(board_string: String) -> BoardType {
 
 /// Returns the board as a String, and None if game has not ended, Empty if game
 /// ended in a draw, or a player if that player has won
+#[allow(dead_code)]
 pub fn string_from_board(board: &BoardType, placed: usize) -> (String, Option<BoardState>) {
     let mut board_string = String::with_capacity(56);
 
@@ -537,6 +561,7 @@ pub fn string_from_board(board: &BoardType, placed: usize) -> (String, Option<Bo
     }
 }
 
+#[allow(dead_code)]
 #[derive(Debug, Serialize, Deserialize)]
 pub struct PairingRequestResponse {
     pub r#type: String,
@@ -545,6 +570,7 @@ pub struct PairingRequestResponse {
     pub color: Option<String>,
 }
 
+#[allow(dead_code)]
 #[derive(Debug, Serialize, Deserialize)]
 pub struct PairingStatusResponse {
     pub r#type: String,
@@ -552,6 +578,7 @@ pub struct PairingStatusResponse {
     pub color: Option<String>,
 }
 
+#[allow(dead_code)]
 #[derive(Debug, Serialize, Deserialize)]
 pub struct GameStateResponse {
     pub r#type: String,
@@ -561,6 +588,7 @@ pub struct GameStateResponse {
     pub updated_time: Option<String>,
 }
 
+#[allow(dead_code)]
 #[derive(Debug, Serialize, Deserialize)]
 pub struct PlaceTokenResponse {
     pub r#type: String,
@@ -568,12 +596,14 @@ pub struct PlaceTokenResponse {
     pub board: String,
 }
 
+#[allow(dead_code)]
 #[derive(Debug, Serialize, Deserialize)]
 pub struct SendEmoteRequestResponse {
     pub r#type: String,
     pub status: String,
 }
 
+#[allow(dead_code)]
 #[derive(Copy, Clone, Debug, PartialEq, Eq)]
 pub enum NetworkedGameState {
     CyanTurn,
@@ -587,6 +617,7 @@ pub enum NetworkedGameState {
     UnknownID,
 }
 
+#[allow(dead_code)]
 #[derive(Copy, Clone, Debug, PartialEq, Eq)]
 pub enum PlacedEnum {
     Accepted,
@@ -595,6 +626,7 @@ pub enum PlacedEnum {
     Other(NetworkedGameState),
 }
 
+#[allow(dead_code)]
 #[derive(Copy, Clone, PartialEq, Eq, Debug)]
 pub enum EmoteEnum {
     Smile,

@@ -1589,6 +1589,7 @@ impl Component for Wrapper {
                         match networked_game_state {
                             NetworkedGameState::CyanTurn => {
                                 if current_game_state.get_current_turn() != Turn::CyanPlayer {
+                                    self.board_updated_time.take();
                                     current_game_state.set_networked_current_turn(Turn::CyanPlayer);
                                     shared.game_state.replace(current_game_state.clone());
                                     append_to_info_text(
@@ -1613,6 +1614,7 @@ impl Component for Wrapper {
                             }
                             NetworkedGameState::MagentaTurn => {
                                 if current_game_state.get_current_turn() != Turn::MagentaPlayer {
+                                    self.board_updated_time.take();
                                     current_game_state
                                         .set_networked_current_turn(Turn::MagentaPlayer);
                                     shared.game_state.replace(current_game_state.clone());

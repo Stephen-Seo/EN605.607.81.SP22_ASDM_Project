@@ -15,6 +15,7 @@ use crate::state::{board_deep_clone, BoardState, BoardType, Turn};
 
 const AI_THIRD_MAX_UTILITY: f64 = 0.89;
 
+#[allow(dead_code)]
 #[derive(Copy, Clone, Debug, PartialEq, Eq)]
 pub enum AIDifficulty {
     Easy,
