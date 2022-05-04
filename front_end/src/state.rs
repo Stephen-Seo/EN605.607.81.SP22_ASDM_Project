@@ -454,7 +454,7 @@ pub fn new_string_board() -> String {
 }
 
 #[allow(dead_code)]
-pub fn board_from_string(board_string: String) -> BoardType {
+pub fn board_from_string(board_string: &str) -> BoardType {
     let board = new_empty_board();
 
     for (idx, c) in board_string.chars().enumerate() {

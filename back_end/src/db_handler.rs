@@ -928,7 +928,7 @@ impl DBHandler {
         }
 
         // get board state
-        let board = board_from_string(board_string);
+        let board = board_from_string(&board_string);
 
         // find placement position or return "illegal move" if unable to
         let mut final_pos = pos;
@@ -1064,7 +1064,7 @@ impl DBHandler {
         };
 
         let is_cyan = status == 0;
-        let board = board_from_string(board_string);
+        let board = board_from_string(&board_string);
         let mut ai_choice_pos: usize = get_ai_choice(
             AIDifficulty::Hard,
             if is_cyan {

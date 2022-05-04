@@ -615,9 +615,9 @@ impl Wrapper {
         &mut self,
         shared: &SharedState,
         document: &Document,
-        board_string: String,
+        board_string: &str,
     ) {
-        let board = board_from_string(board_string.clone());
+        let board = board_from_string(board_string);
         for (idx, slot) in board.iter().enumerate() {
             let was_open =
                 element_has_class(document, &format!("slot{}", idx), "open").unwrap_or(false);
@@ -1579,7 +1579,7 @@ impl Component for Wrapper {
                         if self.board_updated_time != updated_time {
                             if let Some(updated_time) = updated_time {
                                 self.board_updated_time.replace(updated_time);
-                                if let Some(board_string) = board_string {
+                                if let Some(board_string) = board_string.as_ref() {
                                     self.update_board_from_string(&shared, &document, board_string);
                                 }
                             }
@@ -1635,6 +1635,9 @@ impl Component for Wrapper {
                                 }
                             }
                             NetworkedGameState::CyanWon => {
+                                if let Some(board_string) = board_string.as_ref() {
+                                    self.update_board_from_string(&shared, &document, board_string);
+                                }
                                 append_to_info_text(
                                     &document,
                                     "info_text1",
@@ -1648,6 +1651,9 @@ impl Component for Wrapper {
                                 self.do_backend_tick = false;
                             }
                             NetworkedGameState::MagentaWon => {
+                                if let Some(board_string) = board_string.as_ref() {
+                                    self.update_board_from_string(&shared, &document, board_string);
+                                }
                                 append_to_info_text(
                                     &document,
                                     "info_text1",
@@ -1661,6 +1667,9 @@ impl Component for Wrapper {
                                 self.do_backend_tick = false;
                             }
                             NetworkedGameState::Draw => {
+                                if let Some(board_string) = board_string.as_ref() {
+                                    self.update_board_from_string(&shared, &document, board_string);
+                                }
                                 append_to_info_text(
                                     &document,
                                     "info_text1",
@@ -1723,7 +1732,7 @@ impl Component for Wrapper {
                         }
                     }
                     BREnum::GotPlaced(placed_status, board_string) => {
-                        self.update_board_from_string(&shared, &document, board_string);
+                        self.update_board_from_string(&shared, &document, &board_string);
 
                         match placed_status {
                             PlacedEnum::Accepted => {
