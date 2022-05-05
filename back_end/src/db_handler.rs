@@ -1033,7 +1033,7 @@ impl DBHandler {
 
         for row_result in rows {
             if let Ok((id, status, board)) = row_result {
-                self.have_ai_take_players_turn(Some(&conn), id, status, board)?;
+                self.have_ai_take_players_turn(Some(&conn), id, status, &board)?;
             } else {
                 unreachable!("This part should never execute");
             }
@@ -1047,7 +1047,7 @@ impl DBHandler {
         conn: Option<&Connection>,
         game_id: u32,
         status: u32,
-        board_string: String,
+        board_string: &str,
     ) -> Result<(), String> {
         if status > 1 {
             return Err(String::from(
@@ -1064,7 +1064,7 @@ impl DBHandler {
         };
 
         let is_cyan = status == 0;
-        let board = board_from_string(&board_string);
+        let board = board_from_string(board_string);
         let mut ai_choice_pos: usize = get_ai_choice(
             AIDifficulty::Hard,
             if is_cyan {
@@ -1268,17 +1268,18 @@ pub fn start_db_handler_thread(
             }
 
             if cleanup_instant.elapsed() > cleanup_duration {
+                let conn = handler.get_conn(DBFirstRun::NotFirstRun).ok();
                 cleanup_instant = Instant::now();
-                if let Err(e) = handler.cleanup_stale_games(None) {
+                if let Err(e) = handler.cleanup_stale_games(conn.as_ref()) {
                     println!("{}", e);
                 }
-                if let Err(e) = handler.cleanup_stale_players(None) {
+                if let Err(e) = handler.cleanup_stale_players(conn.as_ref()) {
                     println!("{}", e);
                 }
-                if let Err(e) = handler.cleanup_stale_emotes(None) {
+                if let Err(e) = handler.cleanup_stale_emotes(conn.as_ref()) {
                     println!("{}", e);
                 }
-                if let Err(e) = handler.clear_empty_games(None) {
+                if let Err(e) = handler.clear_empty_games(conn.as_ref()) {
                     println!("{}", e);
                 }
             }
