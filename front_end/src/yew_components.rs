@@ -1541,11 +1541,13 @@ impl Component for Wrapper {
                         received_emote,
                         updated_time,
                     } => {
-                        let current_side = shared
-                            .game_state
-                            .borrow()
-                            .get_networked_current_side()
-                            .expect("Should be Networked mode");
+                        let current_side = shared.game_state.borrow().get_networked_current_side();
+                        let current_side = if let Some(side) = current_side {
+                            side
+                        } else {
+                            return true;
+                        };
+
                         if let Some(emote_string) = received_emote {
                             if let Ok(emote_enum) = EmoteEnum::try_from(emote_string.as_str()) {
                                 append_to_info_text(
