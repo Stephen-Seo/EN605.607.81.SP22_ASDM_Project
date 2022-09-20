@@ -37,7 +37,7 @@ pub const BACKEND_PHRASE_MAX_LENGTH: usize = 128;
 // TODO: Change this to "https://asdm.seodisparate.com/api" when backend is installed
 #[allow(dead_code)]
 #[cfg(debug_assertions)]
-pub const BACKEND_URL: &str = "http://testlocalhost/api";
+pub const BACKEND_URL: &str = "http://localhost:1237/";
 
 #[allow(dead_code)]
 #[cfg(not(debug_assertions))]
