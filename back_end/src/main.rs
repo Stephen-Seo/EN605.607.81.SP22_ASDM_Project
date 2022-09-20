@@ -45,8 +45,9 @@ async fn main() {
 
     start_db_handler_thread(db_rx, SQLITE_DB_PATH.into(), s_helper_tx.clone());
 
-    let route = warp::body::content_length_limit(1024 * 32)
-        .and(warp::body::bytes())
+    let route = //warp::body::content_length_limit(1024 * 32)
+        //.and(warp::body::bytes())
+        warp::body::bytes()
         .and_then(move |bytes: bytes::Bytes| {
             let db_tx_clone = db_tx_clone.clone();
             let s_helper_tx_clone = s_helper_tx.clone();
@@ -55,24 +56,48 @@ async fn main() {
                 if let Ok(body_str) = body_str_result {
                     let json_result = serde_json::from_str(body_str);
                     if let Ok(json_value) = json_result {
-                        Ok(warp::reply::with_header(
+                        let reply = warp::reply::with_header(
                             json_handlers::handle_json(json_value, db_tx_clone, s_helper_tx_clone)
                                 .unwrap_or_else(|e| e),
                             "Content-Type",
                             "application/json",
+                        );
+                        let reply = warp::reply::with_header(
+                            reply,
+                            "Access-Control-Allow-Headers",
+                            "*",
+                        );
+                        Ok::<Box<dyn warp::reply::Reply>, Rejection>(Box::new(
+                            warp::reply::with_header(reply, "Access-Control-Allow-Origin", "*"),
                         ))
                     } else {
-                        Ok(warp::reply::with_header(
+                        let reply = warp::reply::with_header(
                             String::from("{\"type\": \"invalid_syntax\"}"),
                             "Content-Type",
                             "application/json",
+                        );
+                        let reply = warp::reply::with_header(
+                            reply,
+                            "Access-Control-Allow-Headers",
+                            "*",
+                        );
+                        Ok::<Box<dyn warp::reply::Reply>, Rejection>(Box::new(
+                            warp::reply::with_header(reply, "Access-Control-Allow-Origin", "*"),
                         ))
                     }
                 } else {
-                    Ok::<warp::reply::WithHeader<String>, Rejection>(warp::reply::with_header(
+                    let reply = warp::reply::with_header(
                         String::from("{\"type\": \"invalid_syntax\"}"),
                         "Content-Type",
                         "application/json",
+                    );
+                    let reply = warp::reply::with_header(
+                        reply,
+                        "Access-Control-Allow-Headers",
+                        "*",
+                    );
+                    Ok::<Box<dyn warp::reply::Reply>, Rejection>(Box::new(
+                        warp::reply::with_header(reply, "Access-Control-Allow-Origin", "*"),
                     ))
                 }
             }
