@@ -1,7 +1,7 @@
 # Four-Line Dropper: A project developed via Agile methodologies
 
 Note that this project was made for a course for the JHU Engineering for
-Professionals program.
+Professionals program. (Named "Agile Software Development Methods".)
 
 The directory `front_end` holds a Rust project for the "front\_end" code. Or in
 other words, it holds the client-side code for the project. The MVP (Minimum
@@ -28,8 +28,7 @@ The directory `pictures` holds pertinent images to the project. It includes the
 
 ## Tags
 
-The git repository is tagged per Sprint and per Day. [One can visualize the
-progress here.](https://git.seodisparate.com/stephenseo/EN605.607.81.SP22_ASDM_Project/graph)
+The git repository is tagged per Sprint and per Day.
 
 ## What is Four-Line Dropper?
 
