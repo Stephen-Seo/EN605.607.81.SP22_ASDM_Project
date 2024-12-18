@@ -39,6 +39,11 @@ four-line matches, then the game ends in a draw. The game is called "Four-Line
 Dropper" to avoid clashing with the game's original name that is trademarked
 (this game is a clone of an existing game).
 
+## Other Things to Know
+
+In multiplayer mode, if a player takes too long to make a move, the game AI
+will choose for you automatically (at hardest game AI difficulty).
+
 # Link to a hosted instance
 
 [I have hosted an instance of the front-end/back-end here.](https://asdm.seodisparate.com)
