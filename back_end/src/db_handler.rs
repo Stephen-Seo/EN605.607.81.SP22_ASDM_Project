@@ -20,7 +20,7 @@ use std::sync::mpsc::{Receiver, RecvTimeoutError, SyncSender};
 use std::time::{Duration, Instant};
 use std::{fmt, thread};
 
-use rand::{thread_rng, Rng};
+use rand::RngCore;
 use rusqlite::{params, Connection, Error as RusqliteError};
 
 /// first value is ID, None if too many players
@@ -425,12 +425,12 @@ impl DBHandler {
             return Err(String::from("Failed to get player count in db"));
         }
 
-        let mut player_id: u32 = thread_rng().gen();
+        let mut player_id: u32 = rand::rng().next_u32();
         loop {
             let exists_result = self.check_if_player_exists(Some(conn), player_id);
             if let Ok(exists) = exists_result {
                 if exists {
-                    player_id = thread_rng().gen();
+                    player_id = rand::rng().next_u32();
                 } else {
                     break;
                 }
@@ -513,13 +513,13 @@ impl DBHandler {
             _conn_result.as_ref().unwrap()
         };
 
-        let mut game_id: u32 = thread_rng().gen();
+        let mut game_id: u32 = rand::rng().next_u32();
         {
             let mut get_game_stmt = conn
                 .prepare("SELECT id FROM games WHERE id = ?;")
                 .map_err(|e| format!("{:?}", e))?;
             while get_game_stmt.query_row([game_id], |_row| Ok(())).is_ok() {
-                game_id = thread_rng().gen();
+                game_id = rand::rng().next_u32();
             }
         }
 
