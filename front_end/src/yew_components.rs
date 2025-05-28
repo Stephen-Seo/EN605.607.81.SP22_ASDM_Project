@@ -684,8 +684,8 @@ impl Wrapper {
         // if previously set disconnect callback is set, unset it
         if let Some(callback) = self.cleanup_id_callback.take() {
             let window = web_sys::window().expect("Should be able to get window");
-            let mut options = EventListenerOptions::new();
-            options.capture(true);
+            let options = EventListenerOptions::new();
+            options.set_capture(true);
             if window
                 .remove_event_listener_with_callback_and_event_listener_options(
                     "pagehide", &callback, &options,
@@ -1449,18 +1449,24 @@ impl Component for Wrapper {
                                     let binded_func =
                                         outer_function.bind1(&outer_function, &resolve);
                                     listener_function.replace(Some(binded_func));
+                                    let options = AddEventListenerOptions::new();
+                                    options.set_capture(true);
+                                    options.set_once(true);
                                     window
                                         .add_event_listener_with_callback_and_add_event_listener_options(
                                             "pagehide",
                                             listener_function.borrow().as_ref().unwrap(),
-                                            AddEventListenerOptions::new().capture(true).once(true)
+                                            &options
                                         )
                                         .expect("Should be able to set \"pagehide\" callback");
+                                    let options = AddEventListenerOptions::new();
+                                    options.set_capture(true);
+                                    options.set_once(true);
                                     window
                                         .add_event_listener_with_callback_and_add_event_listener_options(
                                             "beforeunload",
                                             listener_function.borrow().as_ref().unwrap(),
-                                            AddEventListenerOptions::new().capture(true).once(true)
+                                            &options
                                         )
                                         .expect("Should be able to set \"beforeunload\" callback");
                                 });
