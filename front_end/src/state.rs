@@ -18,8 +18,9 @@ use std::fmt::Display;
 use std::rc::Rc;
 
 #[allow(dead_code)]
-#[derive(Clone, Debug, PartialEq, Eq)]
+#[derive(Default, Clone, Debug, PartialEq, Eq)]
 pub enum GameState {
+    #[default]
     MainMenu,
     SinglePlayer(Turn, AIDifficulty),
     LocalMultiplayer,
@@ -139,12 +140,6 @@ impl GameState {
         } else {
             None
         }
-    }
-}
-
-impl Default for GameState {
-    fn default() -> Self {
-        GameState::MainMenu
     }
 }
 

@@ -1889,7 +1889,6 @@ impl Component for Wrapper {
                 if self.player_id.is_none() {
                     return false;
                 }
-                let emote = emote;
                 let player_id = self.player_id.unwrap();
                 ctx.link().send_future(async move {
                     let mut json_entries = HashMap::new();

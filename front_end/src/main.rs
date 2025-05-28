@@ -18,8 +18,8 @@ use state::SharedState;
 use yew::prelude::*;
 use yew_components::Wrapper;
 
-#[function_component(App)]
-pub fn app() -> Html {
+#[function_component]
+pub fn App() -> Html {
     let ctx = use_state(SharedState::default);
     html! {
         <ContextProvider<SharedState> context={(*ctx).clone()}>
@@ -33,5 +33,5 @@ fn main() {
     wasm_logger::init(wasm_logger::Config::default());
 
     // start webapp
-    yew::start_app::<App>();
+    yew::Renderer::<App>::new().render();
 }
