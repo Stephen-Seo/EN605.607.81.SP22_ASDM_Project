@@ -34,10 +34,6 @@ pub fn check_win_draw(board: &BoardType) -> Option<(BoardState, WinType)> {
         }
     }
 
-    if !has_empty_slot {
-        return Some((BoardState::Empty, WinType::None));
-    }
-
     let check_result = |state| -> Option<BoardState> {
         match state {
             BoardState::Empty => None,
@@ -88,6 +84,10 @@ pub fn check_win_draw(board: &BoardType) -> Option<(BoardState, WinType)> {
                 return Some((result, WinType::DiagonalDown(idx)));
             }
         }
+    }
+
+    if !has_empty_slot {
+        return Some((BoardState::Empty, WinType::None));
     }
 
     None
