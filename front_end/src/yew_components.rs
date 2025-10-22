@@ -1963,7 +1963,8 @@ impl Component for InfoText {
             0 => {
                 html! {
                     <div id={format!("info_text{}", ctx.props().id)} class={format!("info_text{}", ctx.props().id)}>
-                        {"Hello"}
+                        <a href="https://github.com/Stephen-Seo/EN605.607.81.SP22_ASDM_Project">{"Github Repo of this project here."}</a>
+                        <p>{"Hello"}</p>
                     </div>
                 }
             }
